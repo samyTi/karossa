@@ -1,0 +1,124 @@
+/// Modèle pour un achat/reprise de véhicule
+class Achat {
+  final String id;
+  final String vehiculeId;
+  final String vendeurNom;
+  final String vendeurTelephone;
+  final String vendeurEmail;
+  final double prixPropose;
+  final double prixAccorde;
+  final DateTime dateAchat;
+  final AchatStatut statut;
+  final String? remarques;
+  final String? documentsUrl;
+  final DateTime createdAt;
+  final String achetePar;
+
+  Achat({
+    required this.id,
+    required this.vehiculeId,
+    required this.vendeurNom,
+    required this.vendeurTelephone,
+    this.vendeurEmail = '',
+    required this.prixPropose,
+    required this.prixAccorde,
+    required this.dateAchat,
+    this.statut = AchatStatut.en_cours,
+    this.remarques,
+    this.documentsUrl,
+    DateTime? createdAt,
+    required this.achetePar,
+  }) : createdAt = createdAt ?? DateTime.now();
+
+  factory Achat.fromJson(Map<String, dynamic> json) {
+    return Achat(
+      id: json['id'] ?? '',
+      vehiculeId: json['vehicule_id'] ?? '',
+      vendeurNom: json['vendeur_nom'] ?? '',
+      vendeurTelephone: json['vendeur_telephone'] ?? '',
+      vendeurEmail: json['vendeur_email'] ?? '',
+      prixPropose: (json['prix_propose'] ?? 0).toDouble(),
+      prixAccorde: (json['prix_accorde'] ?? 0).toDouble(),
+      dateAchat: DateTime.parse(json['date_achat']),
+      statut: AchatStatut.values.firstWhere(
+        (e) => e.name == json['statut'],
+        orElse: () => AchatStatut.en_cours,
+      ),
+      remarques: json['remarques'],
+      documentsUrl: json['documents_url'],
+      createdAt: json['created_at'] != null 
+          ? DateTime.parse(json['created_at']) 
+          : DateTime.now(),
+      achetePar: json['achete_par'] ?? '',
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'vehicule_id': vehiculeId,
+      'vendeur_nom': vendeurNom,
+      'vendeur_telephone': vendeurTelephone,
+      'vendeur_email': vendeurEmail,
+      'prix_propose': prixPropose,
+      'prix_accorde': prixAccorde,
+      'date_achat': dateAchat.toIso8601String(),
+      'statut': statut.name,
+      'remarques': remarques,
+      'documents_url': documentsUrl,
+      'created_at': createdAt.toIso8601String(),
+      'achete_par': achetePar,
+    };
+  }
+
+  // Calcul de la marge si le véhicule est revendu
+  double calculerMarge(double prixVente) {
+    return prixVente - prixAccorde;
+  }
+
+  // Taux de marge en pourcentage
+  double tauxMarge(double prixVente) {
+    if (prixAccorde == 0) return 0;
+    return ((prixVente - prixAccorde) / prixAccorde) * 100;
+  }
+}
+
+enum AchatStatut {
+  en_cours,      // Évaluation en cours
+  propose,       // Offre faite au vendeur
+  accepte,       // Offre acceptée
+  valide,        // Achat validé et payé
+  annule,        // Achat annulé
+}
+
+extension AchatStatutExtension on AchatStatut {
+  String get label {
+    switch (this) {
+      case AchatStatut.en_cours:
+        return 'En évaluation';
+      case AchatStatut.propose:
+        return 'Offre faite';
+      case AchatStatut.accepte:
+        return 'Accepté';
+      case AchatStatut.valide:
+        return 'Validé';
+      case AchatStatut.annule:
+        return 'Annulé';
+    }
+  }
+
+  String get color {
+    switch (this) {
+      case AchatStatut.en_cours:
+        return '#FFA726'; // Orange
+      case AchatStatut.propose:
+        return '#42A5F5'; // Bleu
+      case AchatStatut.accepte:
+        return '#66BB6A'; // Vert
+      case AchatStatut.valide:
+        return '#2E7D32'; // Vert foncé
+      case AchatStatut.annule:
+        return '#EF5350'; // Rouge
+    }
+  }
+}

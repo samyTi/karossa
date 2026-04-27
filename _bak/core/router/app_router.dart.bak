@@ -1,0 +1,347 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import '../../core/constants/app_colors.dart';
+import '../../features/auth/presentation/auth_provider.dart';
+import '../../features/auth/presentation/login_screen.dart';
+import '../../features/auth/presentation/profile_screen.dart';
+import '../../features/dashboard/presentation/dashboard_screen.dart';
+import '../../features/vehicules/presentation/catalogue_screen.dart';
+import '../../features/vehicules/presentation/vehicule_form_screen.dart';
+import '../../features/vehicules/presentation/vehicule_detail_screen.dart';
+import '../../features/vehicules/presentation/vehicule_history_screen.dart';
+import '../../features/locations/presentation/locations_screen.dart';
+import '../../features/locations/presentation/location_form_screen.dart';
+import '../../features/locations/presentation/location_retour_screen.dart';
+import '../../features/clients/presentation/clients_screen.dart';
+import '../../features/clients/presentation/client_form_screen.dart';
+import '../../features/caisse/presentation/caisse_screen.dart';
+import '../../features/echanges/presentation/echanges_screen.dart';
+import '../../features/echanges/presentation/echange_form_screen.dart';
+import '../../features/reparations/presentation/reparations_screen.dart';
+import '../../features/reparations/presentation/reparation_form_screen.dart';
+import '../../features/entretien/presentation/entretien_screen.dart';
+import '../../features/entretien/presentation/entretien_form_screen.dart';
+import '../../features/finance/presentation/releve_screen.dart';
+import '../../features/ventes/presentation/vente_form_screen.dart';
+import '../../features/admin/presentation/users_screen.dart';
+import '../../features/admin/presentation/settings_screen.dart';
+import '../../features/achats/presentation/achats_screen.dart';
+
+final routerProvider = Provider<GoRouter>((ref) {
+  final authState = ref.watch(authStateProvider);
+
+  return GoRouter(
+    initialLocation: '/dashboard',
+    redirect: (context, state) {
+      final isLoggedIn   = authState.valueOrNull != null;
+      final isLoginRoute = state.matchedLocation == '/login';
+      if (!isLoggedIn && !isLoginRoute) return '/login';
+      if (isLoggedIn  && isLoginRoute)  return '/dashboard';
+      return null;
+    },
+    routes: [
+      GoRoute(path: '/login',
+        builder: (_, __) => const LoginScreen()),
+
+      // ── Profil ────────────────────────────────────────
+      GoRoute(path: '/profil',
+        builder: (_, __) => const ProfileScreen()),
+
+      // ── Vehicules ─────────────────────────────────────
+      GoRoute(path: '/vehicules/new',
+        builder: (_, __) => const VehiculeFormScreen()),
+      GoRoute(path: '/vehicules/:id/edit',
+        builder: (_, s) => VehiculeFormScreen(
+          vehiculeId: s.pathParameters['id'])),
+      GoRoute(path: '/vehicules/:id/history',
+        builder: (_, s) => VehiculeHistoryScreen(
+          vehiculeId: s.pathParameters['id']!)),
+
+      // ── Locations ─────────────────────────────────────
+      GoRoute(path: '/locations/new',
+        builder: (_, s) => LocationFormScreen(
+          vehiculeId: s.uri.queryParameters['vehiculeId'])),
+      GoRoute(path: '/locations/:id/retour',
+        builder: (_, s) => LocationRetourScreen(
+          locationId: s.pathParameters['id']!)),
+
+      // ── Clients ───────────────────────────────────────
+      GoRoute(path: '/clients/new',
+        builder: (_, __) => const ClientFormScreen()),
+      GoRoute(path: '/clients/:id',
+        builder: (_, s) => ClientFormScreen(
+          clientId: s.pathParameters['id'])),
+
+      // ── Ventes ────────────────────────────────────────
+      GoRoute(path: '/ventes/new',
+        builder: (_, s) => VenteFormScreen(
+          vehiculeId: s.uri.queryParameters['vehiculeId'])),
+
+      // ── Autres modules ────────────────────────────────
+      GoRoute(path: '/caisse',
+        builder: (_, __) => const CaisseScreen()),
+      GoRoute(path: '/echanges',
+        builder: (_, __) => const EchangesScreen()),
+      GoRoute(path: '/echanges/new',
+        builder: (_, __) => const EchangeFormScreen()),
+      GoRoute(path: '/reparations',
+        builder: (_, __) => const ReparationsScreen()),
+      GoRoute(path: '/reparations/new',
+        builder: (_, __) => const ReparationFormScreen()),
+      GoRoute(path: '/entretien',
+        builder: (_, __) => const EntretienScreen()),
+      GoRoute(path: '/entretien/new',
+        builder: (_, __) => const EntretienFormScreen()),
+      GoRoute(path: '/releve',
+        builder: (_, __) => const ReleveScreen()),
+
+      // ── Administration ─────────────────────────────────
+      GoRoute(path: '/admin/users',
+        builder: (_, __) => const UsersScreen()),
+      GoRoute(path: '/admin/settings',
+        builder: (_, __) => const SettingsScreen()),
+
+      // ── Achats ─────────────────────────────────────────
+      GoRoute(path: '/achats',
+        builder: (_, __) => const AchatsScreen()),
+
+      // ── Navigation principale ──────────────────────────
+      StatefulShellRoute.indexedStack(
+        builder: (ctx, state, shell) =>
+          _MainScaffold(shell: shell),
+        branches: [
+          StatefulShellBranch(routes: [
+            GoRoute(path: '/dashboard',
+              builder: (_, __) => const DashboardScreen()),
+          ]),
+          StatefulShellBranch(routes: [
+            GoRoute(
+              path: '/vehicules',
+              builder: (_, __) => const CatalogueScreen(),
+              routes: [
+                GoRoute(
+                  path: ':id',
+                  builder: (_, s) => VehiculeDetailScreen(
+                    id: s.pathParameters['id']!)),
+              ]),
+          ]),
+          StatefulShellBranch(routes: [
+            GoRoute(path: '/locations',
+              builder: (_, __) => const LocationsScreen()),
+          ]),
+          StatefulShellBranch(routes: [
+            GoRoute(path: '/clients',
+              builder: (_, __) => const ClientsScreen()),
+          ]),
+          StatefulShellBranch(routes: [
+            GoRoute(path: '/more',
+              builder: (_, __) => const _MoreScreen()),
+          ]),
+        ],
+      ),
+    ],
+  );
+});
+
+// ── Navigation principale ─────────────────────────────────────
+class _MainScaffold extends StatelessWidget {
+  final StatefulNavigationShell shell;
+  const _MainScaffold({required this.shell});
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    body: shell,
+    bottomNavigationBar: NavigationBar(
+      selectedIndex: shell.currentIndex,
+      onDestinationSelected: shell.goBranch,
+      destinations: const [
+        NavigationDestination(
+          icon: Icon(Icons.dashboard_outlined),
+          selectedIcon: Icon(Icons.dashboard),
+          label: 'Accueil'),
+        NavigationDestination(
+          icon: Icon(Icons.directions_car_outlined),
+          selectedIcon: Icon(Icons.directions_car),
+          label: 'Vehicules'),
+        NavigationDestination(
+          icon: Icon(Icons.car_rental_outlined),
+          selectedIcon: Icon(Icons.car_rental),
+          label: 'Locations'),
+        NavigationDestination(
+          icon: Icon(Icons.people_outlined),
+          selectedIcon: Icon(Icons.people),
+          label: 'Clients'),
+        NavigationDestination(
+          icon: Icon(Icons.grid_view_outlined),
+          selectedIcon: Icon(Icons.grid_view),
+          label: 'Plus'),
+      ],
+    ),
+  );
+}
+
+// ── Ecran "Plus" ──────────────────────────────────────────────
+class _MoreScreen extends StatelessWidget {
+  const _MoreScreen();
+
+  @override
+  Widget build(BuildContext context) {
+    // Categories with their items
+    final categories = [
+      _CategoryData(
+        'Finance & Gestion',
+        Icons.account_balance,
+        AppColors.secondary,
+        [
+          _MI('Caisse', Icons.account_balance_wallet_outlined,
+            AppColors.primary, '/caisse'),
+          _MI('Relevé financier', Icons.bar_chart,
+            AppColors.secondary, '/releve'),
+        ],
+      ),
+      _CategoryData(
+        'Gestion Véhicules',
+        Icons.directions_car,
+        AppColors.loue,
+        [
+          _MI('Achats', Icons.shopping_cart,
+            AppColors.primary, '/achats'),
+          _MI('Entretien', Icons.notifications_outlined,
+            AppColors.amber, '/entretien'),
+          _MI('Réparations', Icons.build_outlined,
+            AppColors.reparation, '/reparations'),
+          _MI('Échanges', Icons.swap_horiz,
+            AppColors.accent, '/echanges'),
+        ],
+      ),
+      _CategoryData(
+        'Administration',
+        Icons.admin_panel_settings,
+        AppColors.admin,
+        [
+          _MI('Utilisateurs', Icons.people,
+            AppColors.primary, '/admin/users'),
+          _MI('Paramètres', Icons.settings,
+            AppColors.gerant, '/admin/settings'),
+        ],
+      ),
+      _CategoryData(
+        'Personnel',
+        Icons.person,
+        AppColors.textSecondary,
+        [
+          _MI('Mon profil', Icons.person_outline,
+            AppColors.textSecondary, '/profil'),
+        ],
+      ),
+    ];
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Modules'),
+        elevation: 0,
+      ),
+      body: ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: categories.length,
+        itemBuilder: (context, index) {
+          final category = categories[index];
+          return _CategorySection(category: category);
+        },
+      ),
+    );
+  }
+}
+
+class _CategoryData {
+  final String title;
+  final IconData icon;
+  final Color color;
+  final List<_MI> items;
+  _CategoryData(this.title, this.icon, this.color, this.items);
+}
+
+class _CategorySection extends StatelessWidget {
+  final _CategoryData category;
+  const _CategorySection({required this.category});
+
+  @override
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      // Category header
+      Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        child: Row(
+          children: [
+            Icon(category.icon, size: 20, color: category.color),
+            const SizedBox(width: 8),
+            Text(category.title,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                color: category.color,
+              )),
+          ],
+        ),
+      ),
+      // Items grid
+      GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 12,
+          mainAxisSpacing: 12,
+          childAspectRatio: 1.5),
+        itemCount: category.items.length,
+        itemBuilder: (_, i) => _MenuItemCard(item: category.items[i]),
+      ),
+      const SizedBox(height: 8),
+    ],
+  );
+}
+
+class _MI {
+  final String label;
+  final IconData icon;
+  final Color color;
+  final String route;
+  const _MI(this.label, this.icon, this.color, this.route);
+}
+
+class _MenuItemCard extends StatelessWidget {
+  final _MI item;
+  const _MenuItemCard({required this.item});
+
+  @override
+  Widget build(BuildContext context) => InkWell(
+    onTap: () => context.go(item.route),
+    borderRadius: BorderRadius.circular(12),
+    child: Container(
+      decoration: BoxDecoration(
+        color: item.color.withOpacity(0.07),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: item.color.withOpacity(0.2)),
+      ),
+      padding: const EdgeInsets.all(12),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(item.icon, size: 28, color: item.color),
+          const SizedBox(height: 8),
+          Text(item.label,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: item.color,
+            ),
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis),
+        ],
+      ),
+    ),
+  );
+}

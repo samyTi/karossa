@@ -1,0 +1,76 @@
+name: garage_auto
+description: Application de gestion de magasin auto - vente, location, échange
+publish_to: none
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # ── Backend & Auth ─────────────────────────────────────────
+  supabase_flutter: ^2.3.0
+
+  # ── State management ───────────────────────────────────────
+  flutter_riverpod: ^2.4.9
+  riverpod_annotation: ^2.3.3
+
+  # ── Navigation ─────────────────────────────────────────────
+  go_router: ^13.2.0
+
+  # ── UI & Design ────────────────────────────────────────────
+  google_fonts: ^6.1.0
+  flutter_svg: ^2.0.9
+  cached_network_image: ^3.3.1
+  shimmer: ^3.0.0
+  fl_chart: ^0.67.0
+
+  # ── Formulaires & Inputs ───────────────────────────────────
+  reactive_forms: ^17.0.1
+  image_picker: ^1.0.7
+  intl: 0.20.2
+
+  # ── PDF & Documents ────────────────────────────────────────
+  pdf: ^3.10.7
+  printing: ^5.12.0
+  share_plus: ^7.2.1
+  signature: ^5.4.0          # Signature électronique sur contrats
+
+  # ── GPS & Cartographie ─────────────────────────────────────
+  flutter_map: ^7.0.0        # Carte OpenStreetMap
+  latlong2: ^0.9.0           # Coordonnées GPS
+  web_socket_channel: ^3.0.0 # WebSocket Traccar live
+
+  # ── Stockage local & Notifications ────────────────────────
+  hive_flutter: ^1.1.0
+  flutter_local_notifications: ^17.0.0
+  timezone: ^0.9.2
+
+  # ── Utilitaires ────────────────────────────────────────────
+  uuid: ^4.3.3
+  equatable: ^2.0.5
+  freezed_annotation: ^2.4.1
+  json_annotation: ^4.8.1
+  path_provider: ^2.1.2
+  permission_handler: ^11.3.0
+  connectivity_plus: ^6.0.2
+  http: ^1.2.0               # Appels REST Traccar
+  url_launcher: ^6.2.4       # Ouvrir liens externes
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+  build_runner: ^2.4.8
+  freezed: ^2.4.7
+  json_serializable: ^6.7.1
+  riverpod_generator: ^2.3.9
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+    - assets/icons/
+    - assets/fonts/
