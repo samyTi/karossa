@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/providers/supabase_provider.dart';
 import 'package:go_router/go_router.dart';
-import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_text_styles.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../../shared/widgets/custom_app_bar.dart';
 import '../../../shared/services/notification_service.dart';
-import '../../../main.dart';
 import '../../clients/domain/client_model.dart';
 import '../../clients/presentation/clients_provider.dart';
 import '../../vehicules/domain/vehicule_model.dart';
 import '../../vehicules/presentation/vehicules_provider.dart';
 import 'locations_provider.dart';
+import '../../../core/services/contrat_generator_service.dart';
+import '../../../core/utils/app_logger.dart';
 
 class LocationFormScreen extends ConsumerStatefulWidget {
   final String? vehiculeId;
@@ -25,7 +27,8 @@ class _State extends ConsumerState<LocationFormScreen> {
   Client?   _client;
   DateTime  _debut  = DateTime.now();
   DateTime  _fin    = DateTime.now().add(const Duration(days: 1));
-  bool _loading = false;
+  bool _loading    = false;
+  bool _genererPdf = true;
   final _kmCtrl     = TextEditingController();
   final _cautionCtrl= TextEditingController();
   final _notesCtrl  = TextEditingController();
@@ -79,10 +82,13 @@ class _State extends ConsumerState<LocationFormScreen> {
             Text('Vehicule', style: AppTextStyles.heading3),
             const SizedBox(height: 8),
             DropdownButtonFormField<Vehicule>(
-              initialValue: _vehicule,
+              value: _vehicule != null && vehicules.contains(_vehicule!) 
+                ? _vehicule 
+                : null,
               decoration: const InputDecoration(
                 labelText: 'Selectionner le vehicule'),
-              items: vehicules.map((v) => DropdownMenuItem(
+              hint: const Text('Choisir un véhicule'),
+              items: vehicules.map((v) => DropdownMenuItem<Vehicule>(
                 value: v,
                 child: Text('${v.displayName}'
                   '${v.prixLocationJour != null
@@ -213,6 +219,10 @@ class _State extends ConsumerState<LocationFormScreen> {
             ),
             const SizedBox(height: 20),
 
+
+            // Checkbox génération PDF
+            _buildCheckboxPdf(),
+            const SizedBox(height: 8),
             SizedBox(
               width: double.infinity,
               height: 50,
@@ -239,27 +249,82 @@ class _State extends ConsumerState<LocationFormScreen> {
     setState(() => _loading = true);
     try {
       final repo = ref.read(locationsRepositoryProvider);
-      await repo.create({
+      // Format dates as YYYY-MM-DD for PostgreSQL date fields
+      final debutStr = '${_debut.year}-${_debut.month.toString().padLeft(2, '0')}-${_debut.day.toString().padLeft(2, '0')}';
+      final finStr = '${_fin.year}-${_fin.month.toString().padLeft(2, '0')}-${_fin.day.toString().padLeft(2, '0')}';
+      
+      // Get current user ID for created_by field
+      final currentUser = ref.read(supabaseClientProvider).auth.currentUser;
+      
+      // Remove nb_jours from insert - it's calculated by DB default expression
+      // (date_fin_prevue - date_debut)
+      final data = {
         'vehicule_id':     _vehicule!.id,
         'client_id':       _client!.id,
-        'date_debut':      _debut.toIso8601String().substring(0, 10),
-        'date_fin_prevue': _fin.toIso8601String().substring(0, 10),
+        'date_debut':      debutStr,
+        'date_fin_prevue': finStr,
         'km_depart':       int.tryParse(_kmCtrl.text) ?? 0,
-        'prix_jour':       _prixJour,
-        'nb_jours':        _nbJours,
-        'caution':         double.tryParse(_cautionCtrl.text) ?? 0,
+        'prix_jour':       _prixJour.toStringAsFixed(2),
+        'caution':         (double.tryParse(_cautionCtrl.text) ?? 0).toStringAsFixed(2),
         'retenue_caution': 0,
         'notes_depart':    _notesCtrl.text.trim().isEmpty
                              ? null : _notesCtrl.text.trim(),
         'statut':          'en_cours',
-        'created_by':      supabase.auth.currentUser?.id,
-      });
+        if (currentUser != null) 'created_by': currentUser.id,
+      };
+      
+      AppLogger.d('DEBUG FORM: Creating location with data: $data');
+      AppLogger.d('DEBUG FORM: vehicule_id=${_vehicule!.id}, client_id=${_client!.id}');
+      
+      final location = await repo.create(data);
       // Mettre le véhicule en statut "loué"
-      await supabase.from('vehicules')
+      await ref.read(supabaseClientProvider).from('vehicules')
         .update({'statut': 'loue'})
         .eq('id', _vehicule!.id);
       ref.invalidate(locationsActivesProvider);
       ref.invalidate(vehiculesProvider);
+
+      // ── Génération du contrat PDF ──────────────────────────────────
+      if (_genererPdf && mounted) {
+        // Convert Location object to Map for the PDF generator
+        final locationData = <String, dynamic>{
+          'id': location.id,
+          'vehicule_id': location.vehiculeId,
+          'client_id': location.clientId,
+          'date_debut': location.dateDebut.toIso8601String(),
+          'date_fin_prevue': location.dateFinPrevue.toIso8601String(),
+          'km_depart': location.kmDepart,
+          'prix_jour': location.prixJour,
+          'caution': location.caution,
+          'notes_depart': location.notesDepart,
+          // Include nested client and vehicule data
+          'clients': {
+            'nom': _client?.nom,
+            'prenom': _client?.prenom,
+            'telephone': _client?.telephone,
+            'email': _client?.email,
+            'adresse': _client?.adresse,
+            'num_permis': _client?.numPermis,
+            'num_cni': _client?.numCni,
+          },
+          'vehicules': {
+            'marque': _vehicule?.marque,
+            'modele': _vehicule?.modele,
+            'couleur': _vehicule?.couleur,
+            'immatriculation': _vehicule?.immatriculation,
+            'carburant': _vehicule?.carburant,
+            'boite': _vehicule?.boite,
+            'etat_vehicule': _vehicule?.etatVehicule,
+          },
+        };
+        final pdfFile = await ContratGeneratorService.genererLocation(
+          locationData: locationData,
+        );
+        if (pdfFile != null && mounted) {
+          await ContratGeneratorService.partager(context, pdfFile);
+        }
+      }
+
       if (mounted) {
         context.pop();
         NotificationService().success('Contrat créé avec succès !');
@@ -270,6 +335,15 @@ class _State extends ConsumerState<LocationFormScreen> {
       if (mounted) setState(() => _loading = false);
     }
   }
+
+  Widget _buildCheckboxPdf() => CheckboxListTile(
+    value: _genererPdf,
+    onChanged: (v) => setState(() => _genererPdf = v ?? true),
+    title: const Text('Générer et partager le contrat PDF'),
+    secondary: const Icon(Icons.picture_as_pdf, color: AppColors.primary),
+    contentPadding: EdgeInsets.zero,
+    dense: true,
+  );
 }
 
 class _DateTile extends StatelessWidget {

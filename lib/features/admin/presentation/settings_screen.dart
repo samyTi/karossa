@@ -3,11 +3,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_text_styles.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/theme_provider.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../../shared/widgets/custom_app_bar.dart';
 import '../../contrats/presentation/contrats_provider.dart';
-import '../../contrats/data/contrats_repository.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -23,7 +23,7 @@ class SettingsScreen extends ConsumerWidget {
         showHomeButton: true,
       ),
       body: settingsAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const Center(child: const CircularProgressIndicator()),
         error:   (e, _) => Center(child: Text('Erreur : \$e')),
         data: (settings) => _SettingsBody(settings: settings),
       ),
@@ -78,7 +78,7 @@ class _SettingsBodyState extends ConsumerState<_SettingsBody> {
   Future<void> _save() async {
     setState(() => _saving = true);
     try {
-      await ContratsRepository().updateShowroomSettings(_settings);
+      await ref.read(contratsRepositoryProvider).updateShowroomSettings(_settings);
       ref.invalidate(showroomSettingsProvider);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -270,4 +270,27 @@ class _SettingsTile extends StatelessWidget {
       onTap: onTap,
     ),
   );
+}
+
+
+// Widget switch dark mode à insérer dans SettingsScreen
+class DarkModeSwitch extends ConsumerWidget {
+  const DarkModeSwitch({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final mode = ref.watch(themeModeProvider);
+    final isDark = mode == ThemeMode.dark;
+    return SwitchListTile(
+      title: const Text('Mode sombre'),
+      subtitle: Text(isDark ? 'Activé' : 'Désactivé'),
+      secondary: Icon(
+        isDark ? Icons.dark_mode : Icons.light_mode,
+        color: isDark ? AppColors.primary : AppColors.accent,
+      ),
+      value: isDark,
+      activeThumbColor: AppColors.primary,
+      onChanged: (_) => ref.read(themeModeProvider.notifier).toggle(),
+    );
+  }
 }

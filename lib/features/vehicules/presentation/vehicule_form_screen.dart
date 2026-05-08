@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/providers/supabase_provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'dart:io';
-import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_text_styles.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/services/carte_grise_ocr_service.dart';
 import '../../../shared/widgets/custom_app_bar.dart';
 import '../../../shared/services/notification_service.dart';
-import '../../../main.dart';
 import '../../auth/domain/profile_model.dart';
 import 'vehicules_provider.dart';
 
@@ -34,6 +35,7 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
   final _prixVenteCtrl  = TextEditingController();
   final _prixLocCtrl    = TextEditingController();
   final _notesCtrl      = TextEditingController();
+  final _etatVehiculeCtrl = TextEditingController();
 
   String _carburant = 'essence';
   String _boite     = 'manuelle';
@@ -50,13 +52,66 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
   void initState() {
     super.initState();
     _loadProfiles();
+    if (widget.vehiculeId != null) {
+      _loadVehicule();
+    }
   }
 
   Future<void> _loadProfiles() async {
-    final data = await supabase.from('profiles').select();
+    final data = await ref.read(supabaseClientProvider).from('profiles').select();
     setState(() {
       _allProfiles = data.map((j) => Profile.fromJson(j)).toList();
     });
+  }
+
+  Future<void> _loadVehicule() async {
+    if (widget.vehiculeId == null) return;
+    
+    // Charger les données du véhicule
+    final data = await ref.read(supabaseClientProvider)
+        .from('vehicules')
+        .select()
+        .eq('id', widget.vehiculeId!)
+        .single();
+    
+    if (data != null) {
+      setState(() {
+        _marqueCtrl.text = data['marque'] ?? '';
+        _modeleCtrl.text = data['modele'] ?? '';
+        _anneeCtrl.text = (data['annee'] ?? '').toString();
+        _couleurCtrl.text = data['couleur'] ?? '';
+        _immatCtrl.text = data['immatriculation'] ?? '';
+        _chassisCtrl.text = data['num_chassis'] ?? '';
+        _kmCtrl.text = (data['kilometrage'] ?? 0).toString();
+        _prixVenteCtrl.text = (data['prix_vente'] ?? '').toString();
+        _prixLocCtrl.text = (data['prix_location_jour'] ?? '').toString();
+        _notesCtrl.text = data['notes'] ?? '';
+        _etatVehiculeCtrl.text = data['etat_vehicule'] ?? '';
+        _carburant = data['carburant'] ?? 'essence';
+        _boite = data['boite'] ?? 'manuelle';
+        _statut = data['statut'] ?? 'disponible';
+        
+        // Charger les photos existantes
+        final photos = data['photos'] as List<dynamic>?;
+        if (photos != null) {
+          _photosUrls.addAll(photos.map((p) => p.toString()));
+        }
+      });
+      
+      // Charger les propriétaires
+      final proprietesData = await ref.read(supabaseClientProvider)
+          .from('vehicule_proprietes')
+          .select()
+          .eq('vehicule_id', widget.vehiculeId!);
+      
+      if (proprietesData != null) {
+        setState(() {
+          for (final prop in proprietesData) {
+            _proprietes[prop['proprietaire_id']] = (prop['part_pct'] as num).toDouble();
+          }
+        });
+      }
+    }
   }
 
   double get _totalParts =>
@@ -103,7 +158,17 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
             const SizedBox(height: 20),
 
             // ── Infos générales ───────────────────────────────
-            _SectionTitle('Informations generales'),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _SectionTitle('Informations generales'),
+                TextButton.icon(
+                  icon: const Icon(Icons.document_scanner, size: 18),
+                  label: const Text('Scanner carte grise'),
+                  onPressed: _scanCarteGrise,
+                ),
+              ],
+            ),
             Row(children: [
               Expanded(child: _Field(
                 ctrl: _marqueCtrl, label: 'Marque',
@@ -121,8 +186,9 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
                 validator: (v) {
                   if (v == null || v.isEmpty) return 'Requis';
                   final y = int.tryParse(v);
-                  if (y == null || y < 1950 || y > 2030)
+                  if (y == null || y < 1950 || y > 2030) {
                     return 'Annee invalide';
+                  }
                   return null;
                 })),
               const SizedBox(width: 10),
@@ -203,7 +269,7 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
             // ── Propriétaires ────────────────────────────────
             _SectionTitle('Proprietaire(s) et parts (%)'),
             if (_allProfiles.isEmpty)
-              const Center(child: CircularProgressIndicator())
+              const Center(child: const CircularProgressIndicator())
             else
               ..._allProfiles
                 .where((p) => p.role != UserRole.gerant)
@@ -242,13 +308,35 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
               ),
             const SizedBox(height: 20),
 
-            // ── Notes ─────────────────────────────────────────
-            _SectionTitle('Notes'),
+            // ── État du véhicule ────────────────────────────────
+            _SectionTitle('État du véhicule'),
+            const Text(
+              'Décrivez tout ce qui ne fonctionne pas ou est endommagé (pannes, rayures, bosses…). '
+              'Ces informations seront intégrées au contrat de location.',
+              style: TextStyle(fontSize: 12, color: Colors.grey),
+            ),
+            const SizedBox(height: 8),
+            TextFormField(
+              controller: _etatVehiculeCtrl,
+              maxLines: 5,
+              decoration: const InputDecoration(
+                labelText: 'Dommages / pannes / anomalies (optionnel)',
+                hintText: 'Ex : Rayure sur aile avant gauche, climatisation en panne, rétroviseur droit fissuré…',
+                alignLabelWithHint: true,
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // ── Notes internes ─────────────────────────────────
+            _SectionTitle('Notes internes'),
             TextFormField(
               controller: _notesCtrl,
               maxLines: 3,
               decoration: const InputDecoration(
-                labelText: 'Notes internes (optionnel)'),
+                labelText: 'Notes internes (optionnel)',
+                hintText: 'Informations internes non affichées dans le contrat',
+              ),
             ),
             const SizedBox(height: 24),
 
@@ -273,6 +361,103 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
         ),
       ),
     );
+  }
+
+  /// Scan OCR d'une carte grise
+  Future<void> _scanCarteGrise() async {
+    try {
+      // Ouvrir le sélecteur d'image
+      final picker = ImagePicker();
+      final source = await showModalBottomSheet<ImageSource>(
+        context: context,
+        builder: (ctx) => SafeArea(
+          child: Column(mainAxisSize: MainAxisSize.min, children: [
+            ListTile(
+              leading: const Icon(Icons.camera_alt),
+              title: const Text('Prendre en photo la carte grise'),
+              onTap: () => Navigator.pop(ctx, ImageSource.camera),
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library),
+              title: const Text('Choisir une photo de la carte grise'),
+              onTap: () => Navigator.pop(ctx, ImageSource.gallery),
+            ),
+          ]),
+        ),
+      );
+      
+      if (source == null) return;
+      
+      final xfile = await picker.pickImage(
+        source: source, imageQuality: 85, maxWidth: 1600);
+      if (xfile == null) return;
+      
+      // Afficher un indicateur de chargement
+      if (!mounted) return;
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx) => const Center(
+          child: Card(
+            child: Padding(
+              padding: EdgeInsets.all(20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const CircularProgressIndicator(),
+                  const SizedBox(height: 16),
+                  Text('Analyse de la carte grise...'),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+      
+      // Traiter l'image avec l'OCR
+      final ocrService = CarteGriseOcrService();
+      final data = await ocrService.scanCarteGrise(File(xfile.path));
+      
+      // Fermer le dialog
+      if (mounted) Navigator.pop(context);
+      
+      // Remplir les champs avec les données extraites
+      if (data.isValid) {
+        setState(() {
+          if (data.marque != null) _marqueCtrl.text = data.marque!;
+          if (data.modele != null) _modeleCtrl.text = data.modele!;
+          if (data.annee != null) _anneeCtrl.text = data.annee.toString();
+          if (data.immatriculation != null) _immatCtrl.text = data.immatriculation!;
+          if (data.numChassis != null) _chassisCtrl.text = data.numChassis!;
+          
+          // Normaliser le type de carburant
+          if (data.energie != null) {
+            final energie = data.energie!.toLowerCase();
+            if (energie.contains('essence')) _carburant = 'essence';
+            else if (energie.contains('diesel') || energie.contains('gas')) _carburant = 'diesel';
+            else if (energie.contains('electrique') || energie.contains('elec')) _carburant = 'electrique';
+            else if (energie.contains('hybride')) _carburant = 'hybride';
+            else if (energie.contains('glp') || energie.contains('gaz')) _carburant = 'glp';
+          }
+        });
+        
+        if (mounted) {
+          NotificationService().success('Carte grise analysée avec succès !');
+        }
+      } else {
+        if (mounted) {
+          NotificationService().warning(
+            'Analyse terminée mais certaines données sont manquantes. Veuillez compléter manuellement.');
+        }
+      }
+    } catch (e) {
+      // Fermer le dialog si ouvert
+      if (mounted) Navigator.pop(context);
+      
+      if (mounted) {
+        NotificationService().error('Erreur lors de l\'analyse OCR: ${e.toString()}');
+      }
+    }
   }
 
   Future<void> _pickPhoto() async {
@@ -309,11 +494,11 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
       final ext      = file.path.split('.').last;
       final fileName =
         '${DateTime.now().millisecondsSinceEpoch}.$ext';
-      await supabase.storage
+      await ref.read(supabaseClientProvider).storage
         .from('vehicules-photos')
         .uploadBinary(fileName, bytes,
           fileOptions: FileOptions(contentType: 'image/$ext'));
-      final url = supabase.storage
+      final url = ref.read(supabaseClientProvider).storage
         .from('vehicules-photos')
         .getPublicUrl(fileName);
       urls.add(url);
@@ -354,7 +539,9 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
         'photos':              photoUrls,
         'notes':               _notesCtrl.text.trim().isEmpty
                                  ? null : _notesCtrl.text.trim(),
-        'created_by':          supabase.auth.currentUser?.id,
+        'etat_vehicule':       _etatVehiculeCtrl.text.trim().isEmpty
+                                 ? null : _etatVehiculeCtrl.text.trim(),
+        'created_by':          ref.read(supabaseClientProvider).auth.currentUser?.id,
       };
       final proprietesList = _proprietes.entries.map((e) => {
         'proprietaire_id': e.key,
@@ -554,13 +741,13 @@ class _AddPhotoBtn extends StatelessWidget {
         border: Border.all(color: AppColors.border, width: 1.5),
       ),
       child: uploading
-        ? const Center(child: CircularProgressIndicator())
+        ? const Center(child: const CircularProgressIndicator())
         : const Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(Icons.add_a_photo_outlined,
                 color: AppColors.textSecondary, size: 28),
-              SizedBox(height: 4),
+              const SizedBox(height: 4),
               Text('Ajouter', style: TextStyle(
                 fontSize: 11, color: AppColors.textSecondary)),
             ],

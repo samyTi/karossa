@@ -1,42 +1,56 @@
-import 'package:flutter/foundation.dart';
+// lib/features/auth/presentation/auth_provider.dart
+//
+// CHANGEMENT : utilise supabaseClientProvider / supabaseAuthProvider
+// au lieu d'importer la variable globale depuis main.dart.
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../../main.dart';
+import '../../../../core/providers/supabase_provider.dart';
 import '../domain/profile_model.dart';
+import '../../../core/utils/app_logger.dart';
 
-/// Provider pour l'état d'authentification
+/// État d'authentification — stream Supabase.
 final authStateProvider = StreamProvider<User?>((ref) {
-  return supabase.auth.onAuthStateChange.map((e) => e.session?.user);
+  return ref
+      .watch(supabaseAuthProvider)
+      .onAuthStateChange
+      .map((e) => e.session?.user);
 });
 
-/// Provider pour le profil actuel
-/// Dépend de authStateProvider → se recharge automatiquement à chaque connexion/déconnexion
+/// Profil de l'utilisateur connecté.
+/// Se recharge automatiquement à chaque connexion/déconnexion.
 final currentProfileProvider = FutureProvider<Profile?>((ref) async {
   final user = ref.watch(authStateProvider).valueOrNull;
   if (user == null) return null;
-  final data = await supabase
-    .from('profiles').select().eq('id', user.id).single();
+
+  final client = ref.watch(supabaseClientProvider);
+  final data =
+      await client.from('profiles').select().eq('id', user.id).single();
   return Profile.fromJson(data);
 });
 
-/// Provider pour vérifier si l'utilisateur peut gérer la caisse
+/// Raccourci — vrai si l'utilisateur peut gérer la caisse.
 final canManageCaisseProvider = Provider<bool>((ref) {
   final p = ref.watch(currentProfileProvider).valueOrNull;
   return p?.role == UserRole.gerant || p?.role == UserRole.admin;
 });
 
-/// Provider pour l'authentification (connexion/déconnexion)
+/// Service d'authentification (connexion/déconnexion).
 final authProvider = Provider<AuthService>((ref) {
-  return AuthService();
+  return AuthService(ref.watch(supabaseAuthProvider));
 });
 
-/// Classe pour gérer l'authentification
 class AuthService {
+  AuthService(this._auth);
+
+  final GoTrueClient _auth;
+
   Future<void> signOut() async {
     try {
-      await supabase.auth.signOut();
-    } catch (e) {
-      debugPrint('Sign out error: $e');
+      await _auth.signOut();
+    } catch (e, st) {
+      AppLogger.e('AuthService.signOut', error: e, stackTrace: st);
+      rethrow;
     }
   }
 }

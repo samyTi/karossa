@@ -1,0 +1,52 @@
+
+# ── Dépendances à ajouter dans pubspec.yaml ──────────────────────────────────
+#
+# Ajoutez ces lignes dans la section "dependencies:" de votre pubspec.yaml
+# (si elles ne sont pas déjà présentes)
+#
+# Puis exécutez: flutter pub get
+
+dependencies:
+  # HTTP client
+  http: ^1.2.2
+
+  # IA Gemini (SDK direct — optionnel si vous utilisez le backend)
+  google_generative_ai: ^0.4.6
+
+  # PDF generation
+  pdf: ^3.11.1
+  printing: ^5.13.2
+
+  # Carte GPS
+  flutter_map: ^7.0.2
+  latlong2: ^0.9.1
+
+  # Supabase
+  supabase_flutter: ^2.6.0
+
+  # Navigation
+  go_router: ^14.3.0
+
+  # State management
+  flutter_riverpod: ^2.5.1
+
+  # Image
+  cached_network_image: ^3.4.1
+  image_picker: ^1.1.2
+
+  # Stockage local (cache)
+  hive_flutter: ^1.1.0
+
+  # Notifications
+  flutter_local_notifications: ^17.2.3
+  timezone: ^0.9.4
+
+  # Path
+  path_provider: ^2.1.4
+
+  # Share & open files
+  share_plus: ^10.0.2
+  open_filex: ^4.5.1
+
+  # Intl
+  intl: ^0.19.0

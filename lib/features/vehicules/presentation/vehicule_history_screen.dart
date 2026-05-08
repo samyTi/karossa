@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/providers/supabase_provider.dart';
 import 'package:intl/intl.dart';
-import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_text_styles.dart';
-import '../../../main.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../domain/vehicule_model.dart';
 
 /// Provider pour récupérer l'historique complet d'un véhicule
 final vehiculeHistoryProvider =
     FutureProvider.autoDispose.family<VehiculeHistory, String>((ref, vehiculeId) {
-  return _fetchVehiculeHistory(vehiculeId);
+  return _fetchVehiculeHistory(vehiculeId);  // ref n'est plus nécessaire
 });
 
 class VehiculeHistory {
@@ -220,7 +221,7 @@ class EchangeHistory {
 
 Future<VehiculeHistory> _fetchVehiculeHistory(String vehiculeId) async {
   // Récupérer le véhicule
-  final vehiculeData = await supabase
+  final vehiculeData = await Supabase.instance.client
       .from('vehicules')
       .select('*, vehicule_proprietes(*, profiles(prenom, nom))')
       .eq('id', vehiculeId)
@@ -229,7 +230,7 @@ Future<VehiculeHistory> _fetchVehiculeHistory(String vehiculeId) async {
   final vehicule = Vehicule.fromJson(vehiculeData);
 
   // Récupérer les locations
-  final locationsData = await supabase
+  final locationsData = await Supabase.instance.client
       .from('locations')
       .select('*, clients(prenom, nom)')
       .eq('vehicule_id', vehiculeId)
@@ -240,7 +241,7 @@ Future<VehiculeHistory> _fetchVehiculeHistory(String vehiculeId) async {
       .toList();
 
   // Récupérer les réparations
-  final reparationsData = await supabase
+  final reparationsData = await Supabase.instance.client
       .from('reparations')
       .select('*')
       .eq('vehicule_id', vehiculeId)
@@ -251,7 +252,7 @@ Future<VehiculeHistory> _fetchVehiculeHistory(String vehiculeId) async {
       .toList();
 
   // Récupérer les entretiens
-  final entretiensData = await supabase
+  final entretiensData = await Supabase.instance.client
       .from('alertes_entretien')
       .select('*')
       .eq('vehicule_id', vehiculeId)
@@ -262,7 +263,7 @@ Future<VehiculeHistory> _fetchVehiculeHistory(String vehiculeId) async {
       .toList();
 
   // Récupérer les ventes
-  final ventesData = await supabase
+  final ventesData = await Supabase.instance.client
       .from('ventes')
       .select('*, clients(prenom, nom)')
       .eq('vehicule_id', vehiculeId)
@@ -273,7 +274,7 @@ Future<VehiculeHistory> _fetchVehiculeHistory(String vehiculeId) async {
       .toList();
 
   // Récupérer les échanges
-  final echangesData = await supabase
+  final echangesData = await Supabase.instance.client
       .from('echanges')
       .select('*, clients(prenom, nom)')
       .eq('vehicule_cede_id', vehiculeId)
@@ -307,7 +308,7 @@ class VehiculeHistoryScreen extends ConsumerWidget {
       ),
       body: history.when(
         loading: () =>
-            const Center(child: CircularProgressIndicator()),
+            const Center(child: const CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('Erreur: $e')),
         data: (h) => _HistoryBody(history: h),
       ),

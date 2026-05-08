@@ -50,3 +50,8 @@ node_modules
 .env.local
 .next
 dist
+lib/core/config/app_config.dart
+# Karossa — fichiers sensibles
+# Fichiers temporaires de développement
+**/*.orig
+**/*-old.dart

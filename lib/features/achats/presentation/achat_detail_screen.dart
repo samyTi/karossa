@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_text_styles.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../../shared/widgets/custom_app_bar.dart';
 import '../domain/achat_model.dart';
 import '../data/achats_repository.dart';
@@ -27,7 +27,7 @@ class _AchatDetailScreenState extends ConsumerState<AchatDetailScreen> {
 
     return achatsAsync.when(
       loading: () => const Scaffold(
-        body: Center(child: CircularProgressIndicator())),
+        body: Center(child: const CircularProgressIndicator())),
       error: (e, _) => Scaffold(
         body: Center(child: Text('Erreur: $e'))),
       data: (achats) {
@@ -165,7 +165,7 @@ class _AchatDetailScreenState extends ConsumerState<AchatDetailScreen> {
   Future<void> _changerStatut(Achat achat, AchatStatut newStatut) async {
     setState(() => _loading = true);
     try {
-      await AchatsRepository().updateAchatStatut(achat.id, newStatut);
+      await ref.read(achatsRepositoryProvider).updateAchatStatut(achat.id, newStatut);
       ref.invalidate(achatsProvider);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

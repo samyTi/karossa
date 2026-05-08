@@ -1,19 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_text_styles.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../../shared/widgets/custom_app_bar.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/shimmer_loading.dart';
 import '../domain/client_model.dart';
 import 'clients_provider.dart';
+import '../../../shared/widgets/search_bar_widget.dart';
 
-class ClientsScreen extends ConsumerWidget {
+class ClientsScreen extends ConsumerStatefulWidget {
   const ClientsScreen({super.key});
+  @override
+  ConsumerState<ClientsScreen> createState() => _ClientsScreenState();
+}
+
+class _ClientsScreenState extends ConsumerState<ClientsScreen> {
+  String _search = '';
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final clients = ref.watch(clientsProvider);
     return Scaffold(
       appBar: const CustomAppBar(
@@ -28,10 +35,20 @@ class ClientsScreen extends ConsumerWidget {
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
       ),
-      body: clients.when(
+body: Column(children: [
+  AppSearchBar(
+    hint: 'Rechercher un client...',
+    onChanged: (q) => setState(() => _search = q),
+  ),
+  Expanded(child: clients.when(
         loading: () => const ClientsListShimmer(itemCount: 5),
         error: (e, _) => Center(child: Text('Erreur: $e')),
-        data: (list) => list.isEmpty
+data: (allList) {
+  final list = _search.isEmpty ? allList
+    : allList.where((c) =>
+        c.fullName.toLowerCase().contains(_search.toLowerCase()) ||
+        c.telephone.contains(_search)).toList();
+  return list.isEmpty
           ? const EmptyState(
               icon: Icons.people_outline,
               message: 'Aucun client enregistré')
@@ -39,8 +56,10 @@ class ClientsScreen extends ConsumerWidget {
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
               itemCount: list.length,
               itemBuilder: (_, i) => _ClientTile(client: list[i]),
-            ),
-      ),
+            );
+        },
+      )),
+    ]),
     );
   }
 }

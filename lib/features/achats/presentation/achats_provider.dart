@@ -1,26 +1,37 @@
+// lib/features/achats/presentation/achats_provider.dart
+//
+// CHANGEMENT : le repository est maintenant instancié avec le client injecté.
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/providers/supabase_provider.dart';
 import '../data/achats_repository.dart';
 import '../domain/achat_model.dart';
 
-/// Provider pour le repository des achats
-final achatsRepositoryProvider = Provider((ref) => AchatsRepository());
+// ── Repository ────────────────────────────────────────────────────────────────
 
-/// Provider pour la liste de tous les achats
+final achatsRepositoryProvider = Provider<AchatsRepository>((ref) {
+  return AchatsRepository(ref.watch(supabaseClientProvider));
+});
+
+// ── Providers ─────────────────────────────────────────────────────────────────
+
 final achatsProvider = FutureProvider.autoDispose<List<Achat>>((ref) {
   return ref.watch(achatsRepositoryProvider).getAchats();
 });
 
-/// Provider pour les achats en cours
 final achatsEnCoursProvider = FutureProvider.autoDispose<List<Achat>>((ref) {
-  return ref.watch(achatsRepositoryProvider).getAchatsByStatut(AchatStatut.en_cours);
+  return ref
+      .watch(achatsRepositoryProvider)
+      .getAchatsByStatut(AchatStatut.en_cours);
 });
 
-/// Provider pour les achats validés
 final achatsValidesProvider = FutureProvider.autoDispose<List<Achat>>((ref) {
-  return ref.watch(achatsRepositoryProvider).getAchatsByStatut(AchatStatut.valide);
+  return ref
+      .watch(achatsRepositoryProvider)
+      .getAchatsByStatut(AchatStatut.valide);
 });
 
-/// Provider pour les statistiques des achats
-final statsAchatsProvider = FutureProvider.autoDispose<Map<String, dynamic>>((ref) {
+final statsAchatsProvider =
+    FutureProvider.autoDispose<Map<String, dynamic>>((ref) {
   return ref.watch(achatsRepositoryProvider).getStatsAchats();
 });

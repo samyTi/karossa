@@ -1,3 +1,36 @@
+// lib/features/locations/domain/location_model.dart
+
+class LocationPaiement {
+  final String id;
+  final String locationId;
+  final double montant;
+  final DateTime datePaiement;
+  final String? mode;
+  final String? notes;
+
+  const LocationPaiement({
+    required this.id, required this.locationId,
+    required this.montant, required this.datePaiement,
+    this.mode, this.notes,
+  });
+
+  factory LocationPaiement.fromJson(Map<String, dynamic> json) => LocationPaiement(
+    id:           json['id'],
+    locationId:   json['location_id'],
+    montant:      (json['montant'] as num).toDouble(),
+    datePaiement: DateTime.parse(json['date_paiement']),
+    mode:         json['mode'],
+    notes:        json['notes'],
+  );
+
+  Map<String, dynamic> toJson() => {
+    'location_id':   locationId,
+    'montant':       montant,
+    'date_paiement': datePaiement.toIso8601String().substring(0, 10),
+    'mode':          mode,
+    'notes':         notes,
+  };
+}
 // ignore: constant_identifier_names
 enum LocationStatut { en_cours, termine, annule, retard }
 

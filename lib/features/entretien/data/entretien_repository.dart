@@ -1,9 +1,13 @@
-import '../../../main.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../domain/alerte_model.dart';
 
 class EntretienRepository {
+  EntretienRepository(this._client);
+
+  final SupabaseClient _client;
+
   Future<List<AlerteEntretien>> getActives() async {
-    final data = await supabase
+    final data = await _client
       .from('alertes_entretien')
       .select('*, vehicules(marque, modele)')
       .eq('statut', 'active')
@@ -12,11 +16,11 @@ class EntretienRepository {
   }
 
   Future<void> create(Map<String, dynamic> data) async {
-    await supabase.from('alertes_entretien').insert(data);
+    await _client.from('alertes_entretien').insert(data);
   }
 
   Future<void> marquerFait(String id) async {
-    await supabase.from('alertes_entretien')
+    await _client.from('alertes_entretien')
       .update({'statut': 'fait'}).eq('id', id);
   }
 }

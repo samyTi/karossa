@@ -1,12 +1,13 @@
 // lib/features/gps/presentation/gps_provider.dart
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/providers/supabase_provider.dart';
 import '../data/gps_repository.dart';
 import '../data/traccar_service.dart';
 import '../domain/gps_models.dart';
 
-final gpsRepositoryProvider = Provider((_) => GpsRepository());
-final traccarServiceProvider = Provider((_) => TraccarService());
+final gpsRepositoryProvider = Provider<GpsRepository>((ref) => GpsRepository(ref.watch(supabaseClientProvider)));
+final traccarServiceProvider = Provider<TraccarService>((ref) => TraccarService(ref.watch(supabaseClientProvider)));
 
 /// Liste de tous les véhicules avec leur position GPS live
 final liveFleetProvider = FutureProvider.autoDispose<List<Map<String, dynamic>>>((ref) {

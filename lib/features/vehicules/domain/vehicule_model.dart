@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../core/constants/app_colors.dart';
+import '../../../core/theme/app_colors.dart';
 
 enum VehiculeStatut { disponible, loue, vendu, reparation, reserve }
 
@@ -49,24 +49,51 @@ class Vehicule {
   final String? carburant;
   final String? boite;
   final int kilometrage;
+  // Prix de revient / achat
+  final double? prixAchat;
   final double? prixVente;
   final double? prixLocationJour;
   final VehiculeStatut statut;
   final List<String> photos;
   final String? notes;
+  /// Décrit les dommages, rayures, pannes et tout ce qui ne fonctionne pas
+  /// sur le véhicule. Affiché dans le contrat de location/vente.
+  final String? etatVehicule;
   final List<VehiculePropriete> proprietes;
   final DateTime createdAt;
+  // GPS
+  final int? traccarDeviceId;
+  final int? kmAlerteSeuil;
 
   const Vehicule({
     required this.id, required this.marque, required this.modele,
     required this.annee, this.couleur, this.immatriculation,
     this.carburant, this.boite, required this.kilometrage,
-    this.prixVente, this.prixLocationJour, required this.statut,
-    this.photos = const [], this.notes, this.proprietes = const [],
-    required this.createdAt,
+    this.prixAchat, this.prixVente, this.prixLocationJour,
+    required this.statut, this.photos = const [], this.notes,
+    this.etatVehicule,
+    this.proprietes = const [], required this.createdAt,
+    this.traccarDeviceId, this.kmAlerteSeuil,
   });
 
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is Vehicule && runtimeType == other.runtimeType && id == other.id;
+
+  @override
+  int get hashCode => id.hashCode;
+
   String get displayName => '$marque $modele $annee';
+
+  /// Calcul rapide du prix de revient (sans les dépenses DB)
+  double get prixRevientEstime => prixAchat ?? 0.0;
+
+  /// Retourne true si le kilométrage actuel dépasse le seuil d'alerte
+  bool get kmCritique {
+    if (kmAlerteSeuil == null) return false;
+    return kilometrage >= kmAlerteSeuil!;
+  }
 
   factory Vehicule.fromJson(Map<String, dynamic> json) => Vehicule(
     id:              json['id'],
@@ -78,6 +105,8 @@ class Vehicule {
     carburant:       json['carburant'],
     boite:           json['boite'],
     kilometrage:     json['kilometrage'] ?? 0,
+    prixAchat:       json['prix_achat'] != null
+                       ? (json['prix_achat'] as num).toDouble() : null,
     prixVente:       json['prix_vente'] != null
                        ? (json['prix_vente'] as num).toDouble() : null,
     prixLocationJour: json['prix_location_jour'] != null
@@ -87,8 +116,30 @@ class Vehicule {
                        orElse: () => VehiculeStatut.disponible),
     photos:          List<String>.from(json['photos'] ?? []),
     notes:           json['notes'],
+    etatVehicule:    json['etat_vehicule'],
     proprietes:      (json['vehicule_proprietes'] as List? ?? [])
                        .map((p) => VehiculePropriete.fromJson(p)).toList(),
     createdAt:       DateTime.parse(json['created_at']),
+    traccarDeviceId: json['traccar_device_id'],
+    kmAlerteSeuil:   json['km_alerte_seuil'],
   );
+
+  Map<String, dynamic> toJson() => {
+    'marque':       marque,
+    'modele':       modele,
+    'annee':        annee,
+    'couleur':      couleur,
+    'immatriculation': immatriculation,
+    'carburant':    carburant,
+    'boite':        boite,
+    'kilometrage':  kilometrage,
+    'prix_achat':   prixAchat,
+    'prix_vente':   prixVente,
+    'prix_location_jour': prixLocationJour,
+    'statut':       statut.name,
+    'photos':       photos,
+    'notes':        notes,
+    'etat_vehicule': etatVehicule,
+    'km_alerte_seuil': kmAlerteSeuil,
+  };
 }

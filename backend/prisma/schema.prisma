@@ -1,0 +1,278 @@
+// Karossa — Prisma Schema (miroir du schéma Supabase)
+// Générez le client: npx prisma generate
+// Push les changements: npx prisma db push
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Vehicule {
+  id                String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  marque            String
+  modele            String
+  annee             Int
+  couleur           String?
+  immatriculation   String?   @unique
+  numChassis        String?   @map("num_chassis")
+  carburant         String?
+  boite             String?
+  kilometrage       Int       @default(0)
+  prixAchat         Decimal?  @map("prix_achat")
+  prixVente         Decimal?  @map("prix_vente")
+  prixLocationJour  Decimal?  @map("prix_location_jour")
+  statut            String    @default("disponible")
+  photos            String[]
+  notes             String?
+  dateEntree        DateTime? @default(now()) @map("date_entree") @db.Date
+  traccarDeviceId   Int?      @map("traccar_device_id")
+  kmAlerteSeuil     Int?      @default(150000) @map("km_alerte_seuil")
+  createdBy         String?   @map("created_by") @db.Uuid
+  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt         DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  locations         Location[]
+  ventes            Vente[]
+  reparations       Reparation[]
+  echangesCedes     Echange[]   @relation("vehiculeCede")
+  echangesRepris    Echange[]   @relation("vehiculeRepris")
+  gpsAlertes        GpsAlerte[]
+  proprietes        VehiculePropriete[]
+  caisseOps         CaisseOperation[]
+  alertesEntretien  AlerteEntretien[]
+
+  @@map("vehicules")
+}
+
+model Client {
+  id            String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  nom           String
+  prenom        String
+  telephone     String
+  email         String?
+  adresse       String?
+  numPermis     String?   @map("num_permis")
+  numCni        String?   @map("num_cni")
+  photoCniUrl   String?   @map("photo_cni_url")
+  photoPermisUrl String?  @map("photo_permis_url")
+  statut        String    @default("normal")
+  noteInterne   String?   @map("note_interne")
+  createdBy     String?   @map("created_by") @db.Uuid
+  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  locations     Location[]
+  ventes        Vente[]
+  echanges      Echange[]
+
+  @@map("clients")
+}
+
+model Location {
+  id              String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  vehiculeId      String    @map("vehicule_id") @db.Uuid
+  clientId        String    @map("client_id") @db.Uuid
+  dateDebut       DateTime  @map("date_debut") @db.Date
+  dateFinPrevue   DateTime  @map("date_fin_prevue") @db.Date
+  dateFinReelle   DateTime? @map("date_fin_reelle") @db.Date
+  kmDepart        Int       @map("km_depart")
+  kmRetour        Int?      @map("km_retour")
+  prixJour        Decimal   @map("prix_jour")
+  nbJours         Int?      @map("nb_jours")
+  montantBrut     Decimal?  @map("montant_brut")
+  caution         Decimal   @default(0)
+  retenueCaution  Decimal   @default(0) @map("retenue_caution")
+  statut          String    @default("en_cours")
+  notesDepart     String?   @map("notes_depart")
+  notesRetour     String?   @map("notes_retour")
+  pdfUrl          String?   @map("pdf_url")
+  contratPdfUrl   String?   @map("contrat_pdf_url")
+  createdBy       String?   @map("created_by") @db.Uuid
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  vehicule        Vehicule  @relation(fields: [vehiculeId], references: [id])
+  client          Client    @relation(fields: [clientId], references: [id])
+  repartitions    LocationRepartition[]
+
+  @@map("locations")
+}
+
+model Vente {
+  id                  String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  vehiculeId          String    @map("vehicule_id") @db.Uuid
+  clientId            String    @map("client_id") @db.Uuid
+  prixCatalogue       Decimal?  @map("prix_catalogue")
+  prixVente           Decimal   @map("prix_vente")
+  acompte             Decimal   @default(0)
+  soldeRestant        Decimal?  @map("solde_restant")
+  modePaiement        String?   @map("mode_paiement")
+  dateVente           DateTime  @default(now()) @map("date_vente") @db.Date
+  dateLivraison       DateTime? @map("date_livraison") @db.Date
+  commissionGerantPct Decimal?  @default(5) @map("commission_gerant_pct")
+  commissionGerantMnt Decimal?  @map("commission_gerant_mnt")
+  statutPaiement      String    @default("partiel") @map("statut_paiement")
+  notes               String?
+  pdfUrl              String?   @map("pdf_url")
+  contratPdfUrl       String?   @map("contrat_pdf_url")
+  createdBy           String?   @map("created_by") @db.Uuid
+  createdAt           DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  vehicule            Vehicule  @relation(fields: [vehiculeId], references: [id])
+  client              Client    @relation(fields: [clientId], references: [id])
+
+  @@map("ventes")
+}
+
+model Reparation {
+  id              String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  vehiculeId      String    @map("vehicule_id") @db.Uuid
+  typeRep         String    @map("type_rep")
+  description     String
+  prestataire     String?
+  cout            Decimal
+  dateRep         DateTime  @default(now()) @map("date_rep") @db.Date
+  kmAuMoment      Int?      @map("km_au_moment")
+  photoFactureUrl String?   @map("photo_facture_url")
+  deductible      Boolean   @default(true)
+  createdBy       String?   @map("created_by") @db.Uuid
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  vehicule        Vehicule  @relation(fields: [vehiculeId], references: [id])
+
+  @@map("reparations")
+}
+
+model Echange {
+  id                    String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  vehiculeCedeId        String    @map("vehicule_cede_id") @db.Uuid
+  clientId              String    @map("client_id") @db.Uuid
+  vehiculeRepriseMarque String    @map("vehicule_reprise_marque")
+  vehiculeRepriseModele String    @map("vehicule_reprise_modele")
+  vehiculeRepriseAnnee  Int?      @map("vehicule_reprise_annee")
+  vehiculeRepriseKm     Int?      @map("vehicule_reprise_km")
+  vehiculeRepriseImmat  String?   @map("vehicule_reprise_immat")
+  valeurReprise         Decimal   @map("valeur_reprise")
+  complementClient      Decimal   @default(0) @map("complement_client")
+  commissionGerantPct   Decimal   @default(5) @map("commission_gerant_pct")
+  commissionGerantMnt   Decimal?  @map("commission_gerant_mnt")
+  dateEchange           DateTime  @default(now()) @map("date_echange") @db.Date
+  notes                 String?
+  pdfUrl                String?   @map("pdf_url")
+  vehiculeReprisId      String?   @map("vehicule_repris_id") @db.Uuid
+  createdBy             String?   @map("created_by") @db.Uuid
+  createdAt             DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  vehiculeCede          Vehicule  @relation("vehiculeCede", fields: [vehiculeCedeId], references: [id])
+  vehiculeRepris        Vehicule? @relation("vehiculeRepris", fields: [vehiculeReprisId], references: [id])
+  client                Client    @relation(fields: [clientId], references: [id])
+
+  @@map("echanges")
+}
+
+model GpsAlerte {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  vehiculeId  String?   @map("vehicule_id") @db.Uuid
+  vehiculeNom String?   @map("vehicule_nom")
+  type        String
+  message     String
+  dateAlerte  DateTime  @default(now()) @map("date_alerte") @db.Timestamptz
+  lue         Boolean   @default(false)
+
+  vehicule    Vehicule? @relation(fields: [vehiculeId], references: [id])
+
+  @@map("gps_alertes")
+}
+
+model GpsPosition {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  vehiculeId  String    @map("vehicule_id") @db.Uuid
+  latitude    Float
+  longitude   Float
+  speed       Float?
+  altitude    Float?
+  cap         Float?
+  fixTime     DateTime  @map("fix_time") @db.Timestamptz
+  serverTime  DateTime  @default(now()) @map("server_time") @db.Timestamptz
+
+  @@index([vehiculeId, fixTime])
+  @@map("gps_positions")
+}
+
+model CaisseOperation {
+  id              String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  type            String
+  categorie       String
+  montant         Decimal
+  description     String
+  vehiculeId      String?   @map("vehicule_id") @db.Uuid
+  dateOp          DateTime  @default(now()) @map("date_op") @db.Date
+  photoFactureUrl String?   @map("photo_facture_url")
+  createdBy       String?   @map("created_by") @db.Uuid
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  vehicule        Vehicule? @relation(fields: [vehiculeId], references: [id])
+
+  @@map("caisse_operations")
+}
+
+model VehiculePropriete {
+  id              String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  vehiculeId      String   @map("vehicule_id") @db.Uuid
+  proprietaireId  String   @map("proprietaire_id") @db.Uuid
+  partPct         Decimal  @map("part_pct")
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  vehicule        Vehicule @relation(fields: [vehiculeId], references: [id])
+
+  @@map("vehicule_proprietes")
+}
+
+model LocationRepartition {
+  id              String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  locationId      String   @map("location_id") @db.Uuid
+  beneficiaireId  String   @map("beneficiaire_id") @db.Uuid
+  typePart        String   @map("type_part")
+  pourcentage     Decimal
+  montant         Decimal
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  location        Location @relation(fields: [locationId], references: [id])
+
+  @@map("location_repartitions")
+}
+
+model AlerteEntretien {
+  id            String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  vehiculeId    String   @map("vehicule_id") @db.Uuid
+  typeAlerte    String   @map("type_alerte")
+  dateEcheance  DateTime? @map("date_echeance") @db.Date
+  kmEcheance    Int?     @map("km_echeance")
+  description   String?
+  statut        String   @default("active")
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  vehicule      Vehicule @relation(fields: [vehiculeId], references: [id])
+
+  @@map("alertes_entretien")
+}
+
+model ShowroomSettings {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  nom         String   @unique @default("Garage Auto")
+  adresse     String?
+  tel         String?
+  email       String?
+  rc          String?
+  logoUrl     String?  @map("logo_url")
+  traccarUrl  String?  @map("traccar_url")
+  traccarUser String?  @map("traccar_user")
+  traccarPassword String? @map("traccar_password")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@map("showroom_settings")
+}

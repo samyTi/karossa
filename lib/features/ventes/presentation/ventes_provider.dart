@@ -1,10 +1,10 @@
 // lib/features/ventes/presentation/ventes_provider.dart
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../main.dart';
+import '../../../core/providers/supabase_provider.dart';
 
 final ventesProvider = FutureProvider.autoDispose<List<Map<String, dynamic>>>((ref) async {
-  final data = await supabase
+  final data = await ref.watch(supabaseClientProvider)
       .from('ventes')
       .select('''
         *,
@@ -16,7 +16,7 @@ final ventesProvider = FutureProvider.autoDispose<List<Map<String, dynamic>>>((r
 });
 
 final statsVentesProvider = FutureProvider.autoDispose<Map<String, dynamic>>((ref) async {
-  final ventes = await supabase
+  final ventes = await ref.watch(supabaseClientProvider)
       .from('ventes')
       .select('prix_vente, created_at');
 

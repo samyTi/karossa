@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:fl_chart/fl_chart.dart';
-import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_text_styles.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../auth/presentation/auth_provider.dart';
 import '../../auth/domain/profile_model.dart';
@@ -50,6 +51,12 @@ class ModernDashboard extends ConsumerWidget {
             // ── App Bar moderne avec dégradé ──────────────────
             _buildModernAppBar(context, prenom, role, retards),
 
+            // ── Barre de recherche rapide ─────────────────────
+            _buildQuickSearchBar(context),
+
+            // ── Section: Activité récente ─────────────────────
+            _buildRecentActivitySection(context),
+
             // ── Section: Alertes (si retards) ──────────────────
             if (retards.isNotEmpty)
               SliverToBoxAdapter(
@@ -82,7 +89,7 @@ class ModernDashboard extends ConsumerWidget {
 
             // ── Padding final ──────────────────────────────────
             const SliverToBoxAdapter(
-              child: SizedBox(height: 80),
+              child: const SizedBox(height: 80),
             ),
           ],
         ),
@@ -525,6 +532,192 @@ class ModernDashboard extends ConsumerWidget {
     );
   }
 
+  Widget _buildQuickSearchBar(BuildContext context) {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+        child: InkWell(
+          onTap: () {
+            HapticFeedback.lightImpact();
+            // TODO: Ouvrir la recherche globale
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Recherche globale à implémenter')),
+            );
+          },
+          borderRadius: BorderRadius.circular(14),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: AppColors.border),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.04),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.search, size: 18, color: AppColors.textHint),
+                const SizedBox(width: 10),
+                Text(
+                  'Rechercher un véhicule, un client...',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: AppColors.textHint,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const Spacer(),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: AppColors.primary.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.keyboard, size: 12, color: AppColors.primary),
+                      const SizedBox(width: 4),
+                      Text(
+                        '⌘K',
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRecentActivitySection(BuildContext context) {
+    // Activités récentes simulées (à connecter aux données réelles)
+    final activities = [
+      RecentActivity(
+        icon: Icons.car_rental,
+        title: 'Nouvelle location',
+        subtitle: 'Toyota Corolla - Client: Ahmed',
+        time: 'Il y a 2h',
+        color: AppColors.loue,
+      ),
+      RecentActivity(
+        icon: Icons.sell,
+        title: 'Vente conclue',
+        subtitle: 'BMW Série 3 - 2,500,000 DA',
+        time: 'Il y a 4h',
+        color: AppColors.secondary,
+      ),
+      RecentActivity(
+        icon: Icons.person_add,
+        title: 'Nouveau client',
+        subtitle: 'Sarah Mohamed inscrit',
+        time: 'Il y a 6h',
+        color: AppColors.primary,
+      ),
+      RecentActivity(
+        icon: Icons.build,
+        title: 'Réparation terminée',
+        subtitle: 'Peugeot 208 - Prête',
+        time: 'Hier',
+        color: AppColors.reparation,
+      ),
+    ];
+
+    return SliverToBoxAdapter(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 24, 20, 12),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Activité récente', style: AppTextStyles.heading2),
+                TextButton.icon(
+                  onPressed: () => context.go('/notifications'),
+                  icon: const Icon(Icons.arrow_forward, size: 14),
+                  label: const Text('Voir tout'),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: AppColors.border.withValues(alpha: 0.3)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.04),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              children: activities.asMap().entries.map((entry) {
+                final index = entry.key;
+                final activity = entry.value;
+                return Padding(
+                  padding: EdgeInsets.only(bottom: index < activities.length - 1 ? 12 : 0),
+                  child: Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 18,
+                        backgroundColor: activity.color.withValues(alpha: 0.1),
+                        child: Icon(activity.icon, size: 16, color: activity.color),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              activity.title,
+                              style: AppTextStyles.heading3.copyWith(fontSize: 13),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            Text(
+                              activity.subtitle,
+                              style: AppTextStyles.label,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Text(
+                        activity.time,
+                        style: AppTextStyles.label.copyWith(
+                          color: AppColors.textTertiary,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildLocationsSection(List<Location> actives, BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -647,7 +840,24 @@ class ModernDashboardShimmer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: const Center(child: CircularProgressIndicator()),
+      body: const Center(child: const CircularProgressIndicator()),
     );
   }
+}
+
+// Modèle pour l'activité récente
+class RecentActivity {
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final String time;
+  final Color color;
+
+  RecentActivity({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.time,
+    required this.color,
+  });
 }

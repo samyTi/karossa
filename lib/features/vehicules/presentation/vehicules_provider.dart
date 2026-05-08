@@ -1,8 +1,19 @@
+// lib/features/vehicules/presentation/vehicules_provider.dart
+//
+// CHANGEMENT : le repository reçoit le client via supabaseClientProvider.
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/providers/supabase_provider.dart';
 import '../data/vehicules_repository.dart';
 import '../domain/vehicule_model.dart';
 
-final vehiculesRepositoryProvider = Provider((_) => VehiculesRepository());
+// ── Repository ────────────────────────────────────────────────────────────────
+
+final vehiculesRepositoryProvider = Provider<VehiculesRepository>((ref) {
+  return VehiculesRepository(ref.watch(supabaseClientProvider));
+});
+
+// ── Providers de liste ────────────────────────────────────────────────────────
 
 final vehiculesProvider = FutureProvider.autoDispose<List<Vehicule>>((ref) {
   return ref.watch(vehiculesRepositoryProvider).getAll();
@@ -13,6 +24,8 @@ final vehiculeDetailProvider =
   return ref.watch(vehiculesRepositoryProvider).getById(id);
 });
 
+// ── Filtres (état UI) ─────────────────────────────────────────────────────────
+
 final statutFiltreProvider = StateProvider<VehiculeStatut?>((ref) => null);
 final searchQueryProvider = StateProvider<String>((ref) => '');
 final marqueFiltreProvider = StateProvider<String?>((ref) => null);
@@ -20,65 +33,36 @@ final anneeMinProvider = StateProvider<int?>((ref) => null);
 final anneeMaxProvider = StateProvider<int?>((ref) => null);
 final prixMaxProvider = StateProvider<double?>((ref) => null);
 
+// ── Liste filtrée (logique de présentation uniquement) ────────────────────────
+
 final vehiculesFiltresProvider =
     Provider.autoDispose<AsyncValue<List<Vehicule>>>((ref) {
-  final statut   = ref.watch(statutFiltreProvider);
-  final searchQuery = ref.watch(searchQueryProvider).toLowerCase().trim();
+  final statut = ref.watch(statutFiltreProvider);
+  final search = ref.watch(searchQueryProvider).toLowerCase().trim();
   final marque = ref.watch(marqueFiltreProvider);
   final anneeMin = ref.watch(anneeMinProvider);
   final anneeMax = ref.watch(anneeMaxProvider);
   final prixMax = ref.watch(prixMaxProvider);
-  final vehicules = ref.watch(vehiculesProvider);
-  
-  return vehicules.whenData((list) {
-    var filtered = list;
-    
-    // Filtre par statut
-    if (statut != null) {
-      filtered = filtered.where((v) => v.statut == statut).toList();
-    }
-    
-    // Filtre par marque
-    if (marque != null && marque.isNotEmpty) {
-      filtered = filtered.where((v) => 
-        (v.marque ?? '').toLowerCase().contains(marque.toLowerCase())).toList();
-    }
-    
-    // Filtre par année minimum
-    if (anneeMin != null) {
-      filtered = filtered.where((v) => v.annee >= anneeMin!).toList();
-    }
-    
-    // Filtre par année maximum
-    if (anneeMax != null) {
-      filtered = filtered.where((v) => v.annee <= anneeMax!).toList();
-    }
-    
-    // Filtre par prix maximum
-    if (prixMax != null) {
-      filtered = filtered.where((v) {
-        final prixVente = v.prixVente;
-        final prixLocation = v.prixLocationJour;
-        return (prixVente != null && prixVente <= prixMax!) ||
-               (prixLocation != null && prixLocation <= prixMax!);
-      }).toList();
-    }
-    
-    // Filtre par recherche textuelle
-    if (searchQuery.isNotEmpty) {
-      filtered = filtered.where((v) {
-        final displayName = v.displayName.toLowerCase();
-        final marqueValue = (v.marque ?? '').toLowerCase();
-        final modele = (v.modele ?? '').toLowerCase();
-        final immatriculation = (v.immatriculation ?? '').toLowerCase();
-        
-        return displayName.contains(searchQuery) ||
-               marqueValue.contains(searchQuery) ||
-               modele.contains(searchQuery) ||
-               immatriculation.contains(searchQuery);
-      }).toList();
-    }
-    
-    return filtered;
+
+  return ref.watch(vehiculesProvider).whenData((list) {
+    return list.where((v) {
+      if (statut != null && v.statut != statut) return false;
+      if (marque != null &&
+          marque.isNotEmpty &&
+          !v.marque.toLowerCase().contains(marque.toLowerCase())) return false;
+      if (anneeMin != null && v.annee < anneeMin) return false;
+      if (anneeMax != null && v.annee > anneeMax) return false;
+      if (prixMax != null) {
+        final pv = v.prixVente;
+        final pl = v.prixLocationJour;
+        if ((pv == null || pv > prixMax) &&
+            (pl == null || pl > prixMax)) return false;
+      }
+      if (search.isNotEmpty) {
+        final hay = '${v.displayName} ${v.immatriculation ?? ''}'.toLowerCase();
+        if (!hay.contains(search)) return false;
+      }
+      return true;
+    }).toList();
   });
 });

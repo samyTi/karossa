@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/providers/supabase_provider.dart';
 import 'package:go_router/go_router.dart';
-import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_text_styles.dart';
-import '../../../main.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_text_styles.dart';
 import 'clients_provider.dart';
 
 class ClientFormScreen extends ConsumerStatefulWidget {
@@ -161,7 +161,7 @@ class _State extends ConsumerState<ClientFormScreen> {
         'statut':      _statut,
         'note_interne':_notesCtrl.text.trim().isEmpty
                          ? null : _notesCtrl.text.trim(),
-        'created_by':  supabase.auth.currentUser?.id,
+        'created_by':  ref.read(supabaseClientProvider).auth.currentUser?.id,
       });
       ref.invalidate(clientsProvider);
       if (mounted) {

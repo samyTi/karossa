@@ -3,16 +3,18 @@
 
 import 'dart:async';
 import 'package:flutter/foundation.dart';
-import '../../../main.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../domain/gps_models.dart';
 import 'traccar_service.dart';
+import '../../../core/utils/app_logger.dart';
 
 class GpsRepository {
-  static final GpsRepository _instance = GpsRepository._internal();
-  factory GpsRepository() => _instance;
-  GpsRepository._internal();
+  GpsRepository(this._client)
+      : _traccar = TraccarService(Supabase.instance.client);
 
-  final _traccar = TraccarService();
+  final SupabaseClient _client;
+
+  final TraccarService _traccar;
 
   // ── Associer un véhicule à un boîtier Traccar ─────────────
   Future<bool> assignDeviceToVehicule({
@@ -20,12 +22,12 @@ class GpsRepository {
     required int traccarDeviceId,
   }) async {
     try {
-      await supabase.from('vehicules').update({
+      await _client.from('vehicules').update({
         'traccar_device_id': traccarDeviceId,
       }).eq('id', vehiculeId);
       return true;
     } catch (e) {
-      debugPrint('GpsRepository.assignDeviceToVehicule: $e');
+      AppLogger.d('GpsRepository.assignDeviceToVehicule: $e');
       return false;
     }
   }
@@ -33,13 +35,14 @@ class GpsRepository {
   /// Récupère le device_id Traccar d'un véhicule
   Future<int?> getDeviceId(String vehiculeId) async {
     try {
-      final data = await supabase
+      final data = await _client
           .from('vehicules')
           .select('traccar_device_id')
           .eq('id', vehiculeId)
           .single();
       return data['traccar_device_id'];
-    } catch (_) {
+    } catch (e) {
+    AppLogger.w('Erreur silencieuse ignorée', error: e);
       return null;
     }
   }
@@ -49,7 +52,7 @@ class GpsRepository {
   Future<List<Map<String, dynamic>>> getLiveFleet() async {
     try {
       // Récupère les véhicules avec leur device Traccar
-      final vehicules = await supabase
+      final vehicules = await _client
           .from('vehicules')
           .select('id, marque, modele, immatriculation, statut, traccar_device_id')
           .not('traccar_device_id', 'is', null);
@@ -70,7 +73,7 @@ class GpsRepository {
         };
       }).where((m) => m['position'] != null).toList();
     } catch (e) {
-      debugPrint('GpsRepository.getLiveFleet: $e');
+      AppLogger.d('GpsRepository.getLiveFleet: $e');
       return [];
     }
   }
@@ -108,12 +111,12 @@ class GpsRepository {
 
   Future<List<GpsAlerte>> getAlertes({bool nonLuesOnly = false}) async {
     try {
-      var query = supabase
+      final query = _client
           .from('gps_alertes')
           .select()
           .order('date_alerte', ascending: false);
       if (nonLuesOnly) {
-        final data = await supabase
+        final data = await _client
             .from('gps_alertes')
             .select()
             .eq('lue', false)
@@ -123,24 +126,24 @@ class GpsRepository {
       final data = await query;
       return (data as List).map((j) => GpsAlerte.fromJson(j)).toList();
     } catch (e) {
-      debugPrint('GpsRepository.getAlertes: $e');
+      AppLogger.d('GpsRepository.getAlertes: $e');
       return [];
     }
   }
 
   Future<void> createAlerte(GpsAlerte alerte) async {
     try {
-      await supabase.from('gps_alertes').insert(alerte.toJson());
+      await _client.from('gps_alertes').insert(alerte.toJson());
     } catch (e) {
-      debugPrint('GpsRepository.createAlerte: $e');
+      AppLogger.d('GpsRepository.createAlerte: $e');
     }
   }
 
   Future<void> marquerAlerteLue(String alerteId) async {
     try {
-      await supabase.from('gps_alertes').update({'lue': true}).eq('id', alerteId);
+      await _client.from('gps_alertes').update({'lue': true}).eq('id', alerteId);
     } catch (e) {
-      debugPrint('GpsRepository.marquerAlerteLue: $e');
+      AppLogger.d('GpsRepository.marquerAlerteLue: $e');
     }
   }
 

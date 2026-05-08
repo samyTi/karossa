@@ -1,33 +1,55 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_text_styles.dart';
+import '../../../core/providers/supabase_provider.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../../shared/widgets/custom_app_bar.dart';
-import '../../../main.dart';
 import '../../auth/presentation/auth_provider.dart';
+import '../../../shared/widgets/filter_chips_widget.dart';
+import '../../../shared/services/export_service.dart';
+import '../../../core/utils/app_logger.dart';
 
-final _caisseProvider = FutureProvider.autoDispose((_) async {
-  final data = await supabase
+final _caisseProvider = FutureProvider.autoDispose((ref) async {
+  final data = await ref.read(supabaseClientProvider)
     .from('caisse_operations')
-    .select('*, vehicules(marque, modele)')
+    .select(
+        '*, vehicules(marque, modele),'
+        'locations(id, date_debut, date_fin_prevue),'
+        'ventes(id, prix_vente),'
+        'reparations(id, description, cout)'
+      )
     .order('date_op', ascending: false);
   return data;
 });
 
-class CaisseScreen extends ConsumerWidget {
+class CaisseScreen extends ConsumerStatefulWidget {
   const CaisseScreen({super.key});
-
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<CaisseScreen> createState() => _CaisseScreenState();
+}
+
+class _CaisseScreenState extends ConsumerState<CaisseScreen> {
+  @override
+  Widget build(BuildContext context) {
     final ops    = ref.watch(_caisseProvider);
     final canEdit = ref.watch(canManageCaisseProvider);
 
     return Scaffold(
-      appBar: const CustomAppBar(
-        title: 'Caisse',
-        showBackButton: false,
-        showHomeButton: true,
-      ),
+appBar: CustomAppBar(
+  title: 'Caisse',
+  showBackButton: false,
+  showHomeButton: true,
+  actions: [
+    IconButton(
+      icon: const Icon(Icons.download_outlined),
+      tooltip: 'Exporter CSV',
+      onPressed: () async {
+        final data = ref.read(_caisseProvider).valueOrNull ?? [];
+        await ExportService.exportCaisseCSV(List<Map<String,dynamic>>.from(data));
+      },
+    ),
+  ],
+),
       floatingActionButton: canEdit
         ? FloatingActionButton.extended(
             onPressed: () => _showOpDialog(context, ref),
@@ -39,7 +61,7 @@ class CaisseScreen extends ConsumerWidget {
         : null,
       body: ops.when(
         loading: () =>
-          const Center(child: CircularProgressIndicator()),
+          const Center(child: const CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('Erreur: $e')),
         data: (list) {
           double entrees = 0, sorties = 0;
@@ -158,13 +180,13 @@ class CaisseScreen extends ConsumerWidget {
               onPressed: () async {
                 final mnt = double.tryParse(montantCtrl.text.trim());
                 if (mnt == null || mnt <= 0 || descCtrl.text.trim().isEmpty) return;
-                await supabase.from('caisse_operations').insert({
+                await ref.read(supabaseClientProvider).from('caisse_operations').insert({
                   'type':        type,
                   'categorie':   categorie,
                   'montant':     mnt,
                   'description': descCtrl.text.trim(),
                   'date_op':     DateTime.now().toIso8601String(),
-                  'created_by':  supabase.auth.currentUser?.id,
+                  'created_by':  ref.read(supabaseClientProvider).auth.currentUser?.id,
                 });
                 ref.invalidate(_caisseProvider);
                 if (ctx.mounted) Navigator.pop(ctx);
@@ -245,7 +267,8 @@ class _OpTile extends StatelessWidget {
                 return Text(
                   '${d.day.toString().padLeft(2,'0')}/${d.month.toString().padLeft(2,'0')}/${d.year}',
                   style: AppTextStyles.label);
-              } catch (_) { return Text(raw, style: AppTextStyles.label); }
+              } catch (e) {
+    AppLogger.w('Erreur silencieuse ignorée', error: e); return Text(raw, style: AppTextStyles.label); }
             }),
         ]),
       ),

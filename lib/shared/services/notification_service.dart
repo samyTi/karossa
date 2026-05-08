@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../core/constants/app_colors.dart';
+import '../../core/theme/app_colors.dart';
 
 /// Service de notification pour afficher des toasts élégants
 class NotificationService {
@@ -63,8 +63,15 @@ class NotificationService {
   }
 
   void _hideCurrent() {
-    _currentOverlay?.remove();
-    _currentOverlay = null;
+    if (_currentOverlay != null) {
+      try {
+        _currentOverlay!.remove();
+      } catch (e) {
+        // Ignore if already removed
+      } finally {
+        _currentOverlay = null;
+      }
+    }
   }
 
   IconData _getDefaultIcon(NotificationType type) {

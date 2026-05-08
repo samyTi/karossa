@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_text_styles.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../domain/achat_model.dart';
 import 'achats_provider.dart';
 
@@ -38,10 +38,6 @@ class _AchatsScreenState extends ConsumerState<AchatsScreen>
     setState(() {
       _filtreStatut = statut;
     });
-  }
-
-  Color _getColorFromStatut(AchatStatut statut) {
-    return Color(int.parse('0x${statut.color.substring(1)}'));
   }
 
   @override
@@ -144,7 +140,7 @@ class _AchatsScreenState extends ConsumerState<AchatsScreen>
                   },
                 );
               },
-              loading: () => const Center(child: CircularProgressIndicator()),
+              loading: () => const Center(child: const CircularProgressIndicator()),
               error: (e, st) => Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,

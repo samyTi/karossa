@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_text_styles.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../auth/presentation/auth_provider.dart';
 import '../../auth/domain/profile_model.dart';
@@ -216,34 +216,6 @@ class _AlerteRetards extends StatelessWidget {
         }),
       ],
     ),
-  );
-}
-
-class _StatCard extends StatelessWidget {
-  final String label, value;
-  final Color color;
-  final IconData icon;
-  const _StatCard(this.label, this.value, this.color, this.icon);
-
-  @override
-  Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.all(10),
-    decoration: BoxDecoration(
-      color: color.withValues(alpha: 0.08),
-      borderRadius: BorderRadius.circular(10),
-      border: Border.all(color: color.withValues(alpha: 0.2))),
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Icon(icon, size: 18, color: color.withValues(alpha: 0.7)),
-        const SizedBox(height: 4),
-        Text(value, style: TextStyle(
-          fontSize: 20, fontWeight: FontWeight.w800,
-          color: color)),
-        const SizedBox(height: 2),
-        Text(label, style: AppTextStyles.label,
-          textAlign: TextAlign.center),
-      ]),
   );
 }
 

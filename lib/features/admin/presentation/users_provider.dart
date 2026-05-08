@@ -1,30 +1,36 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/providers/supabase_provider.dart';
 import 'dart:convert';
 import '../../auth/domain/profile_model.dart';
-import '../../../main.dart';
+import '../../../core/utils/app_logger.dart';
 
 /// Provider qui récupère tous les utilisateurs depuis Supabase
 final usersProvider = FutureProvider<List<Profile>>((ref) async {
   try {
-    final response = await supabase
+    // Note: email n'est pas dans profiles, on le récupère depuis auth.users via une jointure
+    final response = await ref.watch(supabaseClientProvider)
         .from('profiles')
         .select('''
           id,
           nom,
           prenom,
-          email,
           role,
           telephone,
           avatar_url,
           created_at,
-          active
+          active,
+          user_id,
+          auth:user_id!inner
         ''')
         .order('created_at', ascending: false);
 
     if (response.isEmpty) return [];
 
     return response.map((data) {
+      // Récupérer l'email depuis la jointure auth
+      // ignore: unused_local_variable — jointure présente pour validation, email non exposé dans Profile
+      final _ = data['user_id'] as Map<String, dynamic>?;
+      
       return Profile(
         id: data['id'] as String,
         nom: data['nom'] as String,
@@ -41,7 +47,7 @@ final usersProvider = FutureProvider<List<Profile>>((ref) async {
       );
     }).toList();
   } catch (e) {
-    debugPrint('Erreur lors de la récupération des utilisateurs: $e');
+    AppLogger.d('Erreur lors de la récupération des utilisateurs: $e');
     return [];
   }
 });
@@ -49,7 +55,7 @@ final usersProvider = FutureProvider<List<Profile>>((ref) async {
 /// Provider pour récupérer les credentials Traccar depuis la table showroom_settings
 final traccarCredentialsProvider = FutureProvider<TraccarCredentials?>((ref) async {
   try {
-    final response = await supabase
+    final response = await ref.watch(supabaseClientProvider)
         .from('showroom_settings')
         .select('traccar_url, traccar_user, traccar_password')
         .maybeSingle();
@@ -62,7 +68,7 @@ final traccarCredentialsProvider = FutureProvider<TraccarCredentials?>((ref) asy
       password: response['traccar_password'] as String?,
     );
   } catch (e) {
-    debugPrint('Erreur lors de la récupération des credentials Traccar: $e');
+    AppLogger.d('Erreur lors de la récupération des credentials Traccar: $e');
     return null;
   }
 });

@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../core/constants/app_colors.dart';
+import '../../../core/theme/app_colors.dart';
 import '../../../shared/widgets/custom_app_bar.dart';
 import '../../../shared/widgets/empty_state.dart';
 import 'gps_provider.dart';
@@ -23,7 +23,7 @@ class GpsAlertsScreen extends ConsumerWidget {
         showHomeButton: true,
       ),
       body: alertesAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const Center(child: const CircularProgressIndicator()),
         error:   (e, _) => Center(child: Text('Erreur : $e')),
         data: (alertes) {
           if (alertes.isEmpty) {

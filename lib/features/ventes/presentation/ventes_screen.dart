@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_text_styles.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../../shared/widgets/empty_state.dart';
 import 'ventes_provider.dart';
 
@@ -61,7 +61,7 @@ class _VentesScreenState extends ConsumerState<VentesScreen> {
           // Liste
           Expanded(
             child: ventesAsync.when(
-              loading: () => const Center(child: CircularProgressIndicator()),
+              loading: () => const Center(child: const CircularProgressIndicator()),
               error: (e, _) => Center(child: Text('Erreur: $e')),
               data: (ventes) {
                 final filtered = _filtreStatut == null

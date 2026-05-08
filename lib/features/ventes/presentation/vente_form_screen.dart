@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/providers/supabase_provider.dart';
 import 'package:go_router/go_router.dart';
-import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_text_styles.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../../shared/widgets/custom_app_bar.dart';
-import '../../../main.dart';
 import '../../clients/domain/client_model.dart';
 import '../../clients/presentation/clients_provider.dart';
 import '../../vehicules/domain/vehicule_model.dart';
 import '../../vehicules/presentation/vehicules_provider.dart';
+import '../../../core/services/contrat_generator_service.dart';
+import '../../../shared/services/notification_service.dart';
+import '../domain/vente_model.dart';
 
 class VenteFormScreen extends ConsumerStatefulWidget {
   final String? vehiculeId;
@@ -21,7 +24,8 @@ class _State extends ConsumerState<VenteFormScreen> {
   final _formKey = GlobalKey<FormState>();
   Vehicule? _vehicule;
   Client?   _client;
-  bool _loading = false;
+  bool _loading    = false;
+  bool _genererPdf = true;
   String _modePaiement = 'especes';
   final _prixCtrl    = TextEditingController();
   final _acompteCtrl = TextEditingController(text: '0');
@@ -171,6 +175,9 @@ class _State extends ConsumerState<VenteFormScreen> {
             ),
             const SizedBox(height: 24),
 
+
+            _buildCheckboxPdf(),
+            const SizedBox(height: 8),
             SizedBox(
               width: double.infinity,
               height: 50,
@@ -213,7 +220,7 @@ class _State extends ConsumerState<VenteFormScreen> {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _loading = true);
     try {
-      await supabase.from('ventes').insert({
+      final res = await ref.read(supabaseClientProvider).from('ventes').insert({
         'vehicule_id':          _vehicule!.id,
         'client_id':            _client!.id,
         'prix_catalogue':       _vehicule!.prixVente,
@@ -227,23 +234,42 @@ class _State extends ConsumerState<VenteFormScreen> {
                                   ? 'complet' : 'partiel',
         'notes':                _notesCtrl.text.trim().isEmpty
                                   ? null : _notesCtrl.text.trim(),
-        'created_by':           supabase.auth.currentUser?.id,
-      });
+        'created_by':           ref.read(supabaseClientProvider).auth.currentUser?.id,
+      }).select().single();
+
       // Véhicule -> vendu (géré par trigger Supabase)
       ref.invalidate(vehiculesProvider);
+
+      // ── Génération du contrat PDF ──────────────────────────────────
+      if (_genererPdf && mounted) {
+        final vente   = Vente.fromJson(res);
+        final pdfFile = await ContratGeneratorService.genererVente(
+          vente:    vente,
+          client:   _client!,
+          vehicule: _vehicule!,
+        );
+        if (pdfFile != null && mounted) {
+          await ContratGeneratorService.partager(context, pdfFile);
+        }
+      }
+
       if (mounted) {
         context.pop();
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Vente enregistree avec succes'),
-            backgroundColor: AppColors.secondary));
+        NotificationService().success('Vente enregistrée avec succès');
       }
     } catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Erreur: $e'),
-          backgroundColor: AppColors.retard));
+      if (mounted) NotificationService().error('Erreur: $e');
     } finally {
       if (mounted) setState(() => _loading = false);
     }
   }
+
+  Widget _buildCheckboxPdf() => CheckboxListTile(
+    value: _genererPdf,
+    onChanged: (v) => setState(() => _genererPdf = v ?? true),
+    title: const Text('Générer et partager le contrat PDF'),
+    secondary: const Icon(Icons.picture_as_pdf, color: AppColors.primary),
+    contentPadding: EdgeInsets.zero,
+    dense: true,
+  );
 }

@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:go_router/go_router.dart';
 import 'package:latlong2/latlong.dart';
-import '../../../core/constants/app_colors.dart';
+import '../../../core/theme/app_colors.dart';
 import '../../../shared/widgets/custom_app_bar.dart';
 import 'gps_provider.dart';
 
@@ -65,7 +65,7 @@ class _GpsMapScreenState extends ConsumerState<GpsMapScreen> {
         ],
       ),
       body: fleetAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const Center(child: const CircularProgressIndicator()),
         error: (e, _) => Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -91,7 +91,7 @@ class _GpsMapScreenState extends ConsumerState<GpsMapScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(Icons.gps_off, size: 64, color: AppColors.textHint),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   Text('Aucun véhicule GPS en ligne',
                       style: TextStyle(color: AppColors.textSecondary)),
                 ],
@@ -122,7 +122,6 @@ class _GpsMapScreenState extends ConsumerState<GpsMapScreen> {
                     markers: fleet.map((item) {
                       final lat = item['lat'] as double;
                       final lon = item['lon'] as double;
-                      final vehiculeData = item['vehicule'] as Map<String, dynamic>;
                       final spd = item['speed'] as double? ?? 0;
                       final isSelected = _selectedVehicule == item;
 

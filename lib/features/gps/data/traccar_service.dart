@@ -5,17 +5,19 @@
 import 'dart:convert';
 import 'dart:async';
 import 'package:flutter/foundation.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:web_socket_channel/web_socket_channel.dart';
-import '../../../main.dart';
+import '../../../shared/services/notification_service.dart';
 import '../domain/gps_models.dart';
+import '../../../core/utils/app_logger.dart';
 
 class TraccarService {
-  // ── Singleton ──────────────────────────────────────────────
-  static final TraccarService _instance = TraccarService._internal();
-  factory TraccarService() => _instance;
-  TraccarService._internal();
+  TraccarService(this._client);
 
+  final SupabaseClient _client;
+
+  // ── Singleton ──────────────────────────────────────────────
   // ═══════════════════════════════════════════════════════════
   // Les credentials sont chargés depuis la table 'settings'
   // Si aucun credential n'est configuré, utilise l'URL par défaut
@@ -46,7 +48,7 @@ class TraccarService {
     if (_credentialsLoaded) return;
 
     try {
-      final response = await supabase
+      final response = await _client
           .from('showroom_settings')
           .select('traccar_url, traccar_user, traccar_password')
           .maybeSingle();
@@ -56,12 +58,12 @@ class TraccarService {
         _traccarUser = response['traccar_user'] as String?;
         _traccarPassword = response['traccar_password'] as String?;
 
-        debugPrint('Traccar credentials chargés depuis la BDD: url=$_traccarUrl');
+        AppLogger.d('Traccar credentials chargés depuis la BDD: url=$_traccarUrl');
       } else {
-        debugPrint('Aucun credential Traccar en BDD, utilisation des valeurs par défaut');
+        AppLogger.d('Aucun credential Traccar en BDD, utilisation des valeurs par défaut');
       }
     } catch (e) {
-      debugPrint('Erreur chargement credentials Traccar: $e');
+      AppLogger.d('Erreur chargement credentials Traccar: $e');
     }
 
     _credentialsLoaded = true;
@@ -74,6 +76,14 @@ class TraccarService {
     await _loadCredentials();
     _credentialsInitialized = true;
   }
+
+  /// Affiche une notification d'erreur
+  void _showError(String message) {
+    NotificationService().error(message);
+  }
+
+  /// Vérifie si les credentials sont configurés
+  bool get hasCredentials => _traccarUser != null && _traccarPassword != null;
 
   String get _baseUrl => _traccarUrl;
 
@@ -102,18 +112,32 @@ class TraccarService {
   /// Récupère tous les boîtiers GPS
   Future<List<TraccarDevice>> getDevices() async {
     await _ensureCredentials();
+    
+    if (!hasCredentials) {
+      _showError('Credentials Traccar non configurés. Vérifiez les paramètres.');
+      return [];
+    }
+    
     try {
       final resp = await http.get(
         Uri.parse('$_baseUrl/api/devices'),
         headers: _headers,
       );
-      if (resp.statusCode != 200) throw Exception('Erreur ${resp.statusCode}');
+      if (resp.statusCode == 401) {
+        _showError('Authentification Traccar échouée. Vérifiez identifiant/mot de passe.');
+        return [];
+      }
+      if (resp.statusCode != 200) {
+        _showError('Erreur serveur Traccar: ${resp.statusCode}');
+        return [];
+      }
       final List data = jsonDecode(resp.body);
       final devices = data.map((j) => TraccarDevice.fromJson(j)).toList();
       for (final d in devices) { _devices[d.id] = d; }
       return devices;
     } catch (e) {
-      debugPrint('TraccarService.getDevices: $e');
+      AppLogger.d('TraccarService.getDevices: $e');
+      _showError('Erreur connexion Traccar: ${e.toString()}');
       return [];
     }
   }
@@ -123,7 +147,8 @@ class TraccarService {
     final devices = await getDevices();
     try {
       return devices.firstWhere((d) => d.uniqueId == immat);
-    } catch (_) {
+    } catch (e) {
+    AppLogger.w('Erreur silencieuse ignorée', error: e);
       return null;
     }
   }
@@ -133,18 +158,32 @@ class TraccarService {
   /// Positions actuelles de tous les boîtiers
   Future<List<TraccarPosition>> getAllPositions() async {
     await _ensureCredentials();
+    
+    if (!hasCredentials) {
+      _showError('Credentials Traccar non configurés.');
+      return [];
+    }
+    
     try {
       final resp = await http.get(
         Uri.parse('$_baseUrl/api/positions'),
         headers: _headers,
       );
-      if (resp.statusCode != 200) throw Exception('Erreur ${resp.statusCode}');
+      if (resp.statusCode == 401) {
+        _showError('Authentification Traccar échouée.');
+        return [];
+      }
+      if (resp.statusCode != 200) {
+        _showError('Erreur récupération positions: ${resp.statusCode}');
+        return [];
+      }
       final List data = jsonDecode(resp.body);
       final positions = data.map((j) => TraccarPosition.fromJson(j)).toList();
       for (final p in positions) { _lastPositions[p.deviceId] = p; }
       return positions;
     } catch (e) {
-      debugPrint('TraccarService.getAllPositions: $e');
+      AppLogger.d('TraccarService.getAllPositions: $e');
+      _showError('Erreur connexion GPS: ${e.toString()}');
       return [];
     }
   }
@@ -164,7 +203,7 @@ class TraccarService {
       _lastPositions[deviceId] = pos;
       return pos;
     } catch (e) {
-      debugPrint('TraccarService.getPositionForDevice: $e');
+      AppLogger.d('TraccarService.getPositionForDevice: $e');
       return null;
     }
   }
@@ -178,8 +217,14 @@ class TraccarService {
   Stream<Map<String, dynamic>> startLiveTracking() async* {
     await _ensureCredentials();
 
+    if (!hasCredentials) {
+      _showError('Credentials Traccar non configurés.');
+      yield {'error': true, 'message': 'Credentials non configurés'};
+      return;
+    }
+
     final wsUrl = '$_wsBaseUrl/api/socket';
-    debugPrint('Tentative de connexion WebSocket: $wsUrl');
+    AppLogger.d('Tentative de connexion WebSocket: $wsUrl');
 
     try {
       final channel = WebSocketChannel.connect(Uri.parse(wsUrl));
@@ -195,14 +240,17 @@ class TraccarService {
             }
           }
           return json;
-        } catch (_) {
+        } catch (e) {
+    AppLogger.w('Erreur silencieuse ignorée', error: e);
           return {'error': true, 'message': 'Erreur parsing WebSocket'};
         }
       }).handleError((e) {
-        debugPrint('WebSocket error: $e');
+        AppLogger.d('WebSocket error: $e');
+        _showError('Déconnexion GPS en direct: ${e.toString()}');
       });
     } catch (e) {
-      debugPrint('TraccarService.startLiveTracking: $e');
+      AppLogger.d('TraccarService.startLiveTracking: $e');
+      _showError('Impossible de se connecter au serveur GPS: ${e.toString()}');
       yield {'error': true, 'message': 'Impossible de se connecter au serveur GPS'};
     }
   }
@@ -235,7 +283,7 @@ class TraccarService {
       final List data = jsonDecode(resp.body);
       return data.map((j) => TraccarTrip.fromJson(j)).toList();
     } catch (e) {
-      debugPrint('TraccarService.getTrips: $e');
+      AppLogger.d('TraccarService.getTrips: $e');
       return [];
     }
   }
@@ -259,7 +307,7 @@ class TraccarService {
       final List data = jsonDecode(resp.body);
       return data.map((j) => TraccarPosition.fromJson(j)).toList();
     } catch (e) {
-      debugPrint('TraccarService.getPositionsHistory: $e');
+      AppLogger.d('TraccarService.getPositionsHistory: $e');
       return [];
     }
   }
@@ -283,7 +331,7 @@ class TraccarService {
       final List data = jsonDecode(resp.body);
       return data.isNotEmpty ? data.first : {};
     } catch (e) {
-      debugPrint('TraccarService.getKmSummary: $e');
+      AppLogger.d('TraccarService.getKmSummary: $e');
       return {};
     }
   }
@@ -310,7 +358,7 @@ class TraccarService {
       final List data = jsonDecode(resp.body);
       return data.map((j) => TraccarEvent.fromJson(j)).toList();
     } catch (e) {
-      debugPrint('TraccarService.getEvents: $e');
+      AppLogger.d('TraccarService.getEvents: $e');
       return [];
     }
   }
@@ -328,7 +376,7 @@ class TraccarService {
       final List data = jsonDecode(resp.body);
       return data.map((j) => TraccarGeofence.fromJson(j)).toList();
     } catch (e) {
-      debugPrint('TraccarService.getGeofences: $e');
+      AppLogger.d('TraccarService.getGeofences: $e');
       return [];
     }
   }
@@ -357,7 +405,7 @@ class TraccarService {
       if (resp.statusCode != 200) return null;
       return TraccarGeofence.fromJson(jsonDecode(resp.body));
     } catch (e) {
-      debugPrint('TraccarService.createCircleGeofence: $e');
+      AppLogger.d('TraccarService.createCircleGeofence: $e');
       return null;
     }
   }
@@ -376,7 +424,7 @@ class TraccarService {
       );
       return resp.statusCode == 204;
     } catch (e) {
-      debugPrint('TraccarService.linkDeviceToGeofence: $e');
+      AppLogger.d('TraccarService.linkDeviceToGeofence: $e');
       return false;
     }
   }

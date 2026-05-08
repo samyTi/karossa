@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/providers/supabase_provider.dart';
 import 'package:go_router/go_router.dart';
-import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_text_styles.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../../shared/widgets/custom_app_bar.dart';
-import '../../../main.dart';
 import '../../vehicules/domain/vehicule_model.dart';
 import '../../vehicules/presentation/vehicules_provider.dart';
 import '../data/achats_repository.dart';
 import 'achats_provider.dart';
+import '../../../core/services/contrat_generator_service.dart';
+import '../../../shared/services/notification_service.dart';
+
 
 class AchatFormScreen extends ConsumerStatefulWidget {
   const AchatFormScreen({super.key});
@@ -21,6 +24,7 @@ class _AchatFormScreenState extends ConsumerState<AchatFormScreen> {
   final _formKey        = GlobalKey<FormState>();
   bool  _loading        = false;
   bool  _creerVehicule  = true;
+  bool  _genererPdf     = true;
 
   Vehicule? _vehiculeExistant;
 
@@ -268,6 +272,9 @@ class _AchatFormScreenState extends ConsumerState<AchatFormScreen> {
 
             const SizedBox(height: 24),
 
+
+            _buildCheckboxPdf(),
+            const SizedBox(height: 8),
             SizedBox(
               width: double.infinity,
               height: 50,
@@ -275,7 +282,7 @@ class _AchatFormScreenState extends ConsumerState<AchatFormScreen> {
                 onPressed: _loading ? null : _submit,
                 icon: _loading
                   ? const SizedBox(width: 18, height: 18,
-                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                      child: const CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
                   : const Icon(Icons.shopping_cart),
                 label: Text(_loading ? 'Enregistrement...' : 'Enregistrer l\'achat'),
               ),
@@ -292,12 +299,16 @@ class _AchatFormScreenState extends ConsumerState<AchatFormScreen> {
     setState(() => _loading = true);
     try {
       String vehiculeId;
+      String vehiculeMarque;
+      String vehiculeModele;
 
       if (_creerVehicule) {
+        vehiculeMarque = _marqueCtrl.text.trim();
+        vehiculeModele = _modeleCtrl.text.trim();
         // Créer le véhicule dans le stock
-        final vRes = await supabase.from('vehicules').insert({
-          'marque':         _marqueCtrl.text.trim(),
-          'modele':         _modeleCtrl.text.trim(),
+        final vRes = await ref.read(supabaseClientProvider).from('vehicules').insert({
+          'marque':         vehiculeMarque,
+          'modele':         vehiculeModele,
           'annee':          int.tryParse(_anneeCtrl.text) ?? DateTime.now().year,
           'kilometrage':    int.tryParse(_kmCtrl.text) ?? 0,
           'immatriculation': _immatCtrl.text.trim().isEmpty ? null : _immatCtrl.text.trim(),
@@ -306,10 +317,12 @@ class _AchatFormScreenState extends ConsumerState<AchatFormScreen> {
         }).select().single();
         vehiculeId = vRes['id'];
       } else {
-        vehiculeId = _vehiculeExistant!.id;
+        vehiculeId     = _vehiculeExistant!.id;
+        vehiculeMarque = _vehiculeExistant!.marque;
+        vehiculeModele = _vehiculeExistant!.modele;
       }
 
-      await AchatsRepository().createAchat(
+      final achat = await ref.read(achatsRepositoryProvider).createAchat(
         vehiculeId:       vehiculeId,
         vendeurNom:       _vendeurNomCtrl.text.trim(),
         vendeurTelephone: _vendeurTelCtrl.text.trim(),
@@ -320,30 +333,52 @@ class _AchatFormScreenState extends ConsumerState<AchatFormScreen> {
         dateAchat:        _dateAchat,
         remarques:        _remarquesCtrl.text.trim().isEmpty
                             ? null : _remarquesCtrl.text.trim(),
-        achetePar:        supabase.auth.currentUser?.id ?? '',
+        achetePar:        ref.read(supabaseClientProvider).auth.currentUser?.id ?? '',
       );
 
       ref.invalidate(achatsProvider);
       ref.invalidate(vehiculesProvider);
 
+      // ── Génération du contrat PDF ──────────────────────────────────
+      if (_genererPdf && achat != null && mounted) {
+        final achatData = <String, dynamic>{
+          'id': achat.id,
+          'vendeur_nom': achat.vendeurNom,
+          'vendeur_tel': achat.vendeurTelephone,
+          'vehicule_marque': vehiculeMarque,
+          'vehicule_modele': vehiculeModele,
+          'vehicule_annee': int.tryParse(_anneeCtrl.text),
+          'vehicule_immat': _immatCtrl.text.trim().isEmpty ? null : _immatCtrl.text.trim(),
+          'vehicule_km': int.tryParse(_kmCtrl.text),
+          'prix_achat': achat.prixAccorde,
+          'date_achat': achat.dateAchat.toIso8601String(),
+          'notes': achat.remarques,
+        };
+        final pdfFile = await ContratGeneratorService.genererAchat(
+          achatData: achatData,
+        );
+        if (pdfFile != null && mounted) {
+          await ContratGeneratorService.partager(context, pdfFile);
+        }
+      }
+
       if (mounted) {
         context.pop();
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Achat enregistré avec succès'),
-            backgroundColor: AppColors.secondary,
-          ),
-        );
+        NotificationService().success('Achat enregistré avec succès');
       }
     } catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Erreur: $e'),
-          backgroundColor: AppColors.retard,
-        ),
-      );
+      if (mounted) NotificationService().error('Erreur: $e');
     } finally {
       if (mounted) setState(() => _loading = false);
     }
   }
+
+  Widget _buildCheckboxPdf() => CheckboxListTile(
+    value: _genererPdf,
+    onChanged: (v) => setState(() => _genererPdf = v ?? true),
+    title: const Text('Générer et partager le contrat PDF'),
+    secondary: const Icon(Icons.picture_as_pdf, color: AppColors.primary),
+    contentPadding: EdgeInsets.zero,
+    dense: true,
+  );
 }

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/providers/supabase_provider.dart';
 import 'package:go_router/go_router.dart';
-import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_text_styles.dart';
-import '../../../main.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../domain/location_model.dart';
 import 'locations_provider.dart';
 import '../../vehicules/presentation/vehicules_provider.dart';
@@ -54,7 +54,7 @@ class _State extends ConsumerState<LocationRetourScreen> {
   Widget build(BuildContext context) {
     if (_location == null) return Scaffold(
       appBar: AppBar(title: const Text('Retour vehicule')),
-      body: const Center(child: CircularProgressIndicator()));
+      body: const Center(child: const CircularProgressIndicator()));
 
     return Scaffold(
       appBar: AppBar(title: const Text('Enregistrer le retour')),
@@ -108,8 +108,9 @@ class _State extends ConsumerState<LocationRetourScreen> {
                 if (v == null || v.isEmpty) return 'Requis';
                 final km = int.tryParse(v);
                 if (km == null) return 'Invalide';
-                if (km < _location!.kmDepart)
+                if (km < _location!.kmDepart) {
                   return 'Inférieur au km de départ';
+                }
                 return null;
               },
             ),
@@ -200,14 +201,13 @@ class _State extends ConsumerState<LocationRetourScreen> {
       await ref.read(locationsRepositoryProvider).cloturerLocation(
         locationId:     widget.locationId,
         kmRetour:       int.parse(_kmCtrl.text),
-        montantBrut:    _montant,
         retenueCaution: double.tryParse(_retenueCtrl.text) ?? 0,
         notesRetour:    _notesCtrl.text.trim().isEmpty
                           ? null : _notesCtrl.text.trim(),
       );
       // Remettre le véhicule disponible
       if (_location?.vehiculeId != null) {
-        await supabase.from('vehicules')
+        await ref.read(supabaseClientProvider).from('vehicules')
           .update({'statut': 'disponible'})
           .eq('id', _location!.vehiculeId);
       }

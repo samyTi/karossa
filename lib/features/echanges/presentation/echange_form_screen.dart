@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/providers/supabase_provider.dart';
 import 'package:go_router/go_router.dart';
-import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_text_styles.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../../shared/widgets/custom_app_bar.dart';
-import '../../../main.dart';
 import '../../clients/domain/client_model.dart';
 import '../../clients/presentation/clients_provider.dart';
 import '../../vehicules/domain/vehicule_model.dart';
 import '../../vehicules/presentation/vehicules_provider.dart';
 import 'echanges_provider.dart';
+import '../../../core/services/contrat_generator_service.dart';
+import '../../../shared/services/notification_service.dart';
 
 class EchangeFormScreen extends ConsumerStatefulWidget {
   const EchangeFormScreen({super.key});
@@ -30,7 +32,8 @@ class _EchangeFormScreenState extends ConsumerState<EchangeFormScreen> {
   final _complementCtrl = TextEditingController();
   final _comCtrl        = TextEditingController(text: '5');
   final _notesCtrl      = TextEditingController();
-  bool _loading = false;
+  bool _loading    = false;
+  bool _genererPdf = true;
 
   double get _valeur     => double.tryParse(_valeurCtrl.text) ?? 0;
   double get _complement => double.tryParse(_complementCtrl.text) ?? 0;
@@ -157,6 +160,9 @@ class _EchangeFormScreenState extends ConsumerState<EchangeFormScreen> {
               decoration: const InputDecoration(labelText: 'Notes'),
             ),
             const SizedBox(height: 20),
+
+            _buildCheckboxPdf(),
+            const SizedBox(height: 8),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
@@ -180,7 +186,7 @@ class _EchangeFormScreenState extends ConsumerState<EchangeFormScreen> {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _loading = true);
     try {
-      await ref.read(echangesRepositoryProvider).create({
+      final echange = await ref.read(echangesRepositoryProvider).create({
         'vehicule_cede_id':        _vehiculeCede!.id,
         'client_id':               _client!.id,
         'vehicule_reprise_marque': _marqueCtrl.text.trim(),
@@ -195,23 +201,42 @@ class _EchangeFormScreenState extends ConsumerState<EchangeFormScreen> {
         'commission_gerant_mnt':   _comMnt,
         'date_echange':            DateTime.now().toIso8601String().substring(0, 10),
         'notes': _notesCtrl.text.trim().isEmpty ? null : _notesCtrl.text.trim(),
-        'created_by': supabase.auth.currentUser?.id,
+        'created_by': ref.read(supabaseClientProvider).auth.currentUser?.id,
       });
       ref.invalidate(echangesProvider);
       ref.invalidate(vehiculesProvider);
+
+      // ── Génération du contrat PDF ──────────────────────────────────
+      if (_genererPdf && mounted) {
+        final pdfFile = await ContratGeneratorService.genererEchange(
+          echange:      echange,
+          client:       _client!,
+          vehiculeCede: _vehiculeCede!,
+        );
+        if (pdfFile != null && mounted) {
+          await ContratGeneratorService.partager(context, pdfFile);
+        }
+      }
+
       if (mounted) {
         context.pop();
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Echange enregistre avec succes')));
+        NotificationService().success('Échange enregistré avec succès');
       }
     } catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Erreur: $e'),
-          backgroundColor: AppColors.retard));
+      if (mounted) NotificationService().error('Erreur: $e');
     } finally {
       if (mounted) setState(() => _loading = false);
     }
   }
+
+  Widget _buildCheckboxPdf() => CheckboxListTile(
+    value: _genererPdf,
+    onChanged: (v) => setState(() => _genererPdf = v ?? true),
+    title: const Text('Générer et partager le contrat PDF'),
+    secondary: const Icon(Icons.picture_as_pdf, color: AppColors.primary),
+    contentPadding: EdgeInsets.zero,
+    dense: true,
+  );
 }
 
 class _RecapEchange extends StatelessWidget {

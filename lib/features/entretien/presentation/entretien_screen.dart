@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_text_styles.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../../shared/widgets/custom_app_bar.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../domain/alerte_model.dart';
@@ -28,7 +28,7 @@ class EntretienScreen extends ConsumerWidget {
         foregroundColor: Colors.white,
       ),
       body: alertes.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const Center(child: const CircularProgressIndicator()),
         error:   (e, _) => Center(child: Text('Erreur: $e')),
         data:    (list) => list.isEmpty
           ? const EmptyState(

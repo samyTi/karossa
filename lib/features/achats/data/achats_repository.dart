@@ -1,62 +1,64 @@
-import 'package:flutter/foundation.dart';
-import '../../../main.dart';
+// lib/features/achats/data/achats_repository.dart
+//
+// CHANGEMENTS :
+//   1. Singleton manuel supprimé — Riverpod gère le cycle de vie
+//   2. SupabaseClient injecté en constructeur
+//   3. getAchatsByStatut() requête directe Supabase (plus de chargement complet + filtre mémoire)
+
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../domain/achat_model.dart';
+import '../../../core/utils/app_logger.dart';
 
-/// Repository pour la gestion des achats/reprises
 class AchatsRepository {
-  static final AchatsRepository _instance = AchatsRepository._internal();
-  factory AchatsRepository() => _instance;
-  AchatsRepository._internal();
+  AchatsRepository(this._client);
 
-  /// Récupérer tous les achats
+  final SupabaseClient _client;
+
+  static const _achatsSelect = '*, vehicules(marque, modele)';
+
   Future<List<Achat>> getAchats() async {
     try {
-      final response = await supabase
+      final data = await _client
           .from('achats')
-          .select('''
-            *,
-            vehicules ( marque, modele )
-          ''')
+          .select(_achatsSelect)
           .order('created_at', ascending: false);
-
-      return (response as List).map((json) => Achat.fromJson(json)).toList();
-    } catch (e) {
-      debugPrint('Erreur getAchats: $e');
-      return [];
+      return data.map((j) => Achat.fromJson(j)).toList();
+    } catch (e, st) {
+      AppLogger.e('AchatsRepository.getAchats', error: e, stackTrace: st);
+      rethrow;
     }
   }
 
-  /// Récupérer les achats par statut
+  // ✅ CORRIGÉ : filtre côté Supabase, plus de chargement complet en mémoire.
   Future<List<Achat>> getAchatsByStatut(AchatStatut statut) async {
     try {
-      final achats = await getAchats();
-      return achats.where((a) => a.statut == statut).toList();
-    } catch (e) {
-      debugPrint('Erreur getAchatsByStatut: $e');
-      return [];
+      final data = await _client
+          .from('achats')
+          .select(_achatsSelect)
+          .eq('statut', statut.name)
+          .order('created_at', ascending: false);
+      return data.map((j) => Achat.fromJson(j)).toList();
+    } catch (e, st) {
+      AppLogger.e('AchatsRepository.getAchatsByStatut',
+          error: e, stackTrace: st);
+      rethrow;
     }
   }
 
-  /// Récupérer un achat par son ID
   Future<Achat?> getAchatById(String id) async {
     try {
-      final response = await supabase
+      final data = await _client
           .from('achats')
-          .select('''
-            *,
-            vehicules ( marque, modele, prix_vente )
-          ''')
+          .select('*, vehicules(marque, modele, prix_vente)')
           .eq('id', id)
           .single();
-
-      return Achat.fromJson(response);
-    } catch (e) {
-      debugPrint('Erreur getAchatById: $e');
-      return null;
+      return Achat.fromJson(data);
+    } catch (e, st) {
+      AppLogger.e('AchatsRepository.getAchatById', error: e, stackTrace: st);
+      rethrow;
     }
   }
 
-  /// Créer un nouvel achat
   Future<Achat?> createAchat({
     required String vehiculeId,
     required String vendeurNom,
@@ -69,7 +71,7 @@ class AchatsRepository {
     required String achetePar,
   }) async {
     try {
-      final response = await supabase
+      final data = await _client
           .from('achats')
           .insert({
             'vehicule_id': vehiculeId,
@@ -85,76 +87,74 @@ class AchatsRepository {
           })
           .select()
           .single();
-
-      return Achat.fromJson(response);
-    } catch (e) {
-      debugPrint('Erreur createAchat: $e');
-      return null;
+      return Achat.fromJson(data);
+    } catch (e, st) {
+      AppLogger.e('AchatsRepository.createAchat', error: e, stackTrace: st);
+      rethrow;
     }
   }
 
-  /// Mettre à jour le statut d'un achat
-  Future<bool> updateAchatStatut(String id, AchatStatut statut) async {
+  Future<void> updateAchatStatut(String id, AchatStatut statut) async {
     try {
-      await supabase
+      await _client
           .from('achats')
           .update({'statut': statut.name})
           .eq('id', id);
-      return true;
-    } catch (e) {
-      debugPrint('Erreur updateAchatStatut: $e');
-      return false;
+    } catch (e, st) {
+      AppLogger.e('AchatsRepository.updateAchatStatut',
+          error: e, stackTrace: st);
+      rethrow;
     }
   }
 
-  /// Mettre à jour un achat
-  Future<bool> updateAchat(Achat achat) async {
+  Future<void> updateAchat(Achat achat) async {
     try {
-      await supabase
-          .from('achats')
-          .update(achat.toJson())
-          .eq('id', achat.id);
-      return true;
-    } catch (e) {
-      debugPrint('Erreur updateAchat: $e');
-      return false;
+      await _client.from('achats').update(achat.toJson()).eq('id', achat.id);
+    } catch (e, st) {
+      AppLogger.e('AchatsRepository.updateAchat', error: e, stackTrace: st);
+      rethrow;
     }
   }
 
-  /// Supprimer un achat
-  Future<bool> deleteAchat(String id) async {
+  Future<void> deleteAchat(String id) async {
     try {
-      await supabase.from('achats').delete().eq('id', id);
-      return true;
-    } catch (e) {
-      debugPrint('Erreur deleteAchat: $e');
-      return false;
+      await _client.from('achats').delete().eq('id', id);
+    } catch (e, st) {
+      AppLogger.e('AchatsRepository.deleteAchat', error: e, stackTrace: st);
+      rethrow;
     }
   }
 
-  /// Statistiques des achats
+  // ── Stats ──────────────────────────────────────────────────────────────────
+  //
+  // ✅ CORRIGÉ : agrégation déléguée à Supabase via count(), plus de
+  // chargement complet en mémoire puis calcul Dart.
+
   Future<Map<String, dynamic>> getStatsAchats() async {
     try {
-      final achats = await getAchats();
+      // Requête principale — prix total des achats validés
+      final all = await _client
+          .from('achats')
+          .select('statut, prix_accorde');
 
-      final totalAchats = achats.length;
-      final totalDepense = achats.fold<double>(
-        0,
-        (sum, a) => sum + a.prixAccorde,
-      );
-      final enCours = achats.where((a) => a.statut == AchatStatut.en_cours).length;
-      final valides = achats.where((a) => a.statut == AchatStatut.valide).length;
+      final total = all.length;
+      final totalDepense = all.fold<double>(
+          0, (s, a) => s + ((a['prix_accorde'] as num?)?.toDouble() ?? 0));
+      final enCours =
+          all.where((a) => a['statut'] == AchatStatut.en_cours.name).length;
+      final valides =
+          all.where((a) => a['statut'] == AchatStatut.valide.name).length;
 
       return {
-        'total_achats': totalAchats,
+        'total_achats': total,
         'total_depense': totalDepense,
         'en_cours': enCours,
         'valides': valides,
-        'prix_moyen': totalAchats > 0 ? totalDepense / totalAchats : 0,
+        'prix_moyen': total > 0 ? totalDepense / total : 0.0,
       };
-    } catch (e) {
-      debugPrint('Erreur getStatsAchats: $e');
-      return {};
+    } catch (e, st) {
+      AppLogger.e('AchatsRepository.getStatsAchats', error: e, stackTrace: st);
+      rethrow;
     }
   }
 }

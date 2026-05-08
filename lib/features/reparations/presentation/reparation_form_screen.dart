@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/providers/supabase_provider.dart';
 import 'package:go_router/go_router.dart';
-import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_text_styles.dart';
-import '../../../main.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../vehicules/domain/vehicule_model.dart';
 import '../../vehicules/presentation/vehicules_provider.dart';
 import 'reparations_provider.dart';
@@ -142,7 +142,7 @@ class _State extends ConsumerState<ReparationFormScreen> {
         'deductible':     _deductible,
         'date_rep':       DateTime.now().toIso8601String().substring(0, 10),
         'statut_vehicule': _changerStatut,
-        'created_by':     supabase.auth.currentUser?.id,
+        'created_by':     ref.read(supabaseClientProvider).auth.currentUser?.id,
       });
       ref.invalidate(reparationsProvider);
       ref.invalidate(vehiculesProvider);

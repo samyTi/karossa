@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/providers/supabase_provider.dart';
 import 'package:go_router/go_router.dart';
-import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_text_styles.dart';
-import '../../../main.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../../shared/widgets/custom_app_bar.dart';
 import '../domain/profile_model.dart';
 import 'auth_provider.dart';
@@ -18,7 +18,7 @@ class ProfileScreen extends ConsumerWidget {
     if (profile == null) {
       return Scaffold(
         appBar: const CustomAppBar(title: 'Profil'),
-        body: const Center(child: CircularProgressIndicator()),
+        body: const Center(child: const CircularProgressIndicator()),
       );
     }
 
@@ -183,7 +183,7 @@ class ProfileScreen extends ConsumerWidget {
           ElevatedButton(
             onPressed: () async {
               // Directly sign out from Supabase for reliability
-              await supabase.auth.signOut();
+              await ref.read(supabaseClientProvider).auth.signOut();
               if (ctx.mounted) {
                 Navigator.pop(ctx);
                 // Force navigation to login

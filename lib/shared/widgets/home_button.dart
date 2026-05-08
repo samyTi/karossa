@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../core/constants/app_colors.dart';
+import '../../core/theme/app_colors.dart';
 
 /// Bouton pour retourner à l'accueil depuis n'importe quel écran
 class HomeButton extends StatelessWidget {

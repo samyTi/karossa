@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_text_styles.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../../shared/widgets/custom_app_bar.dart';
 import '../../../shared/widgets/shimmer_loading.dart';
 import '../../auth/domain/profile_model.dart';
@@ -225,7 +225,7 @@ class _UserCard extends StatelessWidget {
                   child: Row(
                     children: [
                       Icon(Icons.edit, size: 18),
-                      SizedBox(width: 8),
+                      const SizedBox(width: 8),
                       Text('Modifier'),
                     ],
                   ),

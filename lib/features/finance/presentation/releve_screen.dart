@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/providers/supabase_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:intl/intl.dart';
-import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_text_styles.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../../shared/widgets/custom_app_bar.dart';
-import '../../../main.dart';
 import '../../auth/presentation/auth_provider.dart';
 import '../../auth/domain/profile_model.dart';
 
@@ -36,7 +36,7 @@ class _State extends ConsumerState<ReleveScreen> {
   void initState() {
     super.initState();
     _profile   = ref.read(currentProfileProvider).valueOrNull;
-    _associeId = supabase.auth.currentUser?.id;
+    _associeId = ref.read(supabaseClientProvider).auth.currentUser?.id;
     _charger();
   }
 
@@ -47,7 +47,7 @@ class _State extends ConsumerState<ReleveScreen> {
       final debut = DateTime(_annee, _mois, 1).toIso8601String();
       final fin   = DateTime(_annee, _mois + 1, 0, 23, 59)
         .toIso8601String();
-      final data  = await supabase
+      final data  = await ref.read(supabaseClientProvider)
         .from('location_repartitions')
         .select(
           '*, locations('
@@ -126,7 +126,7 @@ class _State extends ConsumerState<ReleveScreen> {
 
         if (_loading)
           const Expanded(
-            child: Center(child: CircularProgressIndicator()))
+            child: Center(child: const CircularProgressIndicator()))
         else if (_repartitions.isEmpty)
           const Expanded(
             child: Center(
