@@ -30,7 +30,7 @@ model Vehicule {
   photos            String[]
   notes             String?
   dateEntree        DateTime? @default(now()) @map("date_entree") @db.Date
-  traccarDeviceId   Int?      @map("traccar_device_id")
+  flespiDeviceId   Int?      @map("flespi_device_id")
   kmAlerteSeuil     Int?      @default(150000) @map("km_alerte_seuil")
   createdBy         String?   @map("created_by") @db.Uuid
   createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz
@@ -268,9 +268,9 @@ model ShowroomSettings {
   email       String?
   rc          String?
   logoUrl     String?  @map("logo_url")
-  traccarUrl  String?  @map("traccar_url")
-  traccarUser String?  @map("traccar_user")
-  traccarPassword String? @map("traccar_password")
+  flespiUrl  String?  @map("flespi_url")
+  flespiUser String?  @map("flespi_user")
+  flespiPassword String? @map("flespi_password")
   createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
   updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz
 

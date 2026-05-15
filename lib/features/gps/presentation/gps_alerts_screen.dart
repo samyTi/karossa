@@ -6,7 +6,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../shared/widgets/custom_app_bar.dart';
 import '../../../shared/widgets/empty_state.dart';
 import 'gps_provider.dart';
-import '../domain/gps_models.dart';
+import '../domain/gps_alerte.dart'; // ✅ corrigé : gps_alerte.dart au lieu de gps_models.dart
 
 class GpsAlertsScreen extends ConsumerWidget {
   const GpsAlertsScreen({super.key});
@@ -14,16 +14,16 @@ class GpsAlertsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final alertesAsync = ref.watch(toutesAlertesProvider);
-    final repo         = ref.read(gpsRepositoryProvider);
+    // ✅ corrigé : gpsAlerteSourceProvider au lieu de gpsRepositoryProvider
+    final alerteSource = ref.read(gpsAlerteSourceProvider);
 
     return Scaffold(
       appBar: const CustomAppBar(
         title: 'Alertes GPS',
-        showBackButton: true,
         showHomeButton: true,
       ),
       body: alertesAsync.when(
-        loading: () => const Center(child: const CircularProgressIndicator()),
+        loading: () => const Center(child: CircularProgressIndicator()),
         error:   (e, _) => Center(child: Text('Erreur : $e')),
         data: (alertes) {
           if (alertes.isEmpty) {
@@ -40,9 +40,11 @@ class GpsAlertsScreen extends ConsumerWidget {
               return _AlertCard(
                 alerte: a,
                 onMarqueLue: () async {
-                  await repo.marquerAlerteLue(a.id);
+                  // ✅ corrigé : appel via alerteSource.marquerAlerteLue
+                  await alerteSource.marquerAlerteLue(a.id);
                   ref.invalidate(toutesAlertesProvider);
                   ref.invalidate(alertesNonLuesProvider);
+                  ref.invalidate(nombreAlertesNonLuesProvider);
                 },
               );
             },
@@ -61,8 +63,8 @@ class _AlertCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final (icon, color) = switch (alerte.type) {
-      'vitesse'     => (Icons.speed, AppColors.retard),
-      'zone'        => (Icons.fence, AppColors.accent),
+      'vitesse'     => (Icons.speed,    AppColors.retard),
+      'zone'        => (Icons.fence,    AppColors.accent),
       'kilometrage' => (Icons.timeline, AppColors.primary),
       _             => (Icons.gps_fixed, AppColors.textSecondary),
     };
@@ -110,9 +112,9 @@ class _AlertCard extends StatelessWidget {
   }
 
   String _formatDate(DateTime dt) {
-    final d = dt.day.toString().padLeft(2, '0');
+    final d  = dt.day.toString().padLeft(2, '0');
     final mo = dt.month.toString().padLeft(2, '0');
-    final h = dt.hour.toString().padLeft(2, '0');
+    final h  = dt.hour.toString().padLeft(2, '0');
     final mi = dt.minute.toString().padLeft(2, '0');
     return '$d/$mo/${dt.year} $h:$mi';
   }

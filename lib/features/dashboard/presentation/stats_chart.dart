@@ -26,9 +26,9 @@ class _RevenusChartState extends State<RevenusChart> {
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text('Revenus vs Dépenses', style: AppTextStyles.heading3),
           const SizedBox(height: 4),
-          Row(children: [
+          const Row(children: [
             _Legend(AppColors.secondary, 'Revenus'),
-            const SizedBox(width: 16),
+            SizedBox(width: 16),
             _Legend(AppColors.reparation, 'Dépenses'),
           ]),
           const SizedBox(height: 16),
@@ -37,19 +37,18 @@ class _RevenusChartState extends State<RevenusChart> {
             child: BarChart(BarChartData(
               maxY: maxY * 1.2,
               gridData: FlGridData(
-                show: true,
                 drawVerticalLine: false,
-                getDrawingHorizontalLine: (_) => FlLine(
+                getDrawingHorizontalLine: (_) => const FlLine(
                   color: AppColors.border, strokeWidth: 0.5),
               ),
               borderData: FlBorderData(show: false),
               titlesData: FlTitlesData(
                 leftTitles: const AxisTitles(
-                  sideTitles: SideTitles(showTitles: false)),
+                  ),
                 topTitles: const AxisTitles(
-                  sideTitles: SideTitles(showTitles: false)),
+                  ),
                 rightTitles: const AxisTitles(
-                  sideTitles: SideTitles(showTitles: false)),
+                  ),
                 bottomTitles: AxisTitles(
                   sideTitles: SideTitles(
                     showTitles: true,
@@ -105,7 +104,7 @@ class RepartitionPieChart extends StatefulWidget {
 }
 
 class _RepartitionPieChartState extends State<RepartitionPieChart> {
-  int _touchedIndex = -1;
+  final int _touchedIndex = -1;
 
   @override
   Widget build(BuildContext context) {

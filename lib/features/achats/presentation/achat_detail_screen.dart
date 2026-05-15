@@ -4,7 +4,6 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../shared/widgets/custom_app_bar.dart';
 import '../domain/achat_model.dart';
-import '../data/achats_repository.dart';
 import 'achats_provider.dart';
 
 class AchatDetailScreen extends ConsumerStatefulWidget {
@@ -27,7 +26,7 @@ class _AchatDetailScreenState extends ConsumerState<AchatDetailScreen> {
 
     return achatsAsync.when(
       loading: () => const Scaffold(
-        body: Center(child: const CircularProgressIndicator())),
+        body: Center(child: CircularProgressIndicator())),
       error: (e, _) => Scaffold(
         body: Center(child: Text('Erreur: $e'))),
       data: (achats) {
@@ -42,7 +41,6 @@ class _AchatDetailScreenState extends ConsumerState<AchatDetailScreen> {
         return Scaffold(
           appBar: CustomAppBar(
             title: 'Détail achat',
-            showBackButton: true,
             showHomeButton: true,
             actions: [
               PopupMenuButton<AchatStatut>(
@@ -176,8 +174,10 @@ class _AchatDetailScreenState extends ConsumerState<AchatDetailScreen> {
         );
       }
     } catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Erreur: $e'), backgroundColor: AppColors.retard));
+      }
     } finally {
       if (mounted) setState(() => _loading = false);
     }

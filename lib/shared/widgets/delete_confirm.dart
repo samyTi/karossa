@@ -52,7 +52,7 @@ Future<bool> showDeleteConfirm(
   return result ?? false;
 }
 
-/// Affiche un Snackbar avec un bouton "Annuler" (undo).
+/// Affiche un Snackbar avec un bouton 'Annuler' (undo).
 void showUndoSnackbar(
   BuildContext context, {
   required String message,

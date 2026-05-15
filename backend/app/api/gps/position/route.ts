@@ -6,7 +6,7 @@ import { checkGeofencing, checkSpeed } from '@/lib/gps/alertes';
 
 /**
  * POST /api/gps/position
- * Reçoit une position GPS depuis un boîtier (ou depuis Flutter via Traccar).
+ * Reçoit une position GPS depuis un boîtier (ou depuis Flutter via Flespi).
  * Headers requis: x-api-key: <API_SECRET_KEY>
  */
 export async function POST(req: NextRequest) {

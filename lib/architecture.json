@@ -1,0 +1,1469 @@
+{
+  "meta": {
+    "project": "lib",
+    "generated": "2026-05-14 16:46:09"
+  },
+  "tree": {
+    "name": "lib",
+    "type": "directory",
+    "path": "/Users/mac/Desktop/karossa/lib",
+    "children": [
+      {
+        "name": "core",
+        "type": "directory",
+        "path": "/Users/mac/Desktop/karossa/lib/core",
+        "children": [
+          {
+            "name": "config",
+            "type": "directory",
+            "path": "/Users/mac/Desktop/karossa/lib/core/config",
+            "children": [
+              {
+                "name": "app_config.dart",
+                "type": "file",
+                "extension": ".dart",
+                "size_bytes": 592,
+                "size_human": "592 o"
+              }
+            ]
+          },
+          {
+            "name": "constants",
+            "type": "directory",
+            "path": "/Users/mac/Desktop/karossa/lib/core/constants",
+            "children": [
+              {
+                "name": "app_spacing.dart",
+                "type": "file",
+                "extension": ".dart",
+                "size_bytes": 7410,
+                "size_human": "7 Ko"
+              }
+            ]
+          },
+          {
+            "name": "extensions",
+            "type": "directory",
+            "path": "/Users/mac/Desktop/karossa/lib/core/extensions",
+            "children": [
+              {
+                "name": "date_extensions.dart",
+                "type": "file",
+                "extension": ".dart",
+                "size_bytes": 330,
+                "size_human": "330 o"
+              },
+              {
+                "name": "money_extensions.dart",
+                "type": "file",
+                "extension": ".dart",
+                "size_bytes": 368,
+                "size_human": "368 o"
+              }
+            ]
+          },
+          {
+            "name": "providers",
+            "type": "directory",
+            "path": "/Users/mac/Desktop/karossa/lib/core/providers",
+            "children": [
+              {
+                "name": "supabase_provider.dart",
+                "type": "file",
+                "extension": ".dart",
+                "size_bytes": 1528,
+                "size_human": "1 Ko"
+              }
+            ]
+          },
+          {
+            "name": "router",
+            "type": "directory",
+            "path": "/Users/mac/Desktop/karossa/lib/core/router",
+            "children": [
+              {
+                "name": "app_router.dart",
+                "type": "file",
+                "extension": ".dart",
+                "size_bytes": 14555,
+                "size_human": "14 Ko"
+              }
+            ]
+          },
+          {
+            "name": "services",
+            "type": "directory",
+            "path": "/Users/mac/Desktop/karossa/lib/core/services",
+            "children": [
+              {
+                "name": "carte_grise_ocr_service.dart",
+                "type": "file",
+                "extension": ".dart",
+                "size_bytes": 15843,
+                "size_human": "15 Ko"
+              },
+              {
+                "name": "contrat_generator_service.dart",
+                "type": "file",
+                "extension": ".dart",
+                "size_bytes": 62236,
+                "size_human": "61 Ko"
+              }
+            ]
+          },
+          {
+            "name": "theme",
+            "type": "directory",
+            "path": "/Users/mac/Desktop/karossa/lib/core/theme",
+            "children": [
+              {
+                "name": "app_colors.dart",
+                "type": "file",
+                "extension": ".dart",
+                "size_bytes": 11654,
+                "size_human": "11 Ko"
+              },
+              {
+                "name": "app_text_styles.dart",
+                "type": "file",
+                "extension": ".dart",
+                "size_bytes": 13977,
+                "size_human": "14 Ko"
+              },
+              {
+                "name": "app_theme.dart",
+                "type": "file",
+                "extension": ".dart",
+                "size_bytes": 17584,
+                "size_human": "17 Ko"
+              },
+              {
+                "name": "theme_provider.dart",
+                "type": "file",
+                "extension": ".dart",
+                "size_bytes": 1100,
+                "size_human": "1 Ko"
+              },
+              {
+                "name": "theme_tokens.dart",
+                "type": "file",
+                "extension": ".dart",
+                "size_bytes": 13884,
+                "size_human": "14 Ko"
+              }
+            ]
+          },
+          {
+            "name": "utils",
+            "type": "directory",
+            "path": "/Users/mac/Desktop/karossa/lib/core/utils",
+            "children": [
+              {
+                "name": "app_logger.dart",
+                "type": "file",
+                "extension": ".dart",
+                "size_bytes": 1545,
+                "size_human": "2 Ko"
+              },
+              {
+                "name": "pdf_receipt_generator.dart",
+                "type": "file",
+                "extension": ".dart",
+                "size_bytes": 4790,
+                "size_human": "5 Ko"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "features",
+        "type": "directory",
+        "path": "/Users/mac/Desktop/karossa/lib/features",
+        "children": [
+          {
+            "name": "achats",
+            "type": "directory",
+            "path": "/Users/mac/Desktop/karossa/lib/features/achats",
+            "children": [
+              {
+                "name": "data",
+                "type": "directory",
+                "path": "/Users/mac/Desktop/karossa/lib/features/achats/data",
+                "children": [
+                  {
+                    "name": "achats_repository.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 5070,
+                    "size_human": "5 Ko"
+                  }
+                ]
+              },
+              {
+                "name": "domain",
+                "type": "directory",
+                "path": "/Users/mac/Desktop/karossa/lib/features/achats/domain",
+                "children": [
+                  {
+                    "name": "achat_model.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 3879,
+                    "size_human": "4 Ko"
+                  }
+                ]
+              },
+              {
+                "name": "presentation",
+                "type": "directory",
+                "path": "/Users/mac/Desktop/karossa/lib/features/achats/presentation",
+                "children": [
+                  {
+                    "name": "achat_detail_screen.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 8286,
+                    "size_human": "8 Ko"
+                  },
+                  {
+                    "name": "achat_form_screen.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 15157,
+                    "size_human": "15 Ko"
+                  },
+                  {
+                    "name": "achats_provider.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 1559,
+                    "size_human": "2 Ko"
+                  },
+                  {
+                    "name": "achats_screen.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 13634,
+                    "size_human": "13 Ko"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "admin",
+            "type": "directory",
+            "path": "/Users/mac/Desktop/karossa/lib/features/admin",
+            "children": [
+              {
+                "name": "presentation",
+                "type": "directory",
+                "path": "/Users/mac/Desktop/karossa/lib/features/admin/presentation",
+                "children": [
+                  {
+                    "name": "settings_screen.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 10326,
+                    "size_human": "10 Ko"
+                  },
+                  {
+                    "name": "users_provider.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 3149,
+                    "size_human": "3 Ko"
+                  },
+                  {
+                    "name": "users_screen.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 7526,
+                    "size_human": "7 Ko"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "ai",
+            "type": "directory",
+            "path": "/Users/mac/Desktop/karossa/lib/features/ai",
+            "children": [
+              {
+                "name": "data",
+                "type": "directory",
+                "path": "/Users/mac/Desktop/karossa/lib/features/ai/data",
+                "children": [
+                  {
+                    "name": "ai_repository.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 5370,
+                    "size_human": "5 Ko"
+                  }
+                ]
+              },
+              {
+                "name": "domain",
+                "type": "directory",
+                "path": "/Users/mac/Desktop/karossa/lib/features/ai/domain",
+                "children": [
+                  {
+                    "name": "chat_message.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 737,
+                    "size_human": "737 o"
+                  }
+                ]
+              },
+              {
+                "name": "presentation",
+                "type": "directory",
+                "path": "/Users/mac/Desktop/karossa/lib/features/ai/presentation",
+                "children": [
+                  {
+                    "name": "ai_chat_screen.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 11384,
+                    "size_human": "11 Ko"
+                  },
+                  {
+                    "name": "ai_provider.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 2306,
+                    "size_human": "2 Ko"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "auth",
+            "type": "directory",
+            "path": "/Users/mac/Desktop/karossa/lib/features/auth",
+            "children": [
+              {
+                "name": "domain",
+                "type": "directory",
+                "path": "/Users/mac/Desktop/karossa/lib/features/auth/domain",
+                "children": [
+                  {
+                    "name": "profile_model.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 12931,
+                    "size_human": "13 Ko"
+                  }
+                ]
+              },
+              {
+                "name": "presentation",
+                "type": "directory",
+                "path": "/Users/mac/Desktop/karossa/lib/features/auth/presentation",
+                "children": [
+                  {
+                    "name": "auth_provider.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 1793,
+                    "size_human": "2 Ko"
+                  },
+                  {
+                    "name": "login_screen.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 3042,
+                    "size_human": "3 Ko"
+                  },
+                  {
+                    "name": "profile_screen.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 10051,
+                    "size_human": "10 Ko"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "caisse",
+            "type": "directory",
+            "path": "/Users/mac/Desktop/karossa/lib/features/caisse",
+            "children": [
+              {
+                "name": "presentation",
+                "type": "directory",
+                "path": "/Users/mac/Desktop/karossa/lib/features/caisse/presentation",
+                "children": [
+                  {
+                    "name": "caisse_screen.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 10195,
+                    "size_human": "10 Ko"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "clients",
+            "type": "directory",
+            "path": "/Users/mac/Desktop/karossa/lib/features/clients",
+            "children": [
+              {
+                "name": "data",
+                "type": "directory",
+                "path": "/Users/mac/Desktop/karossa/lib/features/clients/data",
+                "children": [
+                  {
+                    "name": "clients_repository.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 1460,
+                    "size_human": "1 Ko"
+                  }
+                ]
+              },
+              {
+                "name": "domain",
+                "type": "directory",
+                "path": "/Users/mac/Desktop/karossa/lib/features/clients/domain",
+                "children": [
+                  {
+                    "name": "client_model.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 1920,
+                    "size_human": "2 Ko"
+                  }
+                ]
+              },
+              {
+                "name": "presentation",
+                "type": "directory",
+                "path": "/Users/mac/Desktop/karossa/lib/features/clients/presentation",
+                "children": [
+                  {
+                    "name": "client_detail_screen.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 12637,
+                    "size_human": "12 Ko"
+                  },
+                  {
+                    "name": "client_form_screen.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 6816,
+                    "size_human": "7 Ko"
+                  },
+                  {
+                    "name": "clients_provider.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 1752,
+                    "size_human": "2 Ko"
+                  },
+                  {
+                    "name": "clients_screen.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 3630,
+                    "size_human": "4 Ko"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "contrats",
+            "type": "directory",
+            "path": "/Users/mac/Desktop/karossa/lib/features/contrats",
+            "children": [
+              {
+                "name": "data",
+                "type": "directory",
+                "path": "/Users/mac/Desktop/karossa/lib/features/contrats/data",
+                "children": [
+                  {
+                    "name": "models",
+                    "type": "directory",
+                    "path": "/Users/mac/Desktop/karossa/lib/features/contrats/data/models",
+                    "children": [
+                      {
+                        "name": "contrat_model.dart",
+                        "type": "file",
+                        "extension": ".dart",
+                        "size_bytes": 388,
+                        "size_human": "388 o"
+                      }
+                    ]
+                  },
+                  {
+                    "name": "contract_articles_repository.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 4294,
+                    "size_human": "4 Ko"
+                  },
+                  {
+                    "name": "contrats_repository.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 6617,
+                    "size_human": "6 Ko"
+                  }
+                ]
+              },
+              {
+                "name": "domain",
+                "type": "directory",
+                "path": "/Users/mac/Desktop/karossa/lib/features/contrats/domain",
+                "children": [
+                  {
+                    "name": "contract_article_model.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 3752,
+                    "size_human": "4 Ko"
+                  },
+                  {
+                    "name": "contrat_template_model.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 2099,
+                    "size_human": "2 Ko"
+                  }
+                ]
+              },
+              {
+                "name": "presentation",
+                "type": "directory",
+                "path": "/Users/mac/Desktop/karossa/lib/features/contrats/presentation",
+                "children": [
+                  {
+                    "name": "screens",
+                    "type": "directory",
+                    "path": "/Users/mac/Desktop/karossa/lib/features/contrats/presentation/screens",
+                    "children": [
+                      {
+                        "name": "contract_articles_admin_screen.dart",
+                        "type": "file",
+                        "extension": ".dart",
+                        "size_bytes": 20201,
+                        "size_human": "20 Ko"
+                      },
+                      {
+                        "name": "contract_articles_admin_screen.dart.bak_20260509_021150",
+                        "type": "file",
+                        "extension": ".bak_20260509_021150",
+                        "size_bytes": 20229,
+                        "size_human": "20 Ko"
+                      },
+                      {
+                        "name": "contrats_screen.dart",
+                        "type": "file",
+                        "extension": ".dart",
+                        "size_bytes": 20512,
+                        "size_human": "20 Ko"
+                      }
+                    ]
+                  },
+                  {
+                    "name": "widgets",
+                    "type": "directory",
+                    "path": "/Users/mac/Desktop/karossa/lib/features/contrats/presentation/widgets",
+                    "children": [
+                      {
+                        "name": "contrat_card.dart",
+                        "type": "file",
+                        "extension": ".dart",
+                        "size_bytes": 2799,
+                        "size_human": "3 Ko"
+                      },
+                      {
+                        "name": "contrat_card.dart.bak_20260509_021150",
+                        "type": "file",
+                        "extension": ".bak_20260509_021150",
+                        "size_bytes": 1225,
+                        "size_human": "1 Ko"
+                      }
+                    ]
+                  },
+                  {
+                    "name": "contract_articles_provider.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 2519,
+                    "size_human": "2 Ko"
+                  },
+                  {
+                    "name": "contrat_location_pdf_generator.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 48211,
+                    "size_human": "47 Ko"
+                  },
+                  {
+                    "name": "contrat_vente_pdf_generator.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 23690,
+                    "size_human": "23 Ko"
+                  },
+                  {
+                    "name": "contrats_provider.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 1069,
+                    "size_human": "1 Ko"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "dashboard",
+            "type": "directory",
+            "path": "/Users/mac/Desktop/karossa/lib/features/dashboard",
+            "children": [
+              {
+                "name": "presentation",
+                "type": "directory",
+                "path": "/Users/mac/Desktop/karossa/lib/features/dashboard/presentation",
+                "children": [
+                  {
+                    "name": "kpi_cards.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 6860,
+                    "size_human": "7 Ko"
+                  },
+                  {
+                    "name": "modern_dashboard.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 32370,
+                    "size_human": "32 Ko"
+                  },
+                  {
+                    "name": "stats_chart.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 9642,
+                    "size_human": "9 Ko"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "echanges",
+            "type": "directory",
+            "path": "/Users/mac/Desktop/karossa/lib/features/echanges",
+            "children": [
+              {
+                "name": "data",
+                "type": "directory",
+                "path": "/Users/mac/Desktop/karossa/lib/features/echanges/data",
+                "children": [
+                  {
+                    "name": "echanges_repository.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 2145,
+                    "size_human": "2 Ko"
+                  }
+                ]
+              },
+              {
+                "name": "domain",
+                "type": "directory",
+                "path": "/Users/mac/Desktop/karossa/lib/features/echanges/domain",
+                "children": [
+                  {
+                    "name": "echange_model.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 3021,
+                    "size_human": "3 Ko"
+                  }
+                ]
+              },
+              {
+                "name": "presentation",
+                "type": "directory",
+                "path": "/Users/mac/Desktop/karossa/lib/features/echanges/presentation",
+                "children": [
+                  {
+                    "name": "echange_form_screen.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 11749,
+                    "size_human": "11 Ko"
+                  },
+                  {
+                    "name": "echanges_provider.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 528,
+                    "size_human": "528 o"
+                  },
+                  {
+                    "name": "echanges_screen.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 4184,
+                    "size_human": "4 Ko"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "entretien",
+            "type": "directory",
+            "path": "/Users/mac/Desktop/karossa/lib/features/entretien",
+            "children": [
+              {
+                "name": "data",
+                "type": "directory",
+                "path": "/Users/mac/Desktop/karossa/lib/features/entretien/data",
+                "children": [
+                  {
+                    "name": "entretien_repository.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 754,
+                    "size_human": "754 o"
+                  }
+                ]
+              },
+              {
+                "name": "domain",
+                "type": "directory",
+                "path": "/Users/mac/Desktop/karossa/lib/features/entretien/domain",
+                "children": [
+                  {
+                    "name": "alerte_model.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 2070,
+                    "size_human": "2 Ko"
+                  }
+                ]
+              },
+              {
+                "name": "presentation",
+                "type": "directory",
+                "path": "/Users/mac/Desktop/karossa/lib/features/entretien/presentation",
+                "children": [
+                  {
+                    "name": "entretien_form_screen.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 5247,
+                    "size_human": "5 Ko"
+                  },
+                  {
+                    "name": "entretien_provider.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 494,
+                    "size_human": "494 o"
+                  },
+                  {
+                    "name": "entretien_screen.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 4637,
+                    "size_human": "5 Ko"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "finance",
+            "type": "directory",
+            "path": "/Users/mac/Desktop/karossa/lib/features/finance",
+            "children": [
+              {
+                "name": "presentation",
+                "type": "directory",
+                "path": "/Users/mac/Desktop/karossa/lib/features/finance/presentation",
+                "children": [
+                  {
+                    "name": "releve_screen.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 8969,
+                    "size_human": "9 Ko"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "gps",
+            "type": "directory",
+            "path": "/Users/mac/Desktop/karossa/lib/features/gps",
+            "children": [
+              {
+                "name": "data",
+                "type": "directory",
+                "path": "/Users/mac/Desktop/karossa/lib/features/gps/data",
+                "children": [
+                  {
+                    "name": "flespi_service.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 3322,
+                    "size_human": "3 Ko"
+                  },
+                  {
+                    "name": "gps_alerte_source.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 2905,
+                    "size_human": "3 Ko"
+                  },
+                  {
+                    "name": "gps_local_source.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 6308,
+                    "size_human": "6 Ko"
+                  },
+                  {
+                    "name": "gps_repository_impl.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 6341,
+                    "size_human": "6 Ko"
+                  }
+                ]
+              },
+              {
+                "name": "domain",
+                "type": "directory",
+                "path": "/Users/mac/Desktop/karossa/lib/features/gps/domain",
+                "children": [
+                  {
+                    "name": "gps_alerte.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 2114,
+                    "size_human": "2 Ko"
+                  },
+                  {
+                    "name": "gps_failure.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 1349,
+                    "size_human": "1 Ko"
+                  },
+                  {
+                    "name": "gps_position.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 1659,
+                    "size_human": "2 Ko"
+                  },
+                  {
+                    "name": "gps_repository.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 2219,
+                    "size_human": "2 Ko"
+                  }
+                ]
+              },
+              {
+                "name": "presentation",
+                "type": "directory",
+                "path": "/Users/mac/Desktop/karossa/lib/features/gps/presentation",
+                "children": [
+                  {
+                    "name": "gps_alerts_screen.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 4171,
+                    "size_human": "4 Ko"
+                  },
+                  {
+                    "name": "gps_fleet_map_screen.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 49967,
+                    "size_human": "49 Ko"
+                  },
+                  {
+                    "name": "gps_position_card.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 18099,
+                    "size_human": "18 Ko"
+                  },
+                  {
+                    "name": "gps_provider.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 7970,
+                    "size_human": "8 Ko"
+                  },
+                  {
+                    "name": "gps_screen.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 5632,
+                    "size_human": "6 Ko"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "locations",
+            "type": "directory",
+            "path": "/Users/mac/Desktop/karossa/lib/features/locations",
+            "children": [
+              {
+                "name": "data",
+                "type": "directory",
+                "path": "/Users/mac/Desktop/karossa/lib/features/locations/data",
+                "children": [
+                  {
+                    "name": "locations_repository.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 4019,
+                    "size_human": "4 Ko"
+                  }
+                ]
+              },
+              {
+                "name": "domain",
+                "type": "directory",
+                "path": "/Users/mac/Desktop/karossa/lib/features/locations/domain",
+                "children": [
+                  {
+                    "name": "location_model.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 4819,
+                    "size_human": "5 Ko"
+                  }
+                ]
+              },
+              {
+                "name": "presentation",
+                "type": "directory",
+                "path": "/Users/mac/Desktop/karossa/lib/features/locations/presentation",
+                "children": [
+                  {
+                    "name": "location_form_screen.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 16455,
+                    "size_human": "16 Ko"
+                  },
+                  {
+                    "name": "location_retour_screen.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 8627,
+                    "size_human": "8 Ko"
+                  },
+                  {
+                    "name": "locations_provider.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 1150,
+                    "size_human": "1 Ko"
+                  },
+                  {
+                    "name": "locations_screen.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 5468,
+                    "size_human": "5 Ko"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "menu",
+            "type": "directory",
+            "path": "/Users/mac/Desktop/karossa/lib/features/menu",
+            "children": [
+              {
+                "name": "presentation",
+                "type": "directory",
+                "path": "/Users/mac/Desktop/karossa/lib/features/menu/presentation",
+                "children": [
+                  {
+                    "name": "modern_menu_screen.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 34905,
+                    "size_human": "34 Ko"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "notifications",
+            "type": "directory",
+            "path": "/Users/mac/Desktop/karossa/lib/features/notifications",
+            "children": [
+              {
+                "name": "presentation",
+                "type": "directory",
+                "path": "/Users/mac/Desktop/karossa/lib/features/notifications/presentation",
+                "children": [
+                  {
+                    "name": "notifications_provider.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 5054,
+                    "size_human": "5 Ko"
+                  },
+                  {
+                    "name": "notifications_screen.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 4323,
+                    "size_human": "4 Ko"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "reparations",
+            "type": "directory",
+            "path": "/Users/mac/Desktop/karossa/lib/features/reparations",
+            "children": [
+              {
+                "name": "data",
+                "type": "directory",
+                "path": "/Users/mac/Desktop/karossa/lib/features/reparations/data",
+                "children": [
+                  {
+                    "name": "reparations_repository.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 1498,
+                    "size_human": "1 Ko"
+                  }
+                ]
+              },
+              {
+                "name": "domain",
+                "type": "directory",
+                "path": "/Users/mac/Desktop/karossa/lib/features/reparations/domain",
+                "children": [
+                  {
+                    "name": "reparation_model.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 1488,
+                    "size_human": "1 Ko"
+                  }
+                ]
+              },
+              {
+                "name": "presentation",
+                "type": "directory",
+                "path": "/Users/mac/Desktop/karossa/lib/features/reparations/presentation",
+                "children": [
+                  {
+                    "name": "reparation_form_screen.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 6577,
+                    "size_human": "6 Ko"
+                  },
+                  {
+                    "name": "reparations_provider.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 697,
+                    "size_human": "697 o"
+                  },
+                  {
+                    "name": "reparations_screen.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 4432,
+                    "size_human": "4 Ko"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "vehicules",
+            "type": "directory",
+            "path": "/Users/mac/Desktop/karossa/lib/features/vehicules",
+            "children": [
+              {
+                "name": "data",
+                "type": "directory",
+                "path": "/Users/mac/Desktop/karossa/lib/features/vehicules/data",
+                "children": [
+                  {
+                    "name": "vehicule_financials_repository.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 5826,
+                    "size_human": "6 Ko"
+                  },
+                  {
+                    "name": "vehicule_financials_repository.dart.bak_20260509_021150",
+                    "type": "file",
+                    "extension": ".bak_20260509_021150",
+                    "size_bytes": 5886,
+                    "size_human": "6 Ko"
+                  },
+                  {
+                    "name": "vehicules_repository.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 3278,
+                    "size_human": "3 Ko"
+                  }
+                ]
+              },
+              {
+                "name": "domain",
+                "type": "directory",
+                "path": "/Users/mac/Desktop/karossa/lib/features/vehicules/domain",
+                "children": [
+                  {
+                    "name": "vehicule_financials.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 2374,
+                    "size_human": "2 Ko"
+                  },
+                  {
+                    "name": "vehicule_model.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 5134,
+                    "size_human": "5 Ko"
+                  }
+                ]
+              },
+              {
+                "name": "presentation",
+                "type": "directory",
+                "path": "/Users/mac/Desktop/karossa/lib/features/vehicules/presentation",
+                "children": [
+                  {
+                    "name": "catalogue_screen.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 13937,
+                    "size_human": "14 Ko"
+                  },
+                  {
+                    "name": "vehicule_contracts_screen.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 23363,
+                    "size_human": "23 Ko"
+                  },
+                  {
+                    "name": "vehicule_detail_screen.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 22809,
+                    "size_human": "22 Ko"
+                  },
+                  {
+                    "name": "vehicule_financials_screen.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 10334,
+                    "size_human": "10 Ko"
+                  },
+                  {
+                    "name": "vehicule_form_screen.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 29677,
+                    "size_human": "29 Ko"
+                  },
+                  {
+                    "name": "vehicule_history_screen.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 28887,
+                    "size_human": "28 Ko"
+                  },
+                  {
+                    "name": "vehicule_quick_financial.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 4839,
+                    "size_human": "5 Ko"
+                  },
+                  {
+                    "name": "vehicules_provider.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 3224,
+                    "size_human": "3 Ko"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "ventes",
+            "type": "directory",
+            "path": "/Users/mac/Desktop/karossa/lib/features/ventes",
+            "children": [
+              {
+                "name": "data",
+                "type": "directory",
+                "path": "/Users/mac/Desktop/karossa/lib/features/ventes/data",
+                "children": [
+                  {
+                    "name": "ventes_repository.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 4470,
+                    "size_human": "4 Ko"
+                  }
+                ]
+              },
+              {
+                "name": "domain",
+                "type": "directory",
+                "path": "/Users/mac/Desktop/karossa/lib/features/ventes/domain",
+                "children": [
+                  {
+                    "name": "vente_model.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 4320,
+                    "size_human": "4 Ko"
+                  }
+                ]
+              },
+              {
+                "name": "presentation",
+                "type": "directory",
+                "path": "/Users/mac/Desktop/karossa/lib/features/ventes/presentation",
+                "children": [
+                  {
+                    "name": "vente_form_screen.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 10717,
+                    "size_human": "10 Ko"
+                  },
+                  {
+                    "name": "ventes_provider.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 1056,
+                    "size_human": "1 Ko"
+                  },
+                  {
+                    "name": "ventes_screen.dart",
+                    "type": "file",
+                    "extension": ".dart",
+                    "size_bytes": 8388,
+                    "size_human": "8 Ko"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "gps.zip",
+            "type": "file",
+            "extension": ".zip",
+            "size_bytes": 38129,
+            "size_human": "37 Ko"
+          }
+        ]
+      },
+      {
+        "name": "shared",
+        "type": "directory",
+        "path": "/Users/mac/Desktop/karossa/lib/shared",
+        "children": [
+          {
+            "name": "services",
+            "type": "directory",
+            "path": "/Users/mac/Desktop/karossa/lib/shared/services",
+            "children": [
+              {
+                "name": "backend_api_service.dart",
+                "type": "file",
+                "extension": ".dart",
+                "size_bytes": 7517,
+                "size_human": "7 Ko"
+              },
+              {
+                "name": "export_service.dart",
+                "type": "file",
+                "extension": ".dart",
+                "size_bytes": 3774,
+                "size_human": "4 Ko"
+              },
+              {
+                "name": "notification_service.dart",
+                "type": "file",
+                "extension": ".dart",
+                "size_bytes": 7170,
+                "size_human": "7 Ko"
+              }
+            ]
+          },
+          {
+            "name": "widgets",
+            "type": "directory",
+            "path": "/Users/mac/Desktop/karossa/lib/shared/widgets",
+            "children": [
+              {
+                "name": "custom_app_bar.dart",
+                "type": "file",
+                "extension": ".dart",
+                "size_bytes": 1263,
+                "size_human": "1 Ko"
+              },
+              {
+                "name": "delete_confirm.dart",
+                "type": "file",
+                "extension": ".dart",
+                "size_bytes": 2369,
+                "size_human": "2 Ko"
+              },
+              {
+                "name": "empty_state.dart",
+                "type": "file",
+                "extension": ".dart",
+                "size_bytes": 1424,
+                "size_human": "1 Ko"
+              },
+              {
+                "name": "filter_chips_widget.dart",
+                "type": "file",
+                "extension": ".dart",
+                "size_bytes": 2972,
+                "size_human": "3 Ko"
+              },
+              {
+                "name": "home_button.dart",
+                "type": "file",
+                "extension": ".dart",
+                "size_bytes": 529,
+                "size_human": "529 o"
+              },
+              {
+                "name": "modern_app_bar.dart",
+                "type": "file",
+                "extension": ".dart",
+                "size_bytes": 9257,
+                "size_human": "9 Ko"
+              },
+              {
+                "name": "modern_button.dart",
+                "type": "file",
+                "extension": ".dart",
+                "size_bytes": 9092,
+                "size_human": "9 Ko"
+              },
+              {
+                "name": "modern_card.dart",
+                "type": "file",
+                "extension": ".dart",
+                "size_bytes": 9390,
+                "size_human": "9 Ko"
+              },
+              {
+                "name": "modern_text_field.dart",
+                "type": "file",
+                "extension": ".dart",
+                "size_bytes": 14381,
+                "size_human": "14 Ko"
+              },
+              {
+                "name": "notification_bell.dart",
+                "type": "file",
+                "extension": ".dart",
+                "size_bytes": 1460,
+                "size_human": "1 Ko"
+              },
+              {
+                "name": "search_bar_widget.dart",
+                "type": "file",
+                "extension": ".dart",
+                "size_bytes": 2358,
+                "size_human": "2 Ko"
+              },
+              {
+                "name": "shimmer_loading.dart",
+                "type": "file",
+                "extension": ".dart",
+                "size_bytes": 5042,
+                "size_human": "5 Ko"
+              },
+              {
+                "name": "status_badge.dart",
+                "type": "file",
+                "extension": ".dart",
+                "size_bytes": 707,
+                "size_human": "707 o"
+              },
+              {
+                "name": "vehicle_checklist_widget.dart",
+                "type": "file",
+                "extension": ".dart",
+                "size_bytes": 3148,
+                "size_human": "3 Ko"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "app.dart",
+        "type": "file",
+        "extension": ".dart",
+        "size_bytes": 807,
+        "size_human": "807 o"
+      },
+      {
+        "name": "flutter_architecture.py",
+        "type": "file",
+        "extension": ".py",
+        "size_bytes": 9337,
+        "size_human": "9 Ko"
+      },
+      {
+        "name": "main.dart",
+        "type": "file",
+        "extension": ".dart",
+        "size_bytes": 1005,
+        "size_human": "1005 o"
+      }
+    ]
+  }
+}

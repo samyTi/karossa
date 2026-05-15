@@ -185,7 +185,7 @@ class ModernCardWithHeader extends StatelessWidget {
                 topLeft: Radius.circular(AppSpacing.radiusLg),
                 topRight: Radius.circular(AppSpacing.radiusLg),
               ),
-              border: Border(
+              border: const Border(
                 bottom: BorderSide(
                   color: AppColors.border,
                   width: 0.5,

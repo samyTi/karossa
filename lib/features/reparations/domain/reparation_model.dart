@@ -30,7 +30,7 @@ class Reparation {
     id:             json['id'],
     vehiculeId:     json['vehicule_id'],
     vehiculeNom:    json['vehicules'] != null
-                      ? '${json["vehicules"]["marque"]} ${json["vehicules"]["modele"]}'
+                      ? '${json['vehicules']['marque']} ${json['vehicules']['modele']}'
                       : null,
     typeRep:        json['type_rep'],
     description:    json['description'],

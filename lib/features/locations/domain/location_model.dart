@@ -103,11 +103,11 @@ class Location {
     id:            json['id'],
     vehiculeId:    json['vehicule_id'],
     vehiculeNom:   json['vehicules'] != null
-                     ? '${json["vehicules"]["marque"]} ${json["vehicules"]["modele"]}'
+                     ? '${json['vehicules']['marque']} ${json['vehicules']['modele']}'
                      : null,
     clientId:      json['client_id'],
     clientNom:     json['clients'] != null
-                     ? '${json["clients"]["prenom"]} ${json["clients"]["nom"]}'
+                     ? '${json['clients']['prenom']} ${json['clients']['nom']}'
                      : null,
     clientTel:     json['clients']?['telephone'],
     dateDebut:     DateTime.parse(json['date_debut']),

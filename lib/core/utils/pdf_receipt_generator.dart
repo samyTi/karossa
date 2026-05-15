@@ -26,10 +26,9 @@ class PdfReceiptGenerator {
     final sh = showroom ?? {'nom': 'Garage Auto'};
 
     doc.addPage(pw.Page(
-      pageFormat: PdfPageFormat(80 * PdfPageFormat.mm, double.infinity,
+      pageFormat: const PdfPageFormat(80 * PdfPageFormat.mm, double.infinity,
           marginAll: 8 * PdfPageFormat.mm),
       build: (ctx) => pw.Column(
-        crossAxisAlignment: pw.CrossAxisAlignment.center,
         children: [
           // En-tête
           pw.Text(sh['nom'] ?? 'Garage Auto',

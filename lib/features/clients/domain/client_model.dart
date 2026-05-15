@@ -40,7 +40,7 @@ class Client {
 
   String get fullName => '$prenom $nom';
   String get initials =>
-    '${prenom.isNotEmpty ? prenom[0] : ""}${nom.isNotEmpty ? nom[0] : ""}'.toUpperCase();
+    '${prenom.isNotEmpty ? prenom[0] : ''}${nom.isNotEmpty ? nom[0] : ''}'.toUpperCase();
 
   factory Client.fromJson(Map<String, dynamic> json) => Client(
     id:          json['id'],

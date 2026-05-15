@@ -170,9 +170,11 @@ class _State extends ConsumerState<ClientFormScreen> {
           const SnackBar(content: Text('Client enregistre')));
       }
     } catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Erreur: $e'),
           backgroundColor: AppColors.retard));
+      }
     } finally {
       if (mounted) setState(() => _loading = false);
     }

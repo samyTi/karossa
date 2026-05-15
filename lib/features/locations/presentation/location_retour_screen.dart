@@ -52,9 +52,11 @@ class _State extends ConsumerState<LocationRetourScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (_location == null) return Scaffold(
+    if (_location == null) {
+      return Scaffold(
       appBar: AppBar(title: const Text('Retour vehicule')),
-      body: const Center(child: const CircularProgressIndicator()));
+      body: const Center(child: CircularProgressIndicator()));
+    }
 
     return Scaffold(
       appBar: AppBar(title: const Text('Enregistrer le retour')),
@@ -222,9 +224,11 @@ class _State extends ConsumerState<LocationRetourScreen> {
             backgroundColor: AppColors.secondary));
       }
     } catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Erreur: $e'),
           backgroundColor: AppColors.retard));
+      }
     } finally {
       if (mounted) setState(() => _loading = false);
     }

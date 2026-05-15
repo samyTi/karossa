@@ -7,7 +7,6 @@
 //   - La clé API est passée dans le header x-api-key pour les routes GPS
 
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:http/http.dart' as http;
 import '../../core/utils/app_logger.dart';

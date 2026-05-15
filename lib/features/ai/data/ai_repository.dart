@@ -1,141 +1,126 @@
 // lib/features/ai/data/ai_repository.dart
-// Stratégie double :
-//   - Par défaut : appel direct Gemini (SDK google_generative_ai)
-//   - Si BACKEND_URL est défini : délègue au backend Next.js (clé non exposée)
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
-import '../../../shared/services/backend_api_service.dart';
 import '../domain/chat_message.dart';
 import '../../../core/utils/app_logger.dart';
 
 class AiRepository {
-  AiRepository(this._client);
-
   final SupabaseClient _client;
-
-  static const _apiKey = String.fromEnvironment(
-    'GEMINI_API_KEY',
-    defaultValue: '',
-  );
-
-  /// Si BACKEND_URL est configuré, on passe par le backend sécurisé
-  static const _backendUrl = String.fromEnvironment(
-    'BACKEND_URL',
-    defaultValue: '',
-  );
-
-  bool get _useBackend => _backendUrl.isNotEmpty;
-
   GenerativeModel? _model;
 
-  GenerativeModel get _gemini {
-    _model ??= GenerativeModel(
+  AiRepository(this._client);
+
+  /// Récupère la clé API depuis la table showroom_settings
+  Future<String?> _getApiKey() async {
+    try {
+      final response = await _client
+          .from('showroom_settings')
+          .select('gemini_api_key')
+          .maybeSingle();
+      
+      if (response == null || response['gemini_api_key'] == null) {
+        AppLogger.e('Clé gemini_api_key introuvable dans showroom_settings');
+        return null;
+      }
+      
+      return response['gemini_api_key'] as String;
+    } catch (e) {
+      AppLogger.e('Erreur lors de la récupération de la configuration IA', error: e);
+      return null;
+    }
+  }
+
+  /// Initialise le modèle Gemini uniquement quand c'est nécessaire
+  Future<GenerativeModel?> _initModel() async {
+    if (_model != null) return _model;
+
+    final apiKey = await _getApiKey();
+    if (apiKey == null || apiKey.isEmpty) return null;
+
+    _model = GenerativeModel(
       model: 'gemini-1.5-flash',
-      apiKey: _apiKey,
+      apiKey: apiKey,
       systemInstruction: Content.system(_buildSystemPrompt()),
     );
-    return _model!;
+    return _model;
   }
 
   String _buildSystemPrompt() {
     return '''Tu es KarossaAI, l'assistant intelligent du showroom automobile Karossa (Algérie).
-Tu aides les gérants et propriétaires à gérer leur flotte, analyser les performances et prendre de meilleures décisions.
+Tu aides les gérants à gérer leur flotte, analyser les performances financières et prendre de meilleures décisions.
 
-RÈGLES ABSOLUES:
-- Réponds TOUJOURS en français
-- Sois concis, professionnel et pratique
-- Les montants sont en Dinars Algériens (DA)
-- Si on te demande des calculs financiers, montre le détail étape par étape
-- N'invente jamais de données non fournies
-- Pour les alertes mécaniques, recommande de consulter un mécanicien professionnel
-- Tu peux analyser des données de véhicules, locations, ventes et réparations''';
+RÈGLES ABSOLUES :
+1. Tu parles principalement en Français, mais tu comprends le Darija algérien.
+2. Tes réponses doivent être professionnelles, précises et orientées business.
+3. Pour les montants, utilise toujours "DA" (Dinar Algérien).
+4. Si on te pose une question sur un véhicule spécifique, utilise les données fournies dans le contexte.
+5. Sois capable d'analyser les statistiques de location, de vente et les dépenses de réparation.''';
   }
 
-  /// Envoie un message et retourne la réponse IA
+  /// Envoie un message à l'IA avec gestion de l'historique et du contexte
   Future<String> sendMessage({
     required String message,
     required List<ChatMessage> history,
     Map<String, dynamic>? vehiculeContext,
-    Map<String, dynamic>? showroomContext,
   }) async {
     try {
-      // ── Voie backend sécurisée ────────────────────────────────────────────
-      if (_useBackend) {
-        final histList = history
-            .where((m) => !m.isLoading && m.content.isNotEmpty)
-            .map((m) => { 'role': m.role, 'content': m.content })
-            .toList();
-        return BackendApiService(_client).chatWithAi(
-          message:         message,
-          history:         histList,
-          vehiculeContext: vehiculeContext,
-        );
+      final model = await _initModel();
+      if (model == null) {
+        return "❌ L'IA n'est pas configurée. Veuillez ajouter la clé API dans les paramètres du showroom.";
       }
 
-      // ── Voie SDK direct ───────────────────────────────────────────────────
-      if (_apiKey.isEmpty || _apiKey == '') {
-        return '❌ Clé API Gemini manquante. Définissez GEMINI_API_KEY ou BACKEND_URL.';
-      }
+      // Conversion de l'historique Karossa vers le format Gemini
+      final geminiHistory = history.map((m) => Content(
+        m.role == 'user' ? 'user' : 'model',
+        [TextPart(m.content)],
+      )).toList();
 
+      final chat = model.startChat(history: geminiHistory);
+
+      // Enrichissement du message avec le contexte véhicule si présent
       String enrichedMessage = message;
       if (vehiculeContext != null) {
-        enrichedMessage = '''[CONTEXTE VÉHICULE]
-Véhicule: ${vehiculeContext['marque']} ${vehiculeContext['modele']} ${vehiculeContext['annee']}
-Kilométrage: ${vehiculeContext['kilometrage']} km
-Statut: ${vehiculeContext['statut']}
-${vehiculeContext['prix_vente'] != null ? 'Prix vente: ${vehiculeContext['prix_vente']} DA' : ''}
-${vehiculeContext['prix_location_jour'] != null ? 'Prix location/jour: ${vehiculeContext['prix_location_jour']} DA' : ''}
-[FIN CONTEXTE]
-
-$message''';
+        enrichedMessage = "CONTEXTE VÉHICULE ACTUEL : $vehiculeContext\n\nQUESTION : $message";
       }
 
-      final geminiHistory = history
-          .where((m) => !m.isLoading && m.content.isNotEmpty)
-          .map((m) => Content(
-                m.role == 'user' ? 'user' : 'model',
-                [TextPart(m.content)],
-              ))
-          .toList();
-
-      final chat     = _gemini.startChat(history: geminiHistory);
       final response = await chat.sendMessage(Content.text(enrichedMessage));
-      return response.text ?? 'Désolé, je n ai pas pu générer de réponse.';
+      return response.text ?? 'Désolé, je n\'ai pas pu générer de réponse.';
 
     } catch (e) {
-      AppLogger.d('AiRepository.sendMessage: $e');
+      AppLogger.e('AiRepository.sendMessage', error: e);
       if (e.toString().contains('API_KEY')) {
-        return '❌ Clé API Gemini invalide.';
+        return '❌ La clé API configurée est invalide ou a expiré.';
       }
-      return '❌ Erreur de connexion à l IA. Vérifiez votre connexion.';
+      return '❌ Erreur de connexion avec KarossaAI. Vérifiez votre connexion internet.';
     }
   }
 
-  /// Génère une analyse rapide d'un véhicule
+  /// Analyse rapide d'un véhicule (utile pour l'écran détail véhicule)
   Future<String> analyserVehicule(Map<String, dynamic> vehiculeData) async {
-    final prompt = '''Analyse ce véhicule et donne-moi:
-1. Un résumé de son état général
-2. Des recommandations d'entretien basées sur le kilométrage (${vehiculeData['kilometrage']} km)
-3. Une estimation de rentabilité si loué à ${vehiculeData['prix_location_jour']} DA/jour
-4. Les points d'attention particuliers
+    final prompt = '''Analyse ce véhicule et donne-moi :
+1. Un résumé de son état général.
+2. Des recommandations d'entretien basées sur le kilométrage (${vehiculeData['kilometrage']} km).
+3. Une estimation de rentabilité si loué à ${vehiculeData['prix_location_jour']} DA/jour.
+4. Les points d'attention particuliers.
 
-Données: ${vehiculeData.toString()}''';
+Données : ${vehiculeData.toString()}''';
+    
     return sendMessage(message: prompt, history: []);
   }
 
-  /// Génère des suggestions de prix
+  /// Suggestion de prix basée sur les caractéristiques
   Future<String> suggererPrix({
     required String marque,
     required String modele,
     required int annee,
     required int kilometrage,
   }) async {
-    final prompt = '''Pour un $marque $modele de $annee avec $kilometrage km en Algérie:
-1. Quel prix de vente est réaliste ?
+    final prompt = '''Pour un $marque $modele de $annee avec $kilometrage km en Algérie :
+1. Quel prix de vente est réaliste sur le marché actuel ?
 2. Quel tarif de location journalier est compétitif ?
-3. Quelle est la fourchette de prix habituelle pour ce type de véhicule ?
-Donne des chiffres précis en DA.''';
+3. Quelle est la tendance de ce modèle en Algérie ?''';
+
     return sendMessage(message: prompt, history: []);
   }
 }

@@ -49,7 +49,6 @@ class Vehicule {
   final String? carburant;
   final String? boite;
   final int kilometrage;
-  // Prix de revient / achat
   final double? prixAchat;
   final double? prixVente;
   final double? prixLocationJour;
@@ -61,8 +60,8 @@ class Vehicule {
   final String? etatVehicule;
   final List<VehiculePropriete> proprietes;
   final DateTime createdAt;
-  // GPS
-  final int? traccarDeviceId;
+  // GPS — Device ID du tracker sur la plateforme Flespi
+  final int? flespiDeviceId;
   final int? kmAlerteSeuil;
 
   const Vehicule({
@@ -73,7 +72,7 @@ class Vehicule {
     required this.statut, this.photos = const [], this.notes,
     this.etatVehicule,
     this.proprietes = const [], required this.createdAt,
-    this.traccarDeviceId, this.kmAlerteSeuil,
+    this.flespiDeviceId, this.kmAlerteSeuil,
   });
 
   @override
@@ -86,10 +85,8 @@ class Vehicule {
 
   String get displayName => '$marque $modele $annee';
 
-  /// Calcul rapide du prix de revient (sans les dépenses DB)
   double get prixRevientEstime => prixAchat ?? 0.0;
 
-  /// Retourne true si le kilométrage actuel dépasse le seuil d'alerte
   bool get kmCritique {
     if (kmAlerteSeuil == null) return false;
     return kilometrage >= kmAlerteSeuil!;
@@ -120,26 +117,28 @@ class Vehicule {
     proprietes:      (json['vehicule_proprietes'] as List? ?? [])
                        .map((p) => VehiculePropriete.fromJson(p)).toList(),
     createdAt:       DateTime.parse(json['created_at']),
-    traccarDeviceId: json['traccar_device_id'],
+    // Lit les deux colonnes pour compatibilité avec les anciennes données
+    flespiDeviceId:  json['flespi_device_id'] ?? json['flespi_device_id'],
     kmAlerteSeuil:   json['km_alerte_seuil'],
   );
 
   Map<String, dynamic> toJson() => {
-    'marque':       marque,
-    'modele':       modele,
-    'annee':        annee,
-    'couleur':      couleur,
-    'immatriculation': immatriculation,
-    'carburant':    carburant,
-    'boite':        boite,
-    'kilometrage':  kilometrage,
-    'prix_achat':   prixAchat,
-    'prix_vente':   prixVente,
+    'marque':            marque,
+    'modele':            modele,
+    'annee':             annee,
+    'couleur':           couleur,
+    'immatriculation':   immatriculation,
+    'carburant':         carburant,
+    'boite':             boite,
+    'kilometrage':       kilometrage,
+    'prix_achat':        prixAchat,
+    'prix_vente':        prixVente,
     'prix_location_jour': prixLocationJour,
-    'statut':       statut.name,
-    'photos':       photos,
-    'notes':        notes,
-    'etat_vehicule': etatVehicule,
-    'km_alerte_seuil': kmAlerteSeuil,
+    'statut':            statut.name,
+    'photos':            photos,
+    'notes':             notes,
+    'etat_vehicule':     etatVehicule,
+    'km_alerte_seuil':   kmAlerteSeuil,
+    'flespi_device_id':  flespiDeviceId,
   };
 }

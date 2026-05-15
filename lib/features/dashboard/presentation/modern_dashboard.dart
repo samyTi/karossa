@@ -89,7 +89,7 @@ class ModernDashboard extends ConsumerWidget {
 
             // ── Padding final ──────────────────────────────────
             const SliverToBoxAdapter(
-              child: const SizedBox(height: 80),
+              child: SizedBox(height: 80),
             ),
           ],
         ),
@@ -100,7 +100,6 @@ class ModernDashboard extends ConsumerWidget {
   Widget _buildModernAppBar(BuildContext context, String prenom, UserRole? role, List<Location> retards) {
     return SliverAppBar(
       expandedHeight: 180,
-      floating: false,
       pinned: true,
       flexibleSpace: FlexibleSpaceBar(
         background: Container(
@@ -561,9 +560,9 @@ class ModernDashboard extends ConsumerWidget {
             ),
             child: Row(
               children: [
-                Icon(Icons.search, size: 18, color: AppColors.textHint),
+                const Icon(Icons.search, size: 18, color: AppColors.textHint),
                 const SizedBox(width: 10),
-                Text(
+                const Text(
                   'Rechercher un véhicule, un client...',
                   style: TextStyle(
                     fontSize: 14,
@@ -578,10 +577,10 @@ class ModernDashboard extends ConsumerWidget {
                     color: AppColors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(6),
                   ),
-                  child: Row(
+                  child: const Row(
                     children: [
                       Icon(Icons.keyboard, size: 12, color: AppColors.primary),
-                      const SizedBox(width: 4),
+                      SizedBox(width: 4),
                       Text(
                         '⌘K',
                         style: TextStyle(
@@ -838,9 +837,9 @@ class ModernDashboardShimmer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       backgroundColor: AppColors.background,
-      body: const Center(child: const CircularProgressIndicator()),
+      body: Center(child: CircularProgressIndicator()),
     );
   }
 }

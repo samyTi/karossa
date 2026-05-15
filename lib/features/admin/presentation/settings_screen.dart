@@ -2,6 +2,7 @@
 // Paramètres du showroom — données stockées dans Supabase
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/theme_provider.dart';
@@ -19,12 +20,11 @@ class SettingsScreen extends ConsumerWidget {
     return Scaffold(
       appBar: const CustomAppBar(
         title: 'Paramètres du showroom',
-        showBackButton: true,
         showHomeButton: true,
       ),
       body: settingsAsync.when(
-        loading: () => const Center(child: const CircularProgressIndicator()),
-        error:   (e, _) => Center(child: Text('Erreur : \$e')),
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error:   (e, _) => const Center(child: Text('Erreur : \$e')),
         data: (settings) => _SettingsBody(settings: settings),
       ),
     );
@@ -54,7 +54,7 @@ class _SettingsBodyState extends ConsumerState<_SettingsBody> {
     final result = await showDialog<String>(
       context: context,
       builder: (_) => AlertDialog(
-        title: Text('Modifier — \$label'),
+        title: const Text('Modifier — \$label'),
         content: TextField(
           controller: ctrl,
           autofocus: true,
@@ -89,7 +89,7 @@ class _SettingsBodyState extends ConsumerState<_SettingsBody> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erreur : \$e'),
+          const SnackBar(content: Text('Erreur : \$e'),
               backgroundColor: AppColors.retard),
         );
       }
@@ -105,7 +105,7 @@ class _SettingsBodyState extends ConsumerState<_SettingsBody> {
         ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            _SectionTitle(title: 'Informations générales', icon: Icons.business),
+            const _SectionTitle(title: 'Informations générales', icon: Icons.business),
             const SizedBox(height: 12),
             _InfoCard(
               icon: Icons.business,
@@ -143,34 +143,34 @@ class _SettingsBodyState extends ConsumerState<_SettingsBody> {
             ),
 
             const SizedBox(height: 24),
-            _SectionTitle(title: 'GPS Traccar', icon: Icons.gps_fixed),
+            const _SectionTitle(title: 'GPS Flespi', icon: Icons.gps_fixed),
             const SizedBox(height: 12),
             _InfoCard(
               icon: Icons.dns,
-              title: 'URL Traccar',
-              value: _settings['traccar_url'] ?? 'Non configuré',
-              onEdit: () => _editField('traccar_url', 'URL Traccar (ex: http://192.168.1.10:8082)',
-                  _settings['traccar_url'] ?? ''),
+              title: 'URL Flespi',
+              value: _settings['flespi_url'] ?? 'Non configuré',
+              onEdit: () => _editField('flespi_url', 'URL Flespi (ex: http://192.168.1.10:8082)',
+                  _settings['flespi_url'] ?? ''),
             ),
             const SizedBox(height: 8),
             _InfoCard(
               icon: Icons.person,
-              title: 'Login Traccar',
-              value: _settings['traccar_user'] ?? '',
-              onEdit: () => _editField('traccar_user', 'Email Traccar',
-                  _settings['traccar_user'] ?? ''),
+              title: 'Login Flespi',
+              value: _settings['flespi_user'] ?? '',
+              onEdit: () => _editField('flespi_user', 'Email Flespi',
+                  _settings['flespi_user'] ?? ''),
             ),
             const SizedBox(height: 8),
             _InfoCard(
               icon: Icons.lock,
-              title: 'Mot de passe Traccar',
-              value: (_settings['traccar_password'] ?? '').isNotEmpty ? '••••••••' : '',
-              onEdit: () => _editField('traccar_password', 'Mot de passe Traccar',
-                  _settings['traccar_password'] ?? ''),
+              title: 'Mot de passe Flespi',
+              value: (_settings['flespi_password'] ?? '').isNotEmpty ? '••••••••' : '',
+              onEdit: () => _editField('flespi_password', 'Mot de passe Flespi',
+                  _settings['flespi_password'] ?? ''),
             ),
 
             const SizedBox(height: 24),
-            _SectionTitle(title: 'Préférences', icon: Icons.settings),
+            const _SectionTitle(title: 'Préférences', icon: Icons.settings),
             const SizedBox(height: 12),
             _SettingsTile(
               icon: Icons.attach_money,
@@ -179,6 +179,16 @@ class _SettingsBodyState extends ConsumerState<_SettingsBody> {
               trailing: const Text('DZD',
                   style: TextStyle(fontWeight: FontWeight.w600)),
               onTap: () {},
+            ),
+            const SizedBox(height: 24),
+            const _SectionTitle(title: 'Contrats', icon: Icons.description_outlined),
+            const SizedBox(height: 12),
+            _SettingsTile(
+              icon: Icons.article_outlined,
+              title: 'Articles des contrats',
+              subtitle: 'Configurer les clauses par type (location, vente, échange)',
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.go('/admin/contract-articles'),
             ),
 
             const SizedBox(height: 40),

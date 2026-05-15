@@ -46,7 +46,7 @@ class VehiculeFinancialsScreen extends ConsumerWidget {
         ],
       ),
       body: financialsAsync.when(
-        loading: () => const Center(child: const CircularProgressIndicator()),
+        loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -140,10 +140,10 @@ class _DepensesCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(children: [
-              const Icon(Icons.arrow_circle_down, color: Colors.red),
-              const SizedBox(width: 8),
-              const Text('DÉPENSES',
+            const Row(children: [
+              Icon(Icons.arrow_circle_down, color: Colors.red),
+              SizedBox(width: 8),
+              Text('DÉPENSES',
                   style: TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 15)),
             ]),
@@ -173,10 +173,10 @@ class _RevenusCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(children: [
-              const Icon(Icons.arrow_circle_up, color: Colors.green),
-              const SizedBox(width: 8),
-              const Text('REVENUS',
+            const Row(children: [
+              Icon(Icons.arrow_circle_up, color: Colors.green),
+              SizedBox(width: 8),
+              Text('REVENUS',
                   style: TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 15)),
             ]),
@@ -213,10 +213,10 @@ class _OccupationCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(children: [
-              const Icon(Icons.car_rental, color: Colors.blue),
-              const SizedBox(width: 8),
-              const Text('LOCATIONS',
+            const Row(children: [
+              Icon(Icons.car_rental, color: Colors.blue),
+              SizedBox(width: 8),
+              Text('LOCATIONS',
                   style: TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 15)),
             ]),
@@ -280,7 +280,7 @@ class _Ligne extends StatelessWidget {
         children: [
           Text(label, style: style),
           Text(valeur.toDA(),
-              style: style.copyWith(fontFeatures: null)),
+              style: style.copyWith()),
         ],
       ),
     );

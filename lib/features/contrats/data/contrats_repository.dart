@@ -114,7 +114,7 @@ class ContratsRepository {
   }) async {
     // ✅ FIX : on ne catch plus l'exception — elle remonte à l'appelant
     // pour qu'un message d'erreur soit affiché dans l'UI.
-    // Causes fréquentes d'échec : bucket "contrats" absent dans Supabase
+    // Causes fréquentes d'échec : bucket 'contrats' absent dans Supabase
     // Storage, ou policy RLS manquante.
     final path = '$folder/$fileName';
     AppLogger.d('ContratsRepository: upload → contrats/$path (${pdfBytes.length} bytes)');
@@ -174,4 +174,22 @@ class ContratsRepository {
       rethrow;
     }
   }
+  // ── Articles dynamiques ────────────────────────────────────
+
+/// Récupère les articles actifs d'un type de contrat, triés par ordre.
+/// Utilisé par les générateurs PDF pour remplacer les clauses en dur.
+Future<List<Map<String, dynamic>>> getArticlesActifs(String contratType) async {
+  try {
+    final data = await _client
+        .from('contract_articles')
+        .select()
+        .eq('contrat_type', contratType)
+        .eq('actif', true)
+        .order('ordre');
+    return List<Map<String, dynamic>>.from(data);
+  } catch (e) {
+    AppLogger.d('ContratsRepository.getArticlesActifs: $e');
+    return [];
+  }
+}
 }

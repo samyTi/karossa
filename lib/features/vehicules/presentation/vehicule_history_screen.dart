@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../core/providers/supabase_provider.dart';
 import 'package:intl/intl.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
@@ -243,7 +242,7 @@ Future<VehiculeHistory> _fetchVehiculeHistory(String vehiculeId) async {
   // Récupérer les réparations
   final reparationsData = await Supabase.instance.client
       .from('reparations')
-      .select('*')
+      .select()
       .eq('vehicule_id', vehiculeId)
       .order('date_rep', ascending: false);
 
@@ -254,7 +253,7 @@ Future<VehiculeHistory> _fetchVehiculeHistory(String vehiculeId) async {
   // Récupérer les entretiens
   final entretiensData = await Supabase.instance.client
       .from('alertes_entretien')
-      .select('*')
+      .select()
       .eq('vehicule_id', vehiculeId)
       .order('created_at', ascending: false);
 
@@ -308,7 +307,7 @@ class VehiculeHistoryScreen extends ConsumerWidget {
       ),
       body: history.when(
         loading: () =>
-            const Center(child: const CircularProgressIndicator()),
+            const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('Erreur: $e')),
         data: (h) => _HistoryBody(history: h),
       ),
@@ -423,7 +422,7 @@ class _HistoryBody extends StatelessWidget {
             history.entretiens.isEmpty &&
             history.ventes.isEmpty &&
             history.echanges.isEmpty)
-          EmptyState(
+          const EmptyState(
             icon: Icons.history,
             message: 'Aucun historique pour ce véhicule',
           ),
@@ -655,7 +654,7 @@ class _LocationCard extends StatelessWidget {
             const SizedBox(height: 6),
             Row(
               children: [
-                Icon(Icons.calendar_today, size: 12, color: AppColors.textSecondary),
+                const Icon(Icons.calendar_today, size: 12, color: AppColors.textSecondary),
                 const SizedBox(width: 4),
                 Text(
                   'Du ${fmt.format(location.dateDebut)}',
@@ -673,7 +672,7 @@ class _LocationCard extends StatelessWidget {
             const SizedBox(height: 4),
             Row(
               children: [
-                Icon(Icons.speed, size: 12, color: AppColors.textSecondary),
+                const Icon(Icons.speed, size: 12, color: AppColors.textSecondary),
                 const SizedBox(width: 4),
                 Text(
                   '${location.kmDepart} km',
@@ -743,12 +742,12 @@ class _ReparationCard extends StatelessWidget {
             const SizedBox(height: 4),
             Row(
               children: [
-                Icon(Icons.calendar_today, size: 12, color: AppColors.textSecondary),
+                const Icon(Icons.calendar_today, size: 12, color: AppColors.textSecondary),
                 const SizedBox(width: 4),
                 Text(fmt.format(reparation.dateRep), style: AppTextStyles.label),
                 if (reparation.prestataire != null) ...[
                   const SizedBox(width: 12),
-                  Icon(Icons.business, size: 12, color: AppColors.textSecondary),
+                  const Icon(Icons.business, size: 12, color: AppColors.textSecondary),
                   const SizedBox(width: 4),
                   Text(reparation.prestataire!, style: AppTextStyles.label),
                 ],
@@ -772,11 +771,11 @@ class _EntretienCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isExpired = entretien.statut == 'fait'
+    final bool isExpired = entretien.statut == 'fait'
         ? false
         : entretien.dateEcheance != null &&
             DateTime.now().isAfter(entretien.dateEcheance!);
-    bool isUrgent = entretien.statut != 'fait' &&
+    final bool isUrgent = entretien.statut != 'fait' &&
         entretien.dateEcheance != null &&
         entretien.dateEcheance!.difference(DateTime.now()).inDays <= 7;
 

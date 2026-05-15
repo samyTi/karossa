@@ -140,7 +140,7 @@ class _AchatsScreenState extends ConsumerState<AchatsScreen>
                   },
                 );
               },
-              loading: () => const Center(child: const CircularProgressIndicator()),
+              loading: () => const Center(child: CircularProgressIndicator()),
               error: (e, st) => Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,

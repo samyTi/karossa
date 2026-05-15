@@ -52,34 +52,34 @@ final usersProvider = FutureProvider<List<Profile>>((ref) async {
   }
 });
 
-/// Provider pour récupérer les credentials Traccar depuis la table showroom_settings
-final traccarCredentialsProvider = FutureProvider<TraccarCredentials?>((ref) async {
+/// Provider pour récupérer les credentials Flespi depuis la table showroom_settings
+final flespiCredentialsProvider = FutureProvider<FlespiCredentials?>((ref) async {
   try {
     final response = await ref.watch(supabaseClientProvider)
         .from('showroom_settings')
-        .select('traccar_url, traccar_user, traccar_password')
+        .select('flespi_url, flespi_user, flespi_password')
         .maybeSingle();
 
     if (response == null) return null;
 
-    return TraccarCredentials(
-      url: response['traccar_url'] as String? ?? 'https://demo.traccar.org',
-      username: response['traccar_user'] as String?,
-      password: response['traccar_password'] as String?,
+    return FlespiCredentials(
+      url: response['flespi_url'] as String? ?? 'https://demo.flespi.org',
+      username: response['flespi_user'] as String?,
+      password: response['flespi_password'] as String?,
     );
   } catch (e) {
-    AppLogger.d('Erreur lors de la récupération des credentials Traccar: $e');
+    AppLogger.d('Erreur lors de la récupération des credentials Flespi: $e');
     return null;
   }
 });
 
-/// Modèle pour les credentials Traccar
-class TraccarCredentials {
+/// Modèle pour les credentials Flespi
+class FlespiCredentials {
   final String url;
   final String? username;
   final String? password;
 
-  TraccarCredentials({
+  FlespiCredentials({
     required this.url,
     this.username,
     this.password,

@@ -28,7 +28,7 @@ class ReparationsScreen extends ConsumerWidget {
         foregroundColor: Colors.white,
       ),
       body: reps.when(
-        loading: () => const Center(child: const CircularProgressIndicator()),
+        loading: () => const Center(child: CircularProgressIndicator()),
         error:   (e, _) => Center(child: Text('Erreur: $e')),
         data:    (list) {
           final total = list.fold(0.0, (s, r) => s + r.cout);
@@ -103,8 +103,8 @@ class _RepCard extends StatelessWidget {
         Text('${rep.cout.toInt()} DA',
           style: const TextStyle(fontWeight: FontWeight.w700,
             color: AppColors.reparation, fontSize: 14)),
-        Text('${rep.dateRep.day.toString().padLeft(2,"0")}/'
-             '${rep.dateRep.month.toString().padLeft(2,"0")}/'
+        Text('${rep.dateRep.day.toString().padLeft(2,'0')}/'
+             '${rep.dateRep.month.toString().padLeft(2,'0')}/'
              '${rep.dateRep.year}',
           style: AppTextStyles.label),
       ]),

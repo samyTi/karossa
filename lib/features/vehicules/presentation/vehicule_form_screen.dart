@@ -36,6 +36,7 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
   final _prixLocCtrl    = TextEditingController();
   final _notesCtrl      = TextEditingController();
   final _etatVehiculeCtrl = TextEditingController();
+  final _flespiDeviceIdCtrl = TextEditingController();
 
   String _carburant = 'essence';
   String _boite     = 'manuelle';
@@ -56,7 +57,22 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
       _loadVehicule();
     }
   }
-
+  @override
+  void dispose() {
+    _marqueCtrl.dispose();
+    _modeleCtrl.dispose();
+    _anneeCtrl.dispose();
+    _couleurCtrl.dispose();
+    _immatCtrl.dispose();
+    _chassisCtrl.dispose();
+    _kmCtrl.dispose();
+    _prixVenteCtrl.dispose();
+    _prixLocCtrl.dispose();
+    _notesCtrl.dispose();
+    _etatVehiculeCtrl.dispose();
+    _flespiDeviceIdCtrl.dispose();
+    super.dispose();
+  }
   Future<void> _loadProfiles() async {
     final data = await ref.read(supabaseClientProvider).from('profiles').select();
     setState(() {
@@ -74,45 +90,44 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
         .eq('id', widget.vehiculeId!)
         .single();
     
-    if (data != null) {
-      setState(() {
-        _marqueCtrl.text = data['marque'] ?? '';
-        _modeleCtrl.text = data['modele'] ?? '';
-        _anneeCtrl.text = (data['annee'] ?? '').toString();
-        _couleurCtrl.text = data['couleur'] ?? '';
-        _immatCtrl.text = data['immatriculation'] ?? '';
-        _chassisCtrl.text = data['num_chassis'] ?? '';
-        _kmCtrl.text = (data['kilometrage'] ?? 0).toString();
-        _prixVenteCtrl.text = (data['prix_vente'] ?? '').toString();
-        _prixLocCtrl.text = (data['prix_location_jour'] ?? '').toString();
-        _notesCtrl.text = data['notes'] ?? '';
-        _etatVehiculeCtrl.text = data['etat_vehicule'] ?? '';
-        _carburant = data['carburant'] ?? 'essence';
-        _boite = data['boite'] ?? 'manuelle';
-        _statut = data['statut'] ?? 'disponible';
-        
-        // Charger les photos existantes
-        final photos = data['photos'] as List<dynamic>?;
-        if (photos != null) {
-          _photosUrls.addAll(photos.map((p) => p.toString()));
-        }
-      });
+    setState(() {
+      _marqueCtrl.text = data['marque'] ?? '';
+      _modeleCtrl.text = data['modele'] ?? '';
+      _anneeCtrl.text = (data['annee'] ?? '').toString();
+      _couleurCtrl.text = data['couleur'] ?? '';
+      _immatCtrl.text = data['immatriculation'] ?? '';
+      _chassisCtrl.text = data['num_chassis'] ?? '';
+      _kmCtrl.text = (data['kilometrage'] ?? 0).toString();
+      _prixVenteCtrl.text = (data['prix_vente'] ?? '').toString();
+      _prixLocCtrl.text = (data['prix_location_jour'] ?? '').toString();
+      _notesCtrl.text = data['notes'] ?? '';
+      _etatVehiculeCtrl.text = data['etat_vehicule'] ?? '';
+      _carburant = data['carburant'] ?? 'essence';
+      _boite = data['boite'] ?? 'manuelle';
+      _statut = data['statut'] ?? 'disponible';
       
-      // Charger les propriétaires
-      final proprietesData = await ref.read(supabaseClientProvider)
-          .from('vehicule_proprietes')
-          .select()
-          .eq('vehicule_id', widget.vehiculeId!);
+      final flespiId = data['flespi_device_id'];
+      _flespiDeviceIdCtrl.text = flespiId != null ? flespiId.toString() : '';
       
-      if (proprietesData != null) {
-        setState(() {
-          for (final prop in proprietesData) {
-            _proprietes[prop['proprietaire_id']] = (prop['part_pct'] as num).toDouble();
-          }
-        });
+      // Charger les photos existantes
+      final photos = data['photos'] as List<dynamic>?;
+      if (photos != null) {
+        _photosUrls.addAll(photos.map((p) => p.toString()));
       }
-    }
-  }
+    });
+    
+    // Charger les propriétaires
+    final proprietesData = await ref.read(supabaseClientProvider)
+        .from('vehicule_proprietes')
+        .select()
+        .eq('vehicule_id', widget.vehiculeId!);
+    
+    setState(() {
+      for (final prop in proprietesData) {
+        _proprietes[prop['proprietaire_id']] = (prop['part_pct'] as num).toDouble();
+      }
+    });
+      }
 
   double get _totalParts =>
     _proprietes.values.fold(0.0, (s, v) => s + v);
@@ -123,7 +138,6 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
     return Scaffold(
       appBar: CustomAppBar(
         title: isEdit ? 'Modifier vehicule' : 'Nouveau vehicule',
-        showBackButton: true,
         showHomeButton: true,
       ),
       body: Form(
@@ -132,7 +146,7 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
           padding: const EdgeInsets.all(16),
           children: [
             // ── Photos ───────────────────────────────────────
-            _SectionTitle('Photos'),
+            const _SectionTitle('Photos'),
             SizedBox(
               height: 110,
               child: ListView(
@@ -161,7 +175,7 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _SectionTitle('Informations generales'),
+                const _SectionTitle('Informations generales'),
                 TextButton.icon(
                   icon: const Icon(Icons.document_scanner, size: 18),
                   label: const Text('Scanner carte grise'),
@@ -196,14 +210,40 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
                 ctrl: _couleurCtrl, label: 'Couleur')),
             ]),
             const SizedBox(height: 10),
-            Row(children: [
-              Expanded(child: _Field(
-                ctrl: _immatCtrl,
-                label: 'Immatriculation')),
-              const SizedBox(width: 10),
-              Expanded(child: _Field(
-                ctrl: _chassisCtrl, label: 'N° Chassis')),
-            ]),
+            Row(
+              children: [
+                Expanded(
+                  child: _Field(
+                    ctrl: _immatCtrl,
+                    label: 'Immatriculation',
+                  ),
+                ),
+                const SizedBox(width: 10),
+
+                Expanded(
+                  child: _Field(
+                    ctrl: _chassisCtrl,
+                    label: 'N° Chassis',
+                  ),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 10),
+
+            _Field(
+              ctrl: _flespiDeviceIdCtrl,
+              label: 'Flespi Device ID (GPS)',
+              type: TextInputType.number,
+              validator: (v) {
+                if (v != null &&
+                    v.isNotEmpty &&
+                    int.tryParse(v) == null) {
+                  return 'ID invalide';
+                }
+                return null;
+              },
+            ),
             const SizedBox(height: 10),
             _Field(
               ctrl: _kmCtrl, label: 'Kilometrage',
@@ -236,7 +276,7 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
             const SizedBox(height: 20),
 
             // ── Prix ─────────────────────────────────────────
-            _SectionTitle('Prix'),
+            const _SectionTitle('Prix'),
             Row(children: [
               Expanded(child: _Field(
                 ctrl: _prixLocCtrl,
@@ -253,23 +293,26 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
             const SizedBox(height: 20),
 
             // ── Statut ────────────────────────────────────────
-            _SectionTitle('Statut initial'),
+            const _SectionTitle('Statut initial'),
             _Dropdown(
               label: 'Statut',
               value: _statut,
               items: const {
-                'disponible':  'Disponible',
-                'reparation':  'En reparation',
-                'reserve':     'Reserve',
+                'disponible':   'Disponible',
+                'reserve':      'Reserve',
+                'reparation':   'En reparation',
+                'loue':         'Loué',
+                'vendu':        'Vendu',
+                'maintenance':  'Maintenance',
               },
               onChanged: (v) => setState(() => _statut = v!),
             ),
             const SizedBox(height: 20),
 
             // ── Propriétaires ────────────────────────────────
-            _SectionTitle('Proprietaire(s) et parts (%)'),
+            const _SectionTitle('Proprietaire(s) et parts (%)'),
             if (_allProfiles.isEmpty)
-              const Center(child: const CircularProgressIndicator())
+              const Center(child: CircularProgressIndicator())
             else
               ..._allProfiles
                 .where((p) => p.role != UserRole.gerant)
@@ -298,9 +341,9 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
                   )),
               ],
             ),
-            if (_totalParts > 0 && _totalParts != 100)
-              Padding(
-                padding: const EdgeInsets.only(top: 4),
+            if (_totalParts > 0 && _totalParts.round() != 100)
+              const Padding(
+                padding: EdgeInsets.only(top: 4),
                 child: Text(
                   'La somme des parts doit etre egale a 100%',
                   style: TextStyle(
@@ -309,7 +352,7 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
             const SizedBox(height: 20),
 
             // ── État du véhicule ────────────────────────────────
-            _SectionTitle('État du véhicule'),
+            const _SectionTitle('État du véhicule'),
             const Text(
               'Décrivez tout ce qui ne fonctionne pas ou est endommagé (pannes, rayures, bosses…). '
               'Ces informations seront intégrées au contrat de location.',
@@ -329,7 +372,7 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
             const SizedBox(height: 20),
 
             // ── Notes internes ─────────────────────────────────
-            _SectionTitle('Notes internes'),
+            const _SectionTitle('Notes internes'),
             TextFormField(
               controller: _notesCtrl,
               maxLines: 3,
@@ -404,8 +447,8 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const CircularProgressIndicator(),
-                  const SizedBox(height: 16),
+                  CircularProgressIndicator(),
+                  SizedBox(height: 16),
                   Text('Analyse de la carte grise...'),
                 ],
               ),
@@ -433,8 +476,9 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
           // Normaliser le type de carburant
           if (data.energie != null) {
             final energie = data.energie!.toLowerCase();
-            if (energie.contains('essence')) _carburant = 'essence';
-            else if (energie.contains('diesel') || energie.contains('gas')) _carburant = 'diesel';
+            if (energie.contains('essence')) {
+              _carburant = 'essence';
+            } else if (energie.contains('diesel') || energie.contains('gas')) _carburant = 'diesel';
             else if (energie.contains('electrique') || energie.contains('elec')) _carburant = 'electrique';
             else if (energie.contains('hybride')) _carburant = 'hybride';
             else if (energie.contains('glp') || energie.contains('gaz')) _carburant = 'glp';
@@ -541,6 +585,8 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
                                  ? null : _notesCtrl.text.trim(),
         'etat_vehicule':       _etatVehiculeCtrl.text.trim().isEmpty
                                  ? null : _etatVehiculeCtrl.text.trim(),
+        'flespi_device_id':   _flespiDeviceIdCtrl.text.trim().isEmpty
+                                 ? null : int.tryParse(_flespiDeviceIdCtrl.text.trim()),
         'created_by':          ref.read(supabaseClientProvider).auth.currentUser?.id,
       };
       final proprietesList = _proprietes.entries.map((e) => {
@@ -649,7 +695,7 @@ class _Dropdown extends StatelessWidget {
   Widget build(BuildContext context) => DropdownButtonFormField<String>(
     initialValue: value,
     decoration: InputDecoration(labelText: label),
-    items: items.entries.map((e) => DropdownMenuItem(
+    items: items.entries.map((e) => DropdownMenuItem<String>(
       value: e.key, child: Text(e.value))).toList(),
     onChanged: onChanged,
   );
@@ -741,13 +787,13 @@ class _AddPhotoBtn extends StatelessWidget {
         border: Border.all(color: AppColors.border, width: 1.5),
       ),
       child: uploading
-        ? const Center(child: const CircularProgressIndicator())
+        ? const Center(child: CircularProgressIndicator())
         : const Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(Icons.add_a_photo_outlined,
                 color: AppColors.textSecondary, size: 28),
-              const SizedBox(height: 4),
+              SizedBox(height: 4),
               Text('Ajouter', style: TextStyle(
                 fontSize: 11, color: AppColors.textSecondary)),
             ],

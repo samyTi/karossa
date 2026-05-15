@@ -41,8 +41,8 @@ class _State extends ConsumerState<LocationFormScreen> {
 
   // ignore: unused_element
   String _fmt(DateTime d) =>
-    '${d.day.toString().padLeft(2,"0")}/'
-    '${d.month.toString().padLeft(2,"0")}/${d.year}';
+    '${d.day.toString().padLeft(2,'0')}/'
+    '${d.month.toString().padLeft(2,'0')}/${d.year}';
 
   @override
   void initState() {
@@ -70,7 +70,6 @@ class _State extends ConsumerState<LocationFormScreen> {
     return Scaffold(
       appBar: const CustomAppBar(
         title: 'Nouveau contrat de location',
-        showBackButton: true,
         showHomeButton: true,
       ),
       body: Form(
@@ -82,18 +81,21 @@ class _State extends ConsumerState<LocationFormScreen> {
             Text('Vehicule', style: AppTextStyles.heading3),
             const SizedBox(height: 8),
             DropdownButtonFormField<Vehicule>(
-              value: _vehicule != null && vehicules.contains(_vehicule!) 
+              initialValue: _vehicule != null && vehicules.contains(_vehicule!) 
                 ? _vehicule 
                 : null,
               decoration: const InputDecoration(
                 labelText: 'Selectionner le vehicule'),
               hint: const Text('Choisir un véhicule'),
-              items: vehicules.map((v) => DropdownMenuItem<Vehicule>(
-                value: v,
-                child: Text('${v.displayName}'
-                  '${v.prixLocationJour != null
-                    ? " - ${v.prixLocationJour!.toInt()} DA/j" : ""}'),
-              )).toList(),
+              items: vehicules.map((v) {
+                final prix = v.prixLocationJour != null
+                    ? ' - ${v.prixLocationJour!.toInt()} DA/j'
+                    : '';
+                return DropdownMenuItem<Vehicule>(
+                  value: v,
+                  child: Text('${v.displayName}$prix'),
+                );
+              }).toList(),
               onChanged: (v) => setState(() => _vehicule = v),
               validator: (v) => v == null ? 'Requis' : null,
             ),
@@ -106,7 +108,7 @@ class _State extends ConsumerState<LocationFormScreen> {
               initialValue: _client,
               decoration: const InputDecoration(
                 labelText: 'Selectionner le client'),
-              items: clients.map((c) => DropdownMenuItem(
+              items: clients.map((c) => DropdownMenuItem<Client>(
                 value: c,
                 child: Row(children: [
                   Text(c.fullName),
@@ -152,12 +154,14 @@ class _State extends ConsumerState<LocationFormScreen> {
                     lastDate: DateTime.now()
                       .add(const Duration(days: 365)),
                   );
-                  if (d != null) setState(() {
+                  if (d != null) {
+                    setState(() {
                     _debut = d;
                     if (_fin.isBefore(_debut)) {
                       _fin = _debut.add(const Duration(days: 1));
                     }
                   });
+                  }
                 },
               )),
               const SizedBox(width: 10),
@@ -277,7 +281,7 @@ class _State extends ConsumerState<LocationFormScreen> {
       AppLogger.d('DEBUG FORM: vehicule_id=${_vehicule!.id}, client_id=${_client!.id}');
       
       final location = await repo.create(data);
-      // Mettre le véhicule en statut "loué"
+      // Mettre le véhicule en statut 'loué'
       await ref.read(supabaseClientProvider).from('vehicules')
         .update({'statut': 'loue'})
         .eq('id', _vehicule!.id);
@@ -353,8 +357,8 @@ class _DateTile extends StatelessWidget {
   const _DateTile({
     required this.label, required this.date, required this.onTap});
   String get _fmt =>
-    '${date.day.toString().padLeft(2,"0")}/'
-    '${date.month.toString().padLeft(2,"0")}/${date.year}';
+    '${date.day.toString().padLeft(2,'0')}/'
+    '${date.month.toString().padLeft(2,'0')}/${date.year}';
   @override
   Widget build(BuildContext context) => InkWell(
     onTap: onTap,

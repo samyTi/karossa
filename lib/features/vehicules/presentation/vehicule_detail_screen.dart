@@ -11,6 +11,8 @@ import '../../../core/extensions/money_extensions.dart';
 import '../../../shared/widgets/status_badge.dart';
 import '../domain/vehicule_model.dart';
 import 'vehicules_provider.dart';
+// ✅ Import corrigé : presentation/ au lieu de widgets/
+import '../../gps/presentation/gps_position_card.dart';
 
 class VehiculeDetailScreen extends ConsumerWidget {
   final String id;
@@ -59,14 +61,13 @@ class _Body extends StatelessWidget {
                   : const _NoPhoto(),
             ),
             actions: [
-              // Bouton GPS — visible seulement si un boîtier est associé
-              if (vehicule.traccarDeviceId != null)
-                IconButton(
-                  icon: const Icon(Icons.gps_fixed),
-                  tooltip: 'Localiser',
-                  onPressed: () => context.push(
-                    '/gps/map?vehiculeId=${vehicule.id}',
-                  ),
+              // ✅ Bouton GPS — utilise GpsAppBarButton (IconButton → BottomSheet)
+              // Utilise flespiDeviceId (pas flespiDeviceId)
+              if (vehicule.flespiDeviceId != null)
+                GpsAppBarButton(
+                  vehiculeId:     vehicule.id,
+                  flespiDeviceId: vehicule.flespiDeviceId!,
+                  vehiculeNom:    '${vehicule.marque} ${vehicule.modele}',
                 ),
               IconButton(
                 icon: const Icon(Icons.history),
@@ -244,7 +245,6 @@ class _SmartActionsRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        // ── Analyse financière ─────────────────────────────────────────
         Expanded(
           child: _SmartCard(
             icon: Icons.analytics_outlined,
@@ -257,8 +257,6 @@ class _SmartActionsRow extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 10),
-
-        // ── Demander à l'IA ────────────────────────────────────────────
         Expanded(
           child: _SmartCard(
             icon: Icons.auto_awesome_outlined,
@@ -283,8 +281,6 @@ class _SmartActionsRow extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 10),
-
-        // ── Contrat PDF ────────────────────────────────────────────────
         Expanded(
           child: _SmartCard(
             icon: Icons.picture_as_pdf_outlined,
@@ -300,7 +296,6 @@ class _SmartActionsRow extends StatelessWidget {
   }
 }
 
-/// Carte d'action rapide avec icône + libellé
 class _SmartCard extends StatelessWidget {
   final IconData icon;
   final String label;
@@ -377,7 +372,6 @@ class _PhotoGalleryState extends State<_PhotoGallery> {
             errorWidget: (_, __, ___) => const _NoPhoto(),
           ),
         ),
-        // Indicateur de pages
         if (widget.photos.length > 1)
           Positioned(
             bottom: 50,
@@ -428,14 +422,14 @@ class _KmAlerteWidget extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(Icons.warning_amber_rounded,
+          const Icon(Icons.warning_amber_rounded,
               color: AppColors.reparation, size: 20),
           const SizedBox(width: 10),
           Expanded(
             child: Text(
               'Kilométrage proche du seuil d\'alerte '
               '(${vehicule.kilometrage} / ${vehicule.kmAlerteSeuil} km)',
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 12,
                 color: AppColors.reparation,
                 fontWeight: FontWeight.w500,
@@ -548,7 +542,7 @@ class _InfoRow extends StatelessWidget {
   Widget build(BuildContext context) => Container(
         padding: const EdgeInsets.symmetric(
             horizontal: 14, vertical: 10),
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           border: Border(
             bottom: BorderSide(
                 color: AppColors.border, width: 0.5),

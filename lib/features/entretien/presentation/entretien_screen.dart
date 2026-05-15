@@ -28,7 +28,7 @@ class EntretienScreen extends ConsumerWidget {
         foregroundColor: Colors.white,
       ),
       body: alertes.when(
-        loading: () => const Center(child: const CircularProgressIndicator()),
+        loading: () => const Center(child: CircularProgressIndicator()),
         error:   (e, _) => Center(child: Text('Erreur: $e')),
         data:    (list) => list.isEmpty
           ? const EmptyState(
@@ -92,18 +92,18 @@ class _AlerteCard extends StatelessWidget {
             if (alerte.dateEcheance != null)
               Text(
                 'Echeance : '
-                '${alerte.dateEcheance!.day.toString().padLeft(2, "0")}/'
-                '${alerte.dateEcheance!.month.toString().padLeft(2, "0")}/'
+                '${alerte.dateEcheance!.day.toString().padLeft(2, '0')}/'
+                '${alerte.dateEcheance!.month.toString().padLeft(2, '0')}/'
                 '${alerte.dateEcheance!.year}',
                 style: AppTextStyles.label),
             if (alerte.kmEcheance != null)
               Text('A ${alerte.kmEcheance} km', style: AppTextStyles.label),
             if (alerte.isExpired)
-              Text('EXPIRE',
+              const Text('EXPIRE',
                 style: TextStyle(color: AppColors.retard,
                   fontSize: 11, fontWeight: FontWeight.w700)),
             if (alerte.isUrgent && !alerte.isExpired)
-              Text('URGENT - moins de 7 jours',
+              const Text('URGENT - moins de 7 jours',
                 style: TextStyle(color: AppColors.accent,
                   fontSize: 11, fontWeight: FontWeight.w700)),
           ],

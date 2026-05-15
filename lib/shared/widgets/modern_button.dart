@@ -165,7 +165,7 @@ class _ModernButtonState extends State<ModernButton> with SingleTickerProviderSt
         child: AnimatedContainer(
           duration: ThemeTokens.normalDuration,
           width: widget.isFullWidth ? double.infinity : widget.width,
-          padding: EdgeInsets.symmetric(
+          padding: const EdgeInsets.symmetric(
             horizontal: AppSpacing.md,
             vertical: AppSpacing.sm,
           ),

@@ -44,7 +44,7 @@ class AppTheme {
           shadowColor: AppColors.primary.withValues(alpha: 0.1),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-            side: BorderSide(color: AppColors.border, width: 0.5),
+            side: const BorderSide(color: AppColors.border, width: 0.5),
           ),
           margin: const EdgeInsets.all(AppSpacing.sm),
         ),
@@ -55,23 +55,23 @@ class AppTheme {
           fillColor: AppColors.inputFill,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-            borderSide: BorderSide(color: AppColors.border, width: 1),
+            borderSide: const BorderSide(color: AppColors.border),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-            borderSide: BorderSide(color: AppColors.border, width: 1),
+            borderSide: const BorderSide(color: AppColors.border),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-            borderSide: BorderSide(color: AppColors.primary, width: 2),
+            borderSide: const BorderSide(color: AppColors.primary, width: 2),
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-            borderSide: BorderSide(color: AppColors.error, width: 1),
+            borderSide: const BorderSide(color: AppColors.error),
           ),
           focusedErrorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-            borderSide: BorderSide(color: AppColors.error, width: 2),
+            borderSide: const BorderSide(color: AppColors.error, width: 2),
           ),
           contentPadding: const EdgeInsets.symmetric(
             horizontal: AppSpacing.md,
@@ -82,7 +82,7 @@ class AppTheme {
             fontSize: 14,
             fontWeight: FontWeight.w500,
           ),
-          hintStyle: TextStyle(
+          hintStyle: const TextStyle(
             color: AppColors.textHint,
             fontSize: 14,
           ),
@@ -135,7 +135,7 @@ class AppTheme {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
             ),
-            side: BorderSide(color: AppColors.primary, width: 1.5),
+            side: const BorderSide(color: AppColors.primary, width: 1.5),
             textStyle: GoogleFonts.nunito(
               fontSize: 15,
               fontWeight: FontWeight.w600,
@@ -159,13 +159,13 @@ class AppTheme {
           indicatorColor: AppColors.primary.withValues(alpha: 0.1),
           labelTextStyle: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.selected)) {
-              return TextStyle(
+              return const TextStyle(
                 color: AppColors.primary,
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
               );
             }
-            return TextStyle(
+            return const TextStyle(
               color: AppColors.textSecondary,
               fontSize: 12,
             );
@@ -173,7 +173,7 @@ class AppTheme {
         ),
         
         // Divider
-        dividerTheme: DividerThemeData(
+        dividerTheme: const DividerThemeData(
           color: AppColors.border,
           space: 1,
           thickness: 0.5,
@@ -183,7 +183,7 @@ class AppTheme {
         chipTheme: ChipThemeData(
           backgroundColor: AppColors.inputFill,
           selectedColor: AppColors.primary.withValues(alpha: 0.15),
-          labelStyle: TextStyle(
+          labelStyle: const TextStyle(
             color: AppColors.textPrimary,
             fontSize: 13,
             fontWeight: FontWeight.w500,
@@ -194,12 +194,12 @@ class AppTheme {
           ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-            side: BorderSide(color: AppColors.border),
+            side: const BorderSide(color: AppColors.border),
           ),
         ),
         
         // Bottom Sheet
-        bottomSheetTheme: BottomSheetThemeData(
+        bottomSheetTheme: const BottomSheetThemeData(
           backgroundColor: AppColors.surface,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(top: Radius.circular(AppSpacing.radiusXxl)),
@@ -238,7 +238,7 @@ class AppTheme {
         ),
         
         // Progress Indicator
-        progressIndicatorTheme: ProgressIndicatorThemeData(
+        progressIndicatorTheme: const ProgressIndicatorThemeData(
           color: AppColors.primary,
           linearTrackColor: AppColors.inputFill,
           circularTrackColor: AppColors.inputFill,
@@ -315,7 +315,7 @@ class AppTheme {
             color: AppColors.textPrimaryDark,
             letterSpacing: 0.2,
           ),
-          iconTheme: IconThemeData(color: AppColors.textPrimaryDark, size: 24),
+          iconTheme: const IconThemeData(color: AppColors.textPrimaryDark, size: 24),
         ),
         
         // Cartes
@@ -325,7 +325,7 @@ class AppTheme {
           shadowColor: Colors.black.withValues(alpha: 0.3),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-            side: BorderSide(color: AppColors.borderDark, width: 0.5),
+            side: const BorderSide(color: AppColors.borderDark, width: 0.5),
           ),
           margin: const EdgeInsets.all(AppSpacing.sm),
         ),
@@ -336,34 +336,34 @@ class AppTheme {
           fillColor: AppColors.inputFillDark,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-            borderSide: BorderSide(color: AppColors.borderDark, width: 1),
+            borderSide: const BorderSide(color: AppColors.borderDark),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-            borderSide: BorderSide(color: AppColors.borderDark, width: 1),
+            borderSide: const BorderSide(color: AppColors.borderDark),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-            borderSide: BorderSide(color: AppColors.primaryDarkMode, width: 2),
+            borderSide: const BorderSide(color: AppColors.primaryDarkMode, width: 2),
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-            borderSide: BorderSide(color: AppColors.error, width: 1),
+            borderSide: const BorderSide(color: AppColors.error),
           ),
           focusedErrorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-            borderSide: BorderSide(color: AppColors.error, width: 2),
+            borderSide: const BorderSide(color: AppColors.error, width: 2),
           ),
           contentPadding: const EdgeInsets.symmetric(
             horizontal: AppSpacing.md,
             vertical: AppSpacing.sm,
           ),
-          labelStyle: TextStyle(
+          labelStyle: const TextStyle(
             color: AppColors.textSecondaryDark,
             fontSize: 14,
             fontWeight: FontWeight.w500,
           ),
-          hintStyle: TextStyle(
+          hintStyle: const TextStyle(
             color: AppColors.textHintDark,
             fontSize: 14,
           ),
@@ -416,7 +416,7 @@ class AppTheme {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
             ),
-            side: BorderSide(color: AppColors.primaryDarkMode, width: 1.5),
+            side: const BorderSide(color: AppColors.primaryDarkMode, width: 1.5),
             textStyle: GoogleFonts.nunito(
               fontSize: 15,
               fontWeight: FontWeight.w600,
@@ -425,7 +425,7 @@ class AppTheme {
         ),
         
         // Divider
-        dividerTheme: DividerThemeData(
+        dividerTheme: const DividerThemeData(
           color: AppColors.borderDark,
           space: 1,
           thickness: 0.5,
@@ -435,7 +435,7 @@ class AppTheme {
         chipTheme: ChipThemeData(
           backgroundColor: AppColors.surfaceDarkSecondary,
           selectedColor: AppColors.primaryDarkMode.withValues(alpha: 0.2),
-          labelStyle: TextStyle(
+          labelStyle: const TextStyle(
             color: AppColors.textPrimaryDark,
             fontSize: 13,
             fontWeight: FontWeight.w500,
@@ -446,12 +446,12 @@ class AppTheme {
           ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-            side: BorderSide(color: AppColors.borderDark),
+            side: const BorderSide(color: AppColors.borderDark),
           ),
         ),
         
         // Bottom Sheet
-        bottomSheetTheme: BottomSheetThemeData(
+        bottomSheetTheme: const BottomSheetThemeData(
           backgroundColor: AppColors.surfaceDark,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(top: Radius.circular(AppSpacing.radiusXxl)),
@@ -481,7 +481,7 @@ class AppTheme {
         // Snackbar
         snackBarTheme: SnackBarThemeData(
           backgroundColor: AppColors.surfaceDarkSecondary,
-          contentTextStyle: TextStyle(color: AppColors.textPrimaryDark),
+          contentTextStyle: const TextStyle(color: AppColors.textPrimaryDark),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
           ),
@@ -490,7 +490,7 @@ class AppTheme {
         ),
         
         // Progress Indicator
-        progressIndicatorTheme: ProgressIndicatorThemeData(
+        progressIndicatorTheme: const ProgressIndicatorThemeData(
           color: AppColors.primaryDarkMode,
           linearTrackColor: AppColors.surfaceDarkSecondary,
           circularTrackColor: AppColors.surfaceDarkSecondary,

@@ -27,7 +27,7 @@ class EchangesScreen extends ConsumerWidget {
         foregroundColor: Colors.white,
       ),
       body: echanges.when(
-        loading: () => const Center(child: const CircularProgressIndicator()),
+        loading: () => const Center(child: CircularProgressIndicator()),
         error:   (e, _) => Center(child: Text('Erreur: $e')),
         data:    (list) => list.isEmpty
           ? const EmptyState(icon: Icons.swap_horiz, message: 'Aucun échange enregistré')
@@ -52,8 +52,8 @@ class _EchangeCard extends StatelessWidget {
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           Text(echange.clientNom ?? '—', style: AppTextStyles.heading3),
-          Text('${echange.dateEchange.day.toString().padLeft(2,"0")}/'
-               '${echange.dateEchange.month.toString().padLeft(2,"0")}/'
+          Text('${echange.dateEchange.day.toString().padLeft(2,'0')}/'
+               '${echange.dateEchange.month.toString().padLeft(2,'0')}/'
                '${echange.dateEchange.year}',
             style: AppTextStyles.label),
         ]),

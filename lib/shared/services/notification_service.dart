@@ -59,7 +59,7 @@ class NotificationService {
 
   /// Affiche une notification d'information
   void info(String message, {VoidCallback? onTap}) {
-    show(message: message, type: NotificationType.info, onTap: onTap);
+    show(message: message, onTap: onTap);
   }
 
   void _hideCurrent() {
@@ -167,7 +167,6 @@ class _ToastWidgetState extends State<_ToastWidget>
               ],
               border: Border.all(
                 color: _getBorderColor(),
-                width: 1,
               ),
             ),
             child: Row(

@@ -75,7 +75,7 @@ class CatalogueScreen extends ConsumerWidget {
         // Filtres par statut
         _StatutFilterBar(selected: statut),
         Expanded(child: vehicules.when(
-          loading: () => const VehiculesListShimmer(itemCount: 5),
+          loading: () => const VehiculesListShimmer(),
           error:   (e, _) => Center(child: Text('Erreur: $e')),
           data:    (list) => list.isEmpty
             ? EmptyState(
@@ -212,9 +212,8 @@ class _VehiculeCard extends StatelessWidget {
                 StatusBadge(statut: vehicule.statut),
               ]),
               const SizedBox(height: 4),
-              Text('${vehicule.kilometrage} km'
-                + (vehicule.immatriculation != null
-                   ? ' · ${vehicule.immatriculation}' : ''),
+              Text('${vehicule.kilometrage} km${vehicule.immatriculation != null
+                   ? ' · ${vehicule.immatriculation}' : ''}',
                 style: AppTextStyles.bodySecondary),
               const SizedBox(height: 4),
               Wrap(spacing: 6, children: [
@@ -282,11 +281,11 @@ void _showFiltersDialog(BuildContext context, WidgetRef ref) {
     context: context,
     builder: (context) => StatefulBuilder(
       builder: (context, setDialogState) => AlertDialog(
-        title: Row(
+        title: const Row(
           children: [
-            const Icon(Icons.filter_list, size: 24),
-            const SizedBox(width: 8),
-            const Text('Filtres avancés'),
+            Icon(Icons.filter_list, size: 24),
+            SizedBox(width: 8),
+            Text('Filtres avancés'),
           ],
         ),
         content: SingleChildScrollView(

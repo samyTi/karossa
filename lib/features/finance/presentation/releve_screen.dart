@@ -44,7 +44,7 @@ class _State extends ConsumerState<ReleveScreen> {
     if (_associeId == null) return;
     setState(() => _loading = true);
     try {
-      final debut = DateTime(_annee, _mois, 1).toIso8601String();
+      final debut = DateTime(_annee, _mois).toIso8601String();
       final fin   = DateTime(_annee, _mois + 1, 0, 23, 59)
         .toIso8601String();
       final data  = await ref.read(supabaseClientProvider)
@@ -101,7 +101,7 @@ class _State extends ConsumerState<ReleveScreen> {
             Expanded(child: DropdownButtonFormField<int>(
               initialValue: _mois,
               decoration: const InputDecoration(labelText: 'Mois'),
-              items: List.generate(12, (i) => DropdownMenuItem(
+              items: List.generate(12, (i) => DropdownMenuItem<int>(
                 value: i + 1,
                 child: Text(_moisLabels[i]))).toList(),
               onChanged: (v) {
@@ -114,7 +114,7 @@ class _State extends ConsumerState<ReleveScreen> {
               initialValue: _annee,
               decoration: const InputDecoration(labelText: 'Annee'),
               items: [2024, 2025, 2026].map((y) =>
-                DropdownMenuItem(
+                DropdownMenuItem<int>(
                   value: y, child: Text('$y'))).toList(),
               onChanged: (v) {
                 setState(() => _annee = v!);
@@ -126,7 +126,7 @@ class _State extends ConsumerState<ReleveScreen> {
 
         if (_loading)
           const Expanded(
-            child: Center(child: const CircularProgressIndicator()))
+            child: Center(child: CircularProgressIndicator()))
         else if (_repartitions.isEmpty)
           const Expanded(
             child: Center(
@@ -155,7 +155,7 @@ class _State extends ConsumerState<ReleveScreen> {
                 final r   = _repartitions[i];
                 final veh = r['locations']?['vehicules'];
                 final nom = veh != null
-                  ? '${veh["marque"]} ${veh["modele"]}' : '---';
+                  ? '${veh['marque']} ${veh['modele']}' : '---';
                 final mnt = (r['montant'] as num).toDouble();
                 final pct = (r['pourcentage'] as num).toDouble();
                 final pctStr = pct.toStringAsFixed(1);
@@ -197,7 +197,7 @@ class _State extends ConsumerState<ReleveScreen> {
               fontSize: 20,
               fontWeight: pw.FontWeight.bold)),
           pw.Text('$moisLabel $_annee - $nomAssoc',
-            style: pw.TextStyle(
+            style: const pw.TextStyle(
               fontSize: 13, color: PdfColors.grey600)),
           pw.Divider(thickness: 1),
           pw.SizedBox(height: 12),
@@ -206,7 +206,7 @@ class _State extends ConsumerState<ReleveScreen> {
             data: _repartitions.map((r) {
               final veh = r['locations']?['vehicules'];
               final nom = veh != null
-                ? '${veh["marque"]} ${veh["modele"]}' : '---';
+                ? '${veh['marque']} ${veh['modele']}' : '---';
               final pct = (r['pourcentage'] as num)
                 .toStringAsFixed(1);
               final mnt = fmt.format(

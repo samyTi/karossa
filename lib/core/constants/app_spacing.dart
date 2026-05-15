@@ -10,7 +10,7 @@ class AppSpacing {
   // ═══════════════════════════════════════════════════════════════
 
   /// 2px - Micro espacements (icônes inline, badges)
-  static const double xxsWith = 2.0;
+  static const double xxxs = 2.0;
 
   /// 4px - Très petit espacement
   static const double xxs = 4.0;
@@ -139,16 +139,16 @@ class AppSpacing {
   // ═══════════════════════════════════════════════════════════════
 
   /// 100ms - Animation très rapide
-  static const Duration durationFast = const Duration(milliseconds: 100);
+  static const Duration durationFast = Duration(milliseconds: 100);
 
   /// 200ms - Animation rapide (micro-interactions)
-  static const Duration durationNormal = const Duration(milliseconds: 200);
+  static const Duration durationNormal = Duration(milliseconds: 200);
 
   /// 300ms - Animation standard
-  static const Duration durationMedium = const Duration(milliseconds: 300);
+  static const Duration durationMedium = Duration(milliseconds: 300);
 
   /// 500ms - Animation lente (transitions de page)
-  static const Duration durationSlow = const Duration(milliseconds: 500);
+  static const Duration durationSlow = Duration(milliseconds: 500);
 
   // ═══════════════════════════════════════════════════════════════
   // TAILLES D'ÉLÉMENTS

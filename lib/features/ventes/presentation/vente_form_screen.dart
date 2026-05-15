@@ -47,7 +47,6 @@ class _State extends ConsumerState<VenteFormScreen> {
     return Scaffold(
       appBar: const CustomAppBar(
         title: 'Nouveau bon de vente',
-        showBackButton: true,
         showHomeButton: true,
       ),
       body: Form(
@@ -61,12 +60,15 @@ class _State extends ConsumerState<VenteFormScreen> {
               initialValue: _vehicule,
               decoration: const InputDecoration(
                 labelText: 'Selectionner le vehicule'),
-              items: vehicules.map((v) => DropdownMenuItem(
-                value: v,
-                child: Text('${v.displayName}'
-                  '${v.prixVente != null
-                    ? " - ${v.prixVente!.toInt()} DA" : ""}'),
-              )).toList(),
+              items: vehicules.map((v) {
+                final prix = v.prixVente != null
+                    ? ' - ${v.prixVente!.toInt()} DA'
+                    : '';
+                return DropdownMenuItem<Vehicule>(
+                  value: v,
+                  child: Text('${v.displayName}$prix'),
+                );
+              }).toList(),
               onChanged: (v) {
                 setState(() {
                   _vehicule = v;
@@ -85,7 +87,7 @@ class _State extends ConsumerState<VenteFormScreen> {
               initialValue: _client,
               decoration: const InputDecoration(
                 labelText: 'Selectionner le client'),
-              items: clients.map((c) => DropdownMenuItem(
+              items: clients.map((c) => DropdownMenuItem<Client>(
                 value: c, child: Text(c.fullName))).toList(),
               onChanged: (c) => setState(() => _client = c),
               validator: (v) => v == null ? 'Requis' : null,

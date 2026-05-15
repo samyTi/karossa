@@ -10,13 +10,11 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:intl/date_symbol_data_local.dart';
 import 'app.dart';
-import 'core/utils/notification_service.dart';
 import 'core/config/app_config.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  AppConfig.validate();
-  await initializeDateFormatting('fr', null);
+  await initializeDateFormatting('fr');
   await Supabase.initialize(
     url: AppConfig.supabaseUrl,
     anonKey: AppConfig.supabaseAnonKey,
@@ -24,7 +22,6 @@ Future<void> main() async {
 
   await Hive.initFlutter();
   tz.initializeTimeZones();
-  await NotificationService.init();
 
   runApp(const ProviderScope(child: GarageApp()));
 }

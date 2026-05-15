@@ -20,7 +20,7 @@ final revenusKpiProvider = FutureProvider.autoDispose<Map<String, double>>((ref)
 
   final now      = DateTime.now();
 
-  final debut    = DateTime(now.year, now.month, 1).toIso8601String().substring(0, 10);
+  final debut    = DateTime(now.year, now.month).toIso8601String().substring(0, 10);
 
   final fin      = DateTime(now.year, now.month + 1, 0).toIso8601String().substring(0, 10);
 
@@ -40,7 +40,7 @@ final revenusKpiProvider = FutureProvider.autoDispose<Map<String, double>>((ref)
 
     .eq('statut', 'termine');
 
-  double locRevenu = locs.fold(0.0, (s, l) => s + ((l['montant_brut'] as num?)?.toDouble() ?? 0));
+  final double locRevenu = locs.fold(0.0, (s, l) => s + ((l['montant_brut'] as num?)?.toDouble() ?? 0));
 
 
 
@@ -56,7 +56,7 @@ final revenusKpiProvider = FutureProvider.autoDispose<Map<String, double>>((ref)
 
     .lte('date_vente', fin);
 
-  double venteRevenu = ventes.fold(0.0, (s, v) => s + ((v['prix_vente'] as num?)?.toDouble() ?? 0));
+  final double venteRevenu = ventes.fold(0.0, (s, v) => s + ((v['prix_vente'] as num?)?.toDouble() ?? 0));
 
 
 
@@ -72,7 +72,7 @@ final revenusKpiProvider = FutureProvider.autoDispose<Map<String, double>>((ref)
 
     .lte('date_rep', fin);
 
-  double depenses = reps.fold(0.0, (s, r) => s + ((r['cout'] as num?)?.toDouble() ?? 0));
+  final double depenses = reps.fold(0.0, (s, r) => s + ((r['cout'] as num?)?.toDouble() ?? 0));
 
 
 
@@ -160,8 +160,6 @@ class KpiRevenusRow extends ConsumerWidget {
 
               color: AppColors.secondary,
 
-              trend: null,
-
             )),
 
             const SizedBox(width: 10),
@@ -175,8 +173,6 @@ class KpiRevenusRow extends ConsumerWidget {
               icon: Icons.sell_outlined,
 
               color: AppColors.primary,
-
-              trend: null,
 
             )),
 
@@ -196,8 +192,6 @@ class KpiRevenusRow extends ConsumerWidget {
 
               color: AppColors.retard,
 
-              trend: null,
-
             )),
 
             const SizedBox(width: 10),
@@ -211,8 +205,6 @@ class KpiRevenusRow extends ConsumerWidget {
               icon: Icons.account_balance_wallet_outlined,
 
               color: (kpi['net']! >= 0) ? AppColors.secondary : AppColors.retard,
-
-              trend: null,
 
               highlighted: true,
 
@@ -250,9 +242,7 @@ class _KpiCard extends StatelessWidget {
 
     required this.label, required this.value,
 
-    required this.icon, required this.color,
-
-    this.trend, this.highlighted = false,
+    required this.icon, required this.color, this.trend, this.highlighted = false,
 
   });
 

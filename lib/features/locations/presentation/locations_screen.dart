@@ -94,7 +94,7 @@ class _LocationsScreenState extends ConsumerState<LocationsScreen> {
 
         Expanded(child: actives.when(
 
-          loading: () => const LocationsListShimmer(itemCount: 5),
+          loading: () => const LocationsListShimmer(),
 
           error: (e, _) => Center(child: Text('Erreur: $e')),
 
@@ -210,9 +210,9 @@ class _LocationCard extends StatelessWidget {
 
               'Retour : '
 
-              '${location.dateFinPrevue.day.toString().padLeft(2,"0")}/'
+              '${location.dateFinPrevue.day.toString().padLeft(2,'0')}/'
 
-              '${location.dateFinPrevue.month.toString().padLeft(2,"0")}/'
+              '${location.dateFinPrevue.month.toString().padLeft(2,'0')}/'
 
               '${location.dateFinPrevue.year}',
 

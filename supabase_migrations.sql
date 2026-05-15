@@ -13,9 +13,9 @@ CREATE TABLE IF NOT EXISTS showroom_settings (
   email       text,
   rc          text,
   logo_url    text,
-  traccar_url      text,
-  traccar_user     text,
-  traccar_password text,
+  flespi_url      text,
+  flespi_user     text,
+  flespi_password text,
   created_at  timestamptz DEFAULT now(),
   updated_at  timestamptz DEFAULT now()
 );
@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS contract_templates (
 
 -- ── 3. Colonne GPS sur les véhicules ──────────────────
 ALTER TABLE vehicules
-  ADD COLUMN IF NOT EXISTS traccar_device_id integer,
+  ADD COLUMN IF NOT EXISTS flespi_device_id integer,
   ADD COLUMN IF NOT EXISTS km_alerte_seuil   integer DEFAULT 150000;
 
 -- ── 4. Alertes GPS ────────────────────────────────────

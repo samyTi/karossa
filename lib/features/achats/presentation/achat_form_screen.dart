@@ -7,7 +7,6 @@ import '../../../core/theme/app_text_styles.dart';
 import '../../../shared/widgets/custom_app_bar.dart';
 import '../../vehicules/domain/vehicule_model.dart';
 import '../../vehicules/presentation/vehicules_provider.dart';
-import '../data/achats_repository.dart';
 import 'achats_provider.dart';
 import '../../../core/services/contrat_generator_service.dart';
 import '../../../shared/services/notification_service.dart';
@@ -60,7 +59,6 @@ class _AchatFormScreenState extends ConsumerState<AchatFormScreen> {
     return Scaffold(
       appBar: const CustomAppBar(
         title: 'Nouvel achat / reprise',
-        showBackButton: true,
         showHomeButton: true,
       ),
       body: Form(
@@ -132,7 +130,7 @@ class _AchatFormScreenState extends ConsumerState<AchatFormScreen> {
               DropdownButtonFormField<Vehicule>(
                 initialValue: _vehiculeExistant,
                 decoration: const InputDecoration(labelText: 'Sélectionner le véhicule'),
-                items: vehicules.map((v) => DropdownMenuItem(
+                items: vehicules.map((v) => DropdownMenuItem<Vehicule>(
                   value: v,
                   child: Text(v.displayName),
                 )).toList(),
@@ -222,7 +220,7 @@ class _AchatFormScreenState extends ConsumerState<AchatFormScreen> {
                     children: [
                       Text('Économie négociée', style: AppTextStyles.bodySecondary),
                       Text('${eco.toInt()} DA',
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontWeight: FontWeight.w700,
                           color: AppColors.secondary,
                           fontSize: 14,
@@ -282,7 +280,7 @@ class _AchatFormScreenState extends ConsumerState<AchatFormScreen> {
                 onPressed: _loading ? null : _submit,
                 icon: _loading
                   ? const SizedBox(width: 18, height: 18,
-                      child: const CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
                   : const Icon(Icons.shopping_cart),
                 label: Text(_loading ? 'Enregistrement...' : 'Enregistrer l\'achat'),
               ),

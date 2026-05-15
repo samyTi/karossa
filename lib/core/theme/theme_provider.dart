@@ -19,8 +19,9 @@ class ThemeModeNotifier extends StateNotifier<ThemeMode> {
   Future<void> _load() async {
     final prefs = await SharedPreferences.getInstance();
     final saved = prefs.getString(_kThemeKey);
-    if (saved == 'dark') state = ThemeMode.dark;
-    else if (saved == 'system') state = ThemeMode.system;
+    if (saved == 'dark') {
+      state = ThemeMode.dark;
+    } else if (saved == 'system') state = ThemeMode.system;
     else state = ThemeMode.light;
   }
 

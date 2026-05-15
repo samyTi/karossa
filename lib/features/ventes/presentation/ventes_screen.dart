@@ -61,7 +61,7 @@ class _VentesScreenState extends ConsumerState<VentesScreen> {
           // Liste
           Expanded(
             child: ventesAsync.when(
-              loading: () => const Center(child: const CircularProgressIndicator()),
+              loading: () => const Center(child: CircularProgressIndicator()),
               error: (e, _) => Center(child: Text('Erreur: $e')),
               data: (ventes) {
                 final filtered = _filtreStatut == null

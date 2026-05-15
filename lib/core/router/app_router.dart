@@ -4,7 +4,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../features/contrats/presentation/screens/contrats_screen.dart';
+import '../../features/contrats/presentation/contrats_screen.dart';
 import '../../features/auth/presentation/auth_provider.dart';
 import '../../features/auth/presentation/login_screen.dart';
 import '../../features/auth/presentation/profile_screen.dart';
@@ -36,10 +36,15 @@ import '../../features/admin/presentation/settings_screen.dart';
 import '../../features/achats/presentation/achats_screen.dart';
 import '../../features/achats/presentation/achat_form_screen.dart';
 import '../../features/achats/presentation/achat_detail_screen.dart';
-import '../../features/gps/presentation/gps_map_screen.dart';
+// ✅ gps_map_screen renommé en gps_fleet_map_screen
+import '../../features/gps/presentation/gps_fleet_map_screen.dart';
 import '../../features/gps/presentation/gps_alerts_screen.dart';
+// ✅ gps_screen déplacé de screens/ vers presentation/
+import '../../features/gps/presentation/gps_screen.dart';
 import '../../features/notifications/presentation/notifications_screen.dart';
 import '../../features/ai/presentation/ai_chat_screen.dart';
+import '../../features/contrats/presentation/contract_articles_admin_screen.dart';
+
 
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authStateProvider);
@@ -78,19 +83,16 @@ final routerProvider = Provider<GoRouter>((ref) {
             ),
           ]),
 
-      // ── Véhicules ───────────────────────────────────────────────────
-      // IMPORTANT : 'new' DOIT être déclaré avant ':id'
-      StatefulShellBranch(routes: [
+          // ── Véhicules ───────────────────────────────────────────────────
+          StatefulShellBranch(routes: [
             GoRoute(
               path: '/vehicules',
               builder: (_, __) => const CatalogueScreen(),
               routes: [
-                // ✅ Routes statiques en premier
                 GoRoute(
                   path: 'new',
                   builder: (_, __) => const VehiculeFormScreen(),
                 ),
-                // ✅ Route dynamique en dernier
                 GoRoute(
                   path: ':id',
                   builder: (_, s) => VehiculeDetailScreen(
@@ -116,7 +118,6 @@ final routerProvider = Provider<GoRouter>((ref) {
                         vehiculeNom: s.uri.queryParameters['nom'] ?? 'Véhicule',
                       ),
                     ),
-                    // ── Route pour les contrats d'un véhicule ──────────────
                     GoRoute(
                       path: 'contracts',
                       builder: (_, s) => VehiculeContractsScreen(
@@ -172,7 +173,7 @@ final routerProvider = Provider<GoRouter>((ref) {
             ),
           ]),
 
-          // ── Plus (menu secondaire modernisé) ────────────────────────────
+          // ── Plus (menu secondaire) ───────────────────────────────────────
           StatefulShellBranch(routes: [
             GoRoute(
               path: '/more',
@@ -255,12 +256,12 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/caisse',
         builder: (_, __) => const CaisseScreen(),
       ),
-GoRoute(
-  path: '/notifications',
-  builder: (_, __) => const NotificationsScreen(),
-),
-GoRoute(
-  path: '/releve',
+      GoRoute(
+        path: '/notifications',
+        builder: (_, __) => const NotificationsScreen(),
+      ),
+      GoRoute(
+        path: '/releve',
         builder: (_, __) => const ReleveScreen(),
       ),
       GoRoute(
@@ -271,8 +272,12 @@ GoRoute(
       // ── GPS ───────────────────────────────────────────────────────────────
       GoRoute(
         path: '/gps',
-        builder: (_, __) => const GpsMapScreen(),
+        builder: (_, __) => const GpsScreen(),      // ✅ liste véhicules GPS
         routes: [
+          GoRoute(
+            path: 'map',
+            builder: (_, __) => const GpsFleetMapScreen(), // ✅ carte flotte
+          ),
           GoRoute(
             path: 'alertes',
             builder: (_, __) => const GpsAlertsScreen(),
@@ -300,6 +305,10 @@ GoRoute(
       GoRoute(
         path: '/admin/settings',
         builder: (_, __) => const SettingsScreen(),
+      ),
+      GoRoute(
+        path: '/admin/contract-articles',
+        builder: (_, __) => const ContractArticlesAdminScreen(),
       ),
     ],
   );
@@ -346,6 +355,3 @@ class _MainScaffold extends StatelessWidget {
     ),
   );
 }
-
-// Note: L'ancien _MoreScreen a été remplacé par ModernMenuScreen
-// Les classes ci-dessous sont conservées pour référence mais ne sont plus utilisées

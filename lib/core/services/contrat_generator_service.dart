@@ -37,6 +37,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../features/contrats/data/contrats_repository.dart';
 import '../../features/contrats/presentation/contrat_location_pdf_generator.dart';
+import '../../features/contrats/data/contract_articles_repository.dart';
 import '../../features/contrats/presentation/contrat_vente_pdf_generator.dart';
 import '../providers/supabase_provider.dart';
 import '../utils/app_logger.dart';
@@ -52,8 +53,8 @@ class ContratGeneratorService {
   static Future<Map<String, dynamic>> _settings() async {
     AppLogger.d('[PDF][Settings] ► Chargement des paramètres showroom…');
     final s = await ContratsRepository(Supabase.instance.client).getShowroomSettings();
-    AppLogger.d('[PDF][Settings] ✔ nom="${s['nom']}" adresse="${s['adresse']}" '
-        'tel="${s['tel']}" email="${s['email']}" rc="${s['rc']}" couleur="${s['couleur']}"');
+    AppLogger.d('[PDF][Settings] ✔ nom=${s["nom"]} adresse=${s["adresse"]} '
+    'tel=${s["tel"]} email=${s["email"]} rc=${s["rc"]} couleur=${s["couleur"]}');
     return s;
   }
 
@@ -121,8 +122,8 @@ class ContratGeneratorService {
 
       final clientMap   = locationData['clients']   as Map<String, dynamic>? ?? {};
       final vehiculeMap = locationData['vehicules']  as Map<String, dynamic>? ?? {};
-      AppLogger.d('[PDF][Location] ► Client   : nom="${clientMap['nom']}" prenom="${clientMap['prenom']}" '
-          'tel="${clientMap['telephone']}" permis="${clientMap['num_permis']}"');
+      AppLogger.d('[PDF][Location] ► Client   : nom=${clientMap["nom"]} prenom=${clientMap["prenom"]} '
+    'tel=${clientMap["telephone"]} permis=${clientMap["num_permis"]}');
       AppLogger.d('[PDF][Location] ► Véhicule : ${vehiculeMap['marque']} ${vehiculeMap['modele']} '
           'immat="${vehiculeMap['immatriculation']}"');
 
@@ -174,7 +175,34 @@ class ContratGeneratorService {
       );
 
       AppLogger.d('[PDF][Location] ► Construction du document PDF…');
-      final doc   = await ContratLocationPdfGenerator.buildAsync(dto);
+      // Charger les articles dynamiques (fallback silencieux si table vide)
+      final articlesRepo = ContractArticlesRepository(Supabase.instance.client);
+      final articlesGeneraux = await articlesRepo.getArticlesResolus(
+        contratType: 'location',
+        contextData: {
+          'client_nom':     clientMap['nom']            ?? '',
+          'client_prenom':  clientMap['prenom']         ?? '',
+          'client_cni':     clientMap['num_cni']        ?? '',
+          'client_tel':     clientMap['telephone']      ?? '',
+          'vehicule_marque':vehiculeMap['marque']       ?? '',
+          'vehicule_modele':vehiculeMap['modele']       ?? '',
+          'vehicule_immat': vehiculeMap['immatriculation'] ?? '',
+          'date_debut':     locationData['date_debut']  ?? '',
+          'date_fin':       locationData['date_fin_prevue'] ?? '',
+          'prix_jour':      locationData['prix_jour']?.toString() ?? '',
+          'nb_jours':       locationData['nb_jours']?.toString()  ?? '',
+          'montant_total':  locationData['montant_brut']?.toString() ?? '',
+          'caution':        locationData['caution']?.toString()   ?? '',
+          'showroom_nom':   s['nom']     ?? '',
+          'showroom_adresse': s['adresse'] ?? '',
+          'showroom_tel':   s['tel']     ?? '',
+        },
+      );
+
+      final doc = await ContratLocationPdfGenerator.buildAsync(
+        dto,
+        articlesGeneraux: articlesGeneraux,
+      );
       final bytes = await doc.save();
       AppLogger.d('[PDF][Location] ✔ PDF généré : ${bytes.length} bytes');
       final id    = (locationData['id'] as String? ?? 'loc').substring(0, 8);
@@ -345,7 +373,8 @@ class ContratGeneratorService {
     AppLogger.d('[PDF][Achat] ════════════════════════════════════');
     AppLogger.d('[PDF][Achat] ► Début génération — id=$achatId');
     AppLogger.d('[PDF][Achat] ► Données reçues : ${achatData.keys.toList()}');
-    AppLogger.d('[PDF][Achat] ► Vendeur  : "${achatData['vendeur_nom']}" tel="${achatData['vendeur_tel']}"');
+    // Corrected version:
+    AppLogger.d('[PDF][generateAndShareLocation] ► Reconstruction Map depuis Location id=${achatData['id']}');
     AppLogger.d('[PDF][Achat] ► Véhicule : ${achatData['vehicule_marque']} ${achatData['vehicule_modele']} '
         '${achatData['vehicule_annee']} immat="${achatData['vehicule_immat']}" km=${achatData['vehicule_km']}');
     AppLogger.d('[PDF][Achat] ► Prix achat: ${achatData['prix_achat']} — date: ${achatData['date_achat']}');
@@ -396,7 +425,7 @@ class ContratGeneratorService {
           ? (paiements.first['mode'] as String? ?? 'especes')
           : 'especes';
 
-      AppLogger.d('[PDF][Vente/Map] ► Client   : "${clientMap['nom']}" "${clientMap['prenom']}" '
+      AppLogger.d('[PDF][Vente/Map] ► Client   : "${clientMap['nom']}' '${clientMap['prenom']}" '
           'tel="${clientMap['telephone']}"');
       AppLogger.d('[PDF][Vente/Map] ► Véhicule : ${vehiculeMap['marque']} ${vehiculeMap['modele']} '
           'immat="${vehiculeMap['immatriculation']}" km=${vehiculeMap['kilometrage']}');

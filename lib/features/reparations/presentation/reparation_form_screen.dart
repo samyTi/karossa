@@ -44,7 +44,7 @@ class _State extends ConsumerState<ReparationFormScreen> {
             DropdownButtonFormField<Vehicule>(
               initialValue: _vehicule,
               decoration: const InputDecoration(labelText: 'Vehicule'),
-              items: vehicules.map((v) => DropdownMenuItem(
+              items: vehicules.map((v) => DropdownMenuItem<Vehicule>(
                 value: v, child: Text(v.displayName))).toList(),
               onChanged: (v) => setState(() => _vehicule = v),
               validator: (v) => v == null ? 'Requis' : null,
@@ -53,7 +53,7 @@ class _State extends ConsumerState<ReparationFormScreen> {
             DropdownButtonFormField<String>(
               initialValue: _type,
               decoration: const InputDecoration(labelText: 'Type'),
-              items: List.generate(_types.length, (i) => DropdownMenuItem(
+              items: List.generate(_types.length, (i) => DropdownMenuItem<String>(
                 value: _types[i], child: Text(_typesLabels[i]))).toList(),
               onChanged: (v) => setState(() => _type = v!),
             ),
@@ -152,9 +152,11 @@ class _State extends ConsumerState<ReparationFormScreen> {
           const SnackBar(content: Text('Reparation enregistree')));
       }
     } catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Erreur: $e'),
           backgroundColor: AppColors.retard));
+      }
     } finally {
       if (mounted) setState(() => _loading = false);
     }

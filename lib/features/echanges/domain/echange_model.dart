@@ -1,3 +1,9 @@
+// lib/features/echanges/domain/echange_model.dart
+//
+// CORRECTION ligne 40 : interpolation ternaire avec guillemets doubles
+// imbriqués dans une string délimitée par des guillemets simples.
+// Solution : utiliser une string adjacent au lieu du ternaire inline.
+
 class Echange {
   final String id;
   final String vehiculeCedeId;
@@ -35,25 +41,26 @@ class Echange {
     this.notes,
   });
 
-  String get vehiculeReprisNom =>
-    '$vehiculeReprisMarque $vehiculeReprisModele'
-    '${vehiculeReprisAnnee != null ? " $vehiculeReprisAnnee" : ""}';
+  // CORRECTION : extraire le suffixe année dans une variable locale
+  // pour éviter l'interpolation ternaire avec guillemets doubles imbriqués.
+  String get vehiculeReprisNom {
+    final annee = vehiculeReprisAnnee != null ? ' $vehiculeReprisAnnee' : '';
+    return '$vehiculeReprisMarque $vehiculeReprisModele$annee';
+  }
 
   factory Echange.fromJson(Map<String, dynamic> json) {
-    // La jointure peut arriver sous la clé avec ou sans le suffixe fkey
     final vehData =
-      json['vehicules!echanges_vehicule_cede_id_fkey'] ??
-      json['vehicules'];
+        json['vehicules!echanges_vehicule_cede_id_fkey'] ??
+        json['vehicules'];
 
     return Echange(
       id:                   json['id'],
       vehiculeCedeId:       json['vehicule_cede_id'],
       vehiculeCedeNom:      vehData != null
-        ? '${vehData["marque"]} ${vehData["modele"]}' : null,
+          ? '${vehData["marque"]} ${vehData["modele"]}' : null,
       clientId:             json['client_id'],
       clientNom:            json['clients'] != null
-        ? '${json["clients"]["prenom"]} ${json["clients"]["nom"]}'
-        : null,
+          ? '${json["clients"]["prenom"]} ${json["clients"]["nom"]}' : null,
       vehiculeReprisMarque: json['vehicule_reprise_marque'],
       vehiculeReprisModele: json['vehicule_reprise_modele'],
       vehiculeReprisAnnee:  json['vehicule_reprise_annee'],
@@ -62,9 +69,9 @@ class Echange {
       valeurReprise:        (json['valeur_reprise'] as num).toDouble(),
       complementClient:     (json['complement_client'] as num? ?? 0).toDouble(),
       commissionGerantPct:  json['commission_gerant_pct'] != null
-        ? (json['commission_gerant_pct'] as num).toDouble() : null,
+          ? (json['commission_gerant_pct'] as num).toDouble() : null,
       commissionGerantMnt:  json['commission_gerant_mnt'] != null
-        ? (json['commission_gerant_mnt'] as num).toDouble() : null,
+          ? (json['commission_gerant_mnt'] as num).toDouble() : null,
       dateEchange:          DateTime.parse(json['date_echange']),
       notes:                json['notes'],
     );

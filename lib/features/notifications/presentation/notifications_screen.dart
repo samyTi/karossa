@@ -26,8 +26,8 @@ class NotificationsScreen extends ConsumerWidget {
         ],
       ),
       body: notifs.when(
-        loading: () => const Center(child: const CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('Erreur : \$e')),
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (e, _) => const Center(child: Text('Erreur : \$e')),
         data: (list) => list.isEmpty
           ? const Center(
               child: Column(
@@ -35,7 +35,7 @@ class NotificationsScreen extends ConsumerWidget {
                 children: [
                   Icon(Icons.notifications_none,
                     size: 64, color: AppColors.textHint),
-                  const SizedBox(height: 12),
+                  SizedBox(height: 12),
                   Text('Aucune notification',
                     style: TextStyle(color: AppColors.textSecondary)),
                 ],

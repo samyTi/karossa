@@ -50,7 +50,6 @@ class _EchangeFormScreenState extends ConsumerState<EchangeFormScreen> {
     return Scaffold(
       appBar: const CustomAppBar(
         title: 'Dossier echange / reprise',
-        showBackButton: true,
         showHomeButton: true,
       ),
       body: Form(
@@ -63,7 +62,7 @@ class _EchangeFormScreenState extends ConsumerState<EchangeFormScreen> {
             DropdownButtonFormField<Vehicule>(
               initialValue: _vehiculeCede,
               decoration: const InputDecoration(labelText: 'Selectionner le vehicule'),
-              items: vehicules.map((v) => DropdownMenuItem(
+              items: vehicules.map((v) => DropdownMenuItem<Vehicule>(
                 value: v, child: Text(v.displayName))).toList(),
               onChanged: (v) => setState(() => _vehiculeCede = v),
               validator: (v) => v == null ? 'Requis' : null,
@@ -74,7 +73,7 @@ class _EchangeFormScreenState extends ConsumerState<EchangeFormScreen> {
             DropdownButtonFormField<Client>(
               initialValue: _client,
               decoration: const InputDecoration(labelText: 'Selectionner le client'),
-              items: clients.map((c) => DropdownMenuItem(
+              items: clients.map((c) => DropdownMenuItem<Client>(
                 value: c, child: Text(c.fullName))).toList(),
               onChanged: (c) => setState(() => _client = c),
               validator: (v) => v == null ? 'Requis' : null,

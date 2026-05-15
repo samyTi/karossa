@@ -248,7 +248,7 @@ class Profile {
   String get fullName => '$prenom $nom';
 
   String get initials =>
-    '${prenom.isNotEmpty ? prenom[0] : ""}${nom.isNotEmpty ? nom[0] : ""}'.toUpperCase();
+    '${prenom.isNotEmpty ? prenom[0] : ''}${nom.isNotEmpty ? nom[0] : ''}'.toUpperCase();
 
   Color get color {
     // Couleur basée sur le RÔLE, pas le prénom - plus professionnel et réutilisable
@@ -313,7 +313,7 @@ class Profile {
   /// Vérifie si l'utilisateur peut créer des ventes
   bool get canCreateVente => hasPermission(Permission.ventesCreate);
 
-  /// Vérifie si l'utilisateur est en mode "lecture seule" (proprietaire_vehicule)
+  /// Vérifie si l'utilisateur est en mode 'lecture seule' (proprietaire_vehicule)
   bool get isViewOnly => role == UserRole.proprietaire_vehicule;
 
   factory Profile.fromJson(Map<String, dynamic> json) => Profile(

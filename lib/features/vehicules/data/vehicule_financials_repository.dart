@@ -3,7 +3,6 @@
 //   - Si BACKEND_URL est défini → appel au backend Next.js
 //   - Sinon → calcul direct via Supabase (mode standalone Flutter)
 
-import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../shared/services/backend_api_service.dart';
 import '../domain/vehicule_financials.dart';
@@ -15,7 +14,7 @@ class VehiculeFinancialsRepository {
   final SupabaseClient _client;
 
 
-  static const _backendUrl = String.fromEnvironment('BACKEND_URL', defaultValue: '');
+  static const _backendUrl = String.fromEnvironment('BACKEND_URL');
   bool get _useBackend => _backendUrl.isNotEmpty;
 
   Future<VehiculeFinancials> getFinancials(String vehiculeId) async {

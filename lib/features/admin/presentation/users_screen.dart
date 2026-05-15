@@ -17,11 +17,10 @@ class UsersScreen extends ConsumerWidget {
     return Scaffold(
       appBar: const CustomAppBar(
         title: 'Gérer les utilisateurs',
-        showBackButton: true,
         showHomeButton: true,
       ),
       body: usersAsync.when(
-        loading: () => const ClientsListShimmer(itemCount: 5), // Réutilise le shimmer des clients
+        loading: () => const ClientsListShimmer(), // Réutilise le shimmer des clients
         error: (e, _) => Center(child: Text('Erreur: $e')),
         data: (users) => Column(
           children: [
@@ -51,7 +50,7 @@ class UsersScreen extends ConsumerWidget {
                     icon: Icons.check_circle,
                     color: AppColors.secondary,
                   ),
-                  _StatItem(
+                  const _StatItem(
                     label: 'Inactifs',
                     value: '0',
                     icon: Icons.cancel,
@@ -225,7 +224,7 @@ class _UserCard extends StatelessWidget {
                   child: Row(
                     children: [
                       Icon(Icons.edit, size: 18),
-                      const SizedBox(width: 8),
+                      SizedBox(width: 8),
                       Text('Modifier'),
                     ],
                   ),

@@ -49,14 +49,18 @@ final vehiculesFiltresProvider =
       if (statut != null && v.statut != statut) return false;
       if (marque != null &&
           marque.isNotEmpty &&
-          !v.marque.toLowerCase().contains(marque.toLowerCase())) return false;
+          !v.marque.toLowerCase().contains(marque.toLowerCase())) {
+        return false;
+      }
       if (anneeMin != null && v.annee < anneeMin) return false;
       if (anneeMax != null && v.annee > anneeMax) return false;
       if (prixMax != null) {
         final pv = v.prixVente;
         final pl = v.prixLocationJour;
         if ((pv == null || pv > prixMax) &&
-            (pl == null || pl > prixMax)) return false;
+            (pl == null || pl > prixMax)) {
+          return false;
+        }
       }
       if (search.isNotEmpty) {
         final hay = '${v.displayName} ${v.immatriculation ?? ''}'.toLowerCase();

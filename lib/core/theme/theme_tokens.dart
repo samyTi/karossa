@@ -14,7 +14,6 @@ class ThemeTokens {
 
   static ColorScheme get lightColorScheme => ColorScheme.fromSeed(
         seedColor: AppColors.primary,
-        brightness: Brightness.light,
         primary: AppColors.primary,
         onPrimary: Colors.white,
         primaryContainer: AppColors.primaryLight,
@@ -133,7 +132,7 @@ class ThemeTokens {
   // ═══════════════════════════════════════════════════════════════
 
   /// Gradient primaire (pour app bar, boutons)
-  static LinearGradient get primaryGradient => LinearGradient(
+  static LinearGradient get primaryGradient => const LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
         colors: [
@@ -143,7 +142,7 @@ class ThemeTokens {
       );
 
   /// Gradient secondaire
-  static LinearGradient get secondaryGradient => LinearGradient(
+  static LinearGradient get secondaryGradient => const LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
         colors: [
@@ -153,7 +152,7 @@ class ThemeTokens {
       );
 
   /// Gradient accent
-  static LinearGradient get accentGradient => LinearGradient(
+  static LinearGradient get accentGradient => const LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
         colors: [
@@ -173,7 +172,7 @@ class ThemeTokens {
       );
 
   /// Gradient sombre (pour dark mode)
-  static LinearGradient get darkGradient => LinearGradient(
+  static LinearGradient get darkGradient => const LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
         colors: [
@@ -187,15 +186,14 @@ class ThemeTokens {
   // ═══════════════════════════════════════════════════════════════
 
   /// Bordure subtile (pour cartes)
-  static BorderSide get subtleBorder => BorderSide(
+  static BorderSide get subtleBorder => const BorderSide(
         color: AppColors.border,
         width: 0.5,
       );
 
   /// Bordure standard
-  static BorderSide get standardBorder => BorderSide(
+  static BorderSide get standardBorder => const BorderSide(
         color: AppColors.border,
-        width: 1,
       );
 
   /// Bordure focus (pour inputs actifs)
@@ -205,7 +203,7 @@ class ThemeTokens {
       );
 
   /// Bordure d'erreur
-  static BorderSide get errorBorder => BorderSide(
+  static BorderSide get errorBorder => const BorderSide(
         color: AppColors.error,
         width: 1.5,
       );

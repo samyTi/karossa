@@ -59,7 +59,7 @@ class ModernTextField extends StatefulWidget {
 class _ModernTextFieldState extends State<ModernTextField> {
   late bool _obscureText;
   bool _isFocused = false;
-  bool _hasError = false;
+  final bool _hasError = false;
   final FocusNode _focusNode = FocusNode();
 
   @override
@@ -151,12 +151,12 @@ class _ModernTextFieldState extends State<ModernTextField> {
             onFieldSubmitted: widget.onSubmitted,
             decoration: InputDecoration(
               hintText: widget.hint,
-              hintStyle: TextStyle(
+              hintStyle: const TextStyle(
                 color: AppColors.textHint,
                 fontSize: 14,
               ),
               suffixText: widget.suffixText,
-              suffixStyle: TextStyle(
+              suffixStyle: const TextStyle(
                 color: AppColors.textSecondary,
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
@@ -199,7 +199,6 @@ class _ModernTextFieldState extends State<ModernTextField> {
                     vertical: AppSpacing.sm,
                   ),
               border: InputBorder.none,
-              errorText: null, // Géré manuellement en dessous
               errorBorder: InputBorder.none,
               enabledBorder: InputBorder.none,
               focusedBorder: InputBorder.none,
@@ -211,7 +210,7 @@ class _ModernTextFieldState extends State<ModernTextField> {
             padding: const EdgeInsets.only(top: AppSpacing.xxs),
             child: Text(
               widget.errorText ?? '',
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 12,
                 color: AppColors.error,
                 fontWeight: FontWeight.w500,
@@ -295,24 +294,24 @@ class _ModernSearchFieldState extends State<ModernSearchField> {
         controller: widget.controller,
         focusNode: _focusNode,
         autofocus: widget.autofocus,
-        style: TextStyle(
+        style: const TextStyle(
           fontSize: 15,
           color: AppColors.textPrimary,
         ),
         decoration: InputDecoration(
           hintText: widget.hint ?? 'Rechercher...',
-          hintStyle: TextStyle(
+          hintStyle: const TextStyle(
             color: AppColors.textHint,
             fontSize: 14,
           ),
-          prefixIcon: Icon(
+          prefixIcon: const Icon(
             Icons.search,
             size: 20,
             color: AppColors.textSecondary,
           ),
           suffixIcon: _hasText
               ? IconButton(
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.clear,
                     size: 18,
                     color: AppColors.textSecondary,
@@ -367,7 +366,7 @@ class ModernDropdownField extends StatefulWidget {
 }
 
 class _ModernDropdownFieldState extends State<ModernDropdownField> {
-  bool _isFocused = false;
+  final bool _isFocused = false;
 
   @override
   Widget build(BuildContext context) {
@@ -415,10 +414,10 @@ class _ModernDropdownFieldState extends State<ModernDropdownField> {
                 : null,
           ),
           child: DropdownButtonFormField<String>(
-            value: widget.value,
+            initialValue: widget.value,
             decoration: InputDecoration(
               hintText: widget.hint,
-              hintStyle: TextStyle(
+              hintStyle: const TextStyle(
                 color: AppColors.textHint,
                 fontSize: 14,
               ),
@@ -434,7 +433,6 @@ class _ModernDropdownFieldState extends State<ModernDropdownField> {
                 vertical: AppSpacing.sm,
               ),
               border: InputBorder.none,
-              errorText: null,
             ),
             items: widget.items.entries
                 .map((e) => DropdownMenuItem(
@@ -443,12 +441,12 @@ class _ModernDropdownFieldState extends State<ModernDropdownField> {
                     ))
                 .toList(),
             onChanged: widget.enabled ? widget.onChanged : null,
-            icon: Icon(
+            icon: const Icon(
               Icons.keyboard_arrow_down,
               color: AppColors.textSecondary,
               size: 20,
             ),
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 15,
               color: AppColors.textPrimary,
             ),
@@ -464,7 +462,7 @@ class _ModernDropdownFieldState extends State<ModernDropdownField> {
             padding: const EdgeInsets.only(top: AppSpacing.xxs),
             child: Text(
               widget.errorText!,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 12,
                 color: AppColors.error,
                 fontWeight: FontWeight.w500,

@@ -13,7 +13,6 @@ import '../../../core/theme/app_text_styles.dart';
 import '../../../core/extensions/money_extensions.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/modern_app_bar.dart';
-import '../../echanges/data/echanges_repository.dart';
 import '../../echanges/presentation/echanges_provider.dart';
 import '../../echanges/domain/echange_model.dart';
 
@@ -40,16 +39,15 @@ class VehiculeContractsScreen extends ConsumerWidget {
     return Scaffold(
       appBar: const ModernAppBar(
         title: 'Contrats du véhicule',
-        showBackButton: true,
         showHomeButton: true,
       ),
       body: contractsAsync.when(
-        loading: () => const Center(child: const CircularProgressIndicator()),
+        loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.error_outline, size: 48, color: AppColors.error),
+              const Icon(Icons.error_outline, size: 48, color: AppColors.error),
               const SizedBox(height: 16),
               Text(
                 'Erreur lors du chargement des contrats',
@@ -84,7 +82,7 @@ class _ContractsBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (contracts.isEmpty) {
-      return EmptyState(
+      return const EmptyState(
         icon: Icons.picture_as_pdf_outlined,
         message: 'Aucun contrat trouvé pour ce véhicule',
       );
@@ -153,7 +151,7 @@ class _ContractCard extends StatelessWidget {
                       color: AppColors.secondary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: Icon(
+                    child: const Icon(
                       Icons.swap_horiz,
                       color: AppColors.secondary,
                       size: 20,
@@ -175,7 +173,7 @@ class _ContractCard extends StatelessWidget {
                       ],
                     ),
                   ),
-                  Icon(
+                  const Icon(
                     Icons.arrow_forward_ios,
                     size: 14,
                     color: AppColors.textHint,
@@ -261,9 +259,9 @@ class _ContractOptionsSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: AppColors.surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -386,11 +384,11 @@ class _ContractOptionsSheet extends StatelessWidget {
             pw.SizedBox(height: 20),
             pw.Text(
               'Numéro de contrat: ${contract.id}',
-              style: pw.TextStyle(fontSize: 12),
+              style: const pw.TextStyle(fontSize: 12),
             ),
               pw.Text(
                 'Date: ${DateFormat('dd/MM/yyyy').format(contract.dateEchange)}',
-                style: pw.TextStyle(fontSize: 12),
+                style: const pw.TextStyle(fontSize: 12),
               ),
             pw.SizedBox(height: 30),
             pw.Text(
@@ -401,9 +399,9 @@ class _ContractOptionsSheet extends StatelessWidget {
               ),
             ),
             pw.SizedBox(height: 10),
-            pw.Text('Véhicule cédé: ${contract.vehiculeCedeNom ?? "---"}'),
+            pw.Text('Véhicule cédé: ${contract.vehiculeCedeNom ?? '---'}'),
             pw.Text('Véhicule repris: ${contract.vehiculeReprisNom}'),
-            pw.Text('Client: ${contract.clientNom ?? "---"}'),
+            pw.Text('Client: ${contract.clientNom ?? '---'}'),
             pw.SizedBox(height: 10),
             pw.Text(
               'Valeur de reprise: ${contract.valeurReprise.toInt()} DA',
@@ -492,15 +490,14 @@ class _PdfPreviewScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: ModernAppBar(
+      appBar: const ModernAppBar(
         title: 'Aperçu du contrat',
-        showBackButton: true,
       ),
       body: FutureBuilder(
         future: _generatePdf(contract),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: const CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasError) {
             return Center(child: Text('Erreur: ${snapshot.error}'));
@@ -525,12 +522,11 @@ class _PdfPreviewScreen extends StatelessWidget {
             // Header
             pw.Container(
               padding: const pw.EdgeInsets.all(20),
-              decoration: pw.BoxDecoration(
+              decoration: const pw.BoxDecoration(
                 color: PdfColors.blueGrey,
-                borderRadius: const pw.BorderRadius.all(pw.Radius.circular(8)),
+                borderRadius: pw.BorderRadius.all(pw.Radius.circular(8)),
               ),
               child: pw.Column(
-                crossAxisAlignment: pw.CrossAxisAlignment.center,
                 children: [
                   pw.Text(
                     'CONTRAT D\'ÉCHANGE AUTOMOBILE',
@@ -543,7 +539,7 @@ class _PdfPreviewScreen extends StatelessWidget {
                   pw.SizedBox(height: 8),
                   pw.Text(
                     'Garage Auto - Document officiel',
-                    style: pw.TextStyle(
+                    style: const pw.TextStyle(
                       fontSize: 14,
                       color: PdfColors.white,
                     ),
@@ -561,7 +557,7 @@ class _PdfPreviewScreen extends StatelessWidget {
                   children: [
                     pw.Text(
                       'Numéro de contrat',
-                      style: pw.TextStyle(
+                      style: const pw.TextStyle(
                         fontSize: 10,
                         color: PdfColors.grey,
                       ),
@@ -580,7 +576,7 @@ class _PdfPreviewScreen extends StatelessWidget {
                   children: [
                     pw.Text(
                       'Date de signature',
-                      style: pw.TextStyle(
+                      style: const pw.TextStyle(
                         fontSize: 10,
                         color: PdfColors.grey,
                       ),
@@ -643,9 +639,9 @@ class _PdfPreviewScreen extends StatelessWidget {
             // Footer
             pw.Container(
               padding: const pw.EdgeInsets.all(15),
-              decoration: pw.BoxDecoration(
+              decoration: const pw.BoxDecoration(
                 color: PdfColors.grey200,
-                borderRadius: const pw.BorderRadius.all(pw.Radius.circular(8)),
+                borderRadius: pw.BorderRadius.all(pw.Radius.circular(8)),
               ),
               child: pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -671,7 +667,7 @@ class _PdfPreviewScreen extends StatelessWidget {
                           pw.SizedBox(height: 5),
                           pw.Text(
                             'Le Gérant',
-                            style: pw.TextStyle(fontSize: 10),
+                            style: const pw.TextStyle(fontSize: 10),
                           ),
                         ],
                       ),
@@ -685,7 +681,7 @@ class _PdfPreviewScreen extends StatelessWidget {
                           pw.SizedBox(height: 5),
                           pw.Text(
                             'Le Client',
-                            style: pw.TextStyle(fontSize: 10),
+                            style: const pw.TextStyle(fontSize: 10),
                           ),
                         ],
                       ),
@@ -711,7 +707,7 @@ class _PdfPreviewScreen extends StatelessWidget {
             flex: 2,
             child: pw.Text(
               label,
-              style: pw.TextStyle(
+              style: const pw.TextStyle(
                 fontSize: 12,
                 color: PdfColors.grey,
               ),
@@ -738,7 +734,7 @@ class _PdfPreviewScreen extends StatelessWidget {
       child: pw.Row(
         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
         children: [
-          pw.Text(label, style: pw.TextStyle(fontSize: 12)),
+          pw.Text(label, style: const pw.TextStyle(fontSize: 12)),
           pw.Text(
             '${value.toInt()} DA',
             style: pw.TextStyle(

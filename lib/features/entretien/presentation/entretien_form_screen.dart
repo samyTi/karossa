@@ -39,7 +39,7 @@ class _State extends ConsumerState<EntretienFormScreen> {
             DropdownButtonFormField<Vehicule>(
               initialValue: _vehicule,
               decoration: const InputDecoration(labelText: 'Vehicule'),
-              items: vehicules.map((v) => DropdownMenuItem(
+              items: vehicules.map((v) => DropdownMenuItem<Vehicule>(
                 value: v, child: Text(v.displayName))).toList(),
               onChanged: (v) => setState(() => _vehicule = v),
               validator: (v) => v == null ? 'Requis' : null,
@@ -49,7 +49,7 @@ class _State extends ConsumerState<EntretienFormScreen> {
               initialValue: _type,
               decoration: const InputDecoration(
                 labelText: "Type d'entretien"),
-              items: List.generate(_types.length, (i) => DropdownMenuItem(
+              items: List.generate(_types.length, (i) => DropdownMenuItem<String>(
                 value: _types[i], child: Text(_labels[i]))).toList(),
               onChanged: (v) => setState(() => _type = v!),
             ),
@@ -59,8 +59,8 @@ class _State extends ConsumerState<EntretienFormScreen> {
               title: Text(_dateEcheance == null
                 ? 'Date d\'echeance (optionnel)'
                 : 'Echeance : '
-                  '${_dateEcheance!.day.toString().padLeft(2, "0")}/'
-                  '${_dateEcheance!.month.toString().padLeft(2, "0")}/'
+                  '${_dateEcheance!.day.toString().padLeft(2, '0')}/'
+                  '${_dateEcheance!.month.toString().padLeft(2, '0')}/'
                   '${_dateEcheance!.year}'),
               trailing: const Icon(Icons.calendar_today,
                 color: AppColors.primary),
@@ -113,8 +113,7 @@ class _State extends ConsumerState<EntretienFormScreen> {
       await ref.read(entretienRepositoryProvider).create({
         'vehicule_id':   _vehicule!.id,
         'type_alerte':   _type,
-        'date_echeance': _dateEcheance != null
-          ? _dateEcheance!.toIso8601String().substring(0, 10) : null,
+        'date_echeance': _dateEcheance?.toIso8601String().substring(0, 10),
         'km_echeance':   int.tryParse(_kmCtrl.text),
         'description':   _descCtrl.text.trim().isEmpty
           ? null : _descCtrl.text.trim(),
@@ -127,9 +126,11 @@ class _State extends ConsumerState<EntretienFormScreen> {
           const SnackBar(content: Text('Alerte creee')));
       }
     } catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Erreur: $e'),
           backgroundColor: AppColors.retard));
+      }
     } finally {
       if (mounted) setState(() => _loading = false);
     }

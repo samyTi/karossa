@@ -23,7 +23,7 @@ class FilterChipsRow extends StatelessWidget {
       scrollDirection: Axis.horizontal,
       padding: const EdgeInsets.symmetric(horizontal: 16),
       children: [
-        // Chip "Tous"
+        // Chip 'Tous'
         Padding(
           padding: const EdgeInsets.only(right: 8),
           child: FilterChip(

@@ -41,7 +41,7 @@ body: Column(children: [
     onChanged: (q) => setState(() => _search = q),
   ),
   Expanded(child: clients.when(
-        loading: () => const ClientsListShimmer(itemCount: 5),
+        loading: () => const ClientsListShimmer(),
         error: (e, _) => Center(child: Text('Erreur: $e')),
 data: (allList) {
   final list = _search.isEmpty ? allList

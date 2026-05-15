@@ -43,7 +43,7 @@ class ClientDetailScreen extends ConsumerWidget {
     final clientAsync = ref.watch(clientDetailProvider(clientId));
 
     return clientAsync.when(
-      loading: () => const Scaffold(body: Center(child: const CircularProgressIndicator())),
+      loading: () => const Scaffold(body: Center(child: CircularProgressIndicator())),
       error: (e, _) => Scaffold(body: Center(child: Text('Erreur : $e'))),
       data: (client) => client == null
         ? const Scaffold(body: Center(child: Text('Client introuvable')))

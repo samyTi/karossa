@@ -346,7 +346,7 @@ class _InputBar extends StatelessWidget {
                   ? const SizedBox(
                       width: 18,
                       height: 18,
-                      child: const CircularProgressIndicator(
+                      child: CircularProgressIndicator(
                           strokeWidth: 2, color: Colors.white),
                     )
                   : const Icon(Icons.send, size: 18),

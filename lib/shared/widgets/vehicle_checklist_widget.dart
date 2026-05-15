@@ -72,14 +72,14 @@ class _VehicleChecklistWidgetState extends State<VehicleChecklistWidget> {
             borderRadius: BorderRadius.circular(8),
             border: Border.all(color: AppColors.retard.withValues(alpha: 0.3)),
           ),
-          child: Row(children: [
-            const Icon(Icons.warning_amber_rounded,
+          child: const Row(children: [
+            Icon(Icons.warning_amber_rounded,
               color: AppColors.retard, size: 18),
-            const SizedBox(width: 8),
+            SizedBox(width: 8),
             Expanded(child: Text(
               '\${_items.values.where((v) => !v).length} point(s) à signaler — '
               'pensez à retenir sur la caution',
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppColors.retard, fontSize: 12),
             )),
           ]),
