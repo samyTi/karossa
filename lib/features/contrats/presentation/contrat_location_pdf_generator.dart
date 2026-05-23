@@ -1,5 +1,24 @@
 // lib/features/contrats/presentation/contrat_location_pdf_generator.dart
 //
+// v5 — Correction encodage caractères spéciaux français
+//
+// CHANGEMENTS vs v4 :
+//   - Ajout police Latin (_latinFont / _latinFontBold) chargée depuis
+//     assets/fonts/Roboto-Regular.ttf + Roboto-Bold.ttf
+//   - _buildFr() applique un pw.Theme avec la police Latin (même logique
+//     que withArabicTheme pour la version arabe)
+//   - Corrige l'affichage de é à ç ê è ù â œ – ' « » etc. dans le PDF FR
+//
+// PUBSPEC — ajouter si absent :
+//   flutter:
+//     fonts:
+//       - family: Roboto
+//         fonts:
+//           - asset: assets/fonts/Roboto-Regular.ttf
+//           - asset: assets/fonts/Roboto-Bold.ttf
+//             weight: 700
+//   (télécharger depuis https://fonts.google.com/specimen/Roboto)
+//
 // v4 — Fusion de contrat_location_pdf.dart (ancien) + contrat_location_pdf_generator.dart
 //
 // CHANGEMENTS vs v3 :
@@ -20,13 +39,18 @@
 //   path_provider: ^2.1.0
 //   intl: ^0.19.0
 
-import 'dart:io';
 import 'dart:typed_data';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:intl/intl.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
+
+// dart:io et path_provider uniquement sur mobile/desktop
+import 'dart:io' if (dart.library.html) 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:path_provider/path_provider.dart'
+    if (dart.library.html) 'package:path_provider/path_provider.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  DTO  (inchangé — compatibilité avec ContratGeneratorService)
@@ -168,6 +192,24 @@ class ContratLocationDto {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+//  DTOs résultat — paire de documents / fichiers FR + AR
+// ─────────────────────────────────────────────────────────────────────────────
+
+/// Contient les deux documents PDF générés (FR et AR) en mémoire.
+class ContratLocationPdfPair {
+  final pw.Document fr;
+  final pw.Document ar;
+  const ContratLocationPdfPair({required this.fr, required this.ar});
+}
+
+/// Contient les deux fichiers PDF sauvegardés sur disque (FR et AR).
+class ContratLocationFilePair {
+  final File fr;
+  final File ar;
+  const ContratLocationFilePair({required this.fr, required this.ar});
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 //  GÉNÉRATEUR PDF
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -185,6 +227,34 @@ class ContratLocationPdfGenerator {
 
   // ── Police arabe (cache statique) ────────────────────────────────────────
 
+  // ── Police latine — FR (cache statique) ──────────────────────────────────
+  // Nécessaire pour afficher correctement é à ç ê è ù â œ – ' « » etc.
+  // La police par défaut du package pdf (Helvetica) ne supporte que l'ASCII.
+
+  static pw.Font? _latinFont;
+  static pw.Font? _latinFontBold;
+
+  static Future<void> _loadLatinFont() async {
+    if (_latinFont != null) return;
+    try {
+      final regular = await rootBundle.load('assets/fonts/Roboto-Regular.ttf');
+      final bold    = await rootBundle.load('assets/fonts/Roboto-Bold.ttf');
+      _latinFont     = pw.Font.ttf(regular);
+      _latinFontBold = pw.Font.ttf(bold);
+    } catch (e) {
+      // IMPORTANT : ajoutez Roboto dans pubspec.yaml sous flutter > fonts
+      // et copiez les TTF dans assets/fonts/Roboto-Regular.ttf + Roboto-Bold.ttf
+      // Téléchargement : https://fonts.google.com/specimen/Roboto
+      // Sans cette police, les accents et tirets s'affichent mal en PDF FR.
+      // ignore: avoid_print
+      print('[ContratLocationPdf] ⚠️ Police latine non chargée : $e');
+      _latinFont     = null;
+      _latinFontBold = null;
+    }
+  }
+
+  // ── Police arabe — AR (cache statique) ───────────────────────────────────
+
   static pw.Font? _arabicFont;
   static pw.Font? _arabicFontBold;
 
@@ -195,33 +265,73 @@ class ContratLocationPdfGenerator {
       final bold    = await rootBundle.load('assets/fonts/Cairo-Bold.ttf');
       _arabicFont     = pw.Font.ttf(regular);
       _arabicFontBold = pw.Font.ttf(bold);
-    } catch (_) {
+    } catch (e) {
+      // IMPORTANT : si cette erreur apparaît, ajoutez la police Cairo dans
+      // pubspec.yaml sous flutter > fonts, et copiez les fichiers TTF dans
+      // assets/fonts/Cairo-Regular.ttf et assets/fonts/Cairo-Bold.ttf
+      // Sans cette police, le texte arabe s'affiche en caractères illisibles.
+      // ignore: avoid_print
+      print('[ContratLocationPdf] ⚠️ Police arabe non chargée : $e');
       _arabicFont     = null;
       _arabicFontBold = null;
     }
   }
 
   // ── Points d'entrée ──────────────────────────────────────────────────────
+  //
+  // Chaque version (FR / AR) est un document PDF indépendant de 2 pages.
+  // Utiliser buildBothAsync() pour obtenir les deux en une seule passe.
 
+  /// Retourne les deux documents séparément.
+  /// [fr] = contrat français (2 pages LTR)
+  /// [ar] = contrat arabe   (2 pages RTL)
+  static Future<ContratLocationPdfPair> buildBothAsync(
+    ContratLocationDto dto, {
+    List<Map<String, String>>? articlesGeneraux, // articles FR uniquement
+    List<Map<String, String>>? articlesAr,       // articles AR uniquement
+  }) async {
+    await Future.wait([_loadLatinFont(), _loadArabicFont()]);
+    return ContratLocationPdfPair(
+      fr: _buildFr(dto, articlesGeneraux: articlesGeneraux),
+      ar: _buildAr(dto, articlesAr: articlesAr),
+    );
+  }
+
+  /// Compatibilité ascendante — retourne le doc FR uniquement.
   static Future<pw.Document> buildAsync(
     ContratLocationDto dto, {
     List<Map<String, String>>? articlesGeneraux,
+    List<Map<String, String>>? articlesAr,
   }) async {
-    await _loadArabicFont();
-    return build(dto, articlesGeneraux: articlesGeneraux);
+    await _loadLatinFont();
+    return _buildFr(dto, articlesGeneraux: articlesGeneraux);
   }
 
-  static pw.Document build(
+  // ── Document français (2 pages) ──────────────────────────────────────────
+
+  static pw.Document _buildFr(
     ContratLocationDto dto, {
     List<Map<String, String>>? articlesGeneraux,
   }) {
     final doc = pw.Document();
 
-    // ── Exemplaire français (pages 1 & 2) ──
+    // ── Helper : enveloppe le widget dans le thème latin si la police est chargée.
+    // Indispensable pour que é à ç ê è ù â œ – ' « » s'affichent correctement.
+    pw.Widget withLatinTheme(pw.Widget child) {
+      if (_latinFont == null) return child;
+      return pw.Theme(
+        data: pw.ThemeData.withFont(
+          base: _latinFont!,
+          bold: _latinFontBold ?? _latinFont!,
+        ),
+        child: child,
+      );
+    }
+
     doc.addPage(pw.Page(
       pageFormat: PdfPageFormat.a4,
       margin: const pw.EdgeInsets.symmetric(horizontal: 28, vertical: 24),
-      build: (ctx) => pw.Column(
+      build: (ctx) => withLatinTheme(pw.Column(
         crossAxisAlignment: pw.CrossAxisAlignment.stretch,
         children: [
           _buildAgenceHeader(dto),
@@ -242,16 +352,28 @@ class ContratLocationPdfGenerator {
           pw.SizedBox(height: 8),
           _buildSignatures(dto),
         ],
-      ),
+      )),
     ));
 
     doc.addPage(pw.Page(
       pageFormat: PdfPageFormat.a4,
       margin: const pw.EdgeInsets.symmetric(horizontal: 28, vertical: 24),
-      build: (ctx) => _buildConditionsGeneralesPage(dto, articlesGeneraux: articlesGeneraux),
+      build: (ctx) => withLatinTheme(
+        _buildConditionsGeneralesPage(dto, articlesGeneraux: articlesGeneraux),
+      ),
     ));
 
-    // ── Exemplaire arabe (pages 3 & 4) ──
+    return doc;
+  }
+
+  // ── Document arabe (2 pages) ─────────────────────────────────────────────
+
+  static pw.Document _buildAr(
+    ContratLocationDto dto, {
+    List<Map<String, String>>? articlesAr,
+  }) {
+    final doc = pw.Document();
+
     pw.Widget withArabicTheme(pw.Widget child) {
       if (_arabicFont == null) return child;
       return pw.Theme(
@@ -293,7 +415,9 @@ class ContratLocationPdfGenerator {
     doc.addPage(pw.Page(
       pageFormat: PdfPageFormat.a4,
       margin: const pw.EdgeInsets.symmetric(horizontal: 28, vertical: 24),
-      build: (ctx) => withArabicTheme(_buildConditionsGeneralesPageAr(dto)),
+      build: (ctx) => withArabicTheme(
+        _buildConditionsGeneralesPageAr(dto, articlesAr: articlesAr),
+      ),
     ));
 
     return doc;
@@ -303,10 +427,36 @@ class ContratLocationPdfGenerator {
 
   static Future<Uint8List> saveBytes(pw.Document doc) async => doc.save();
 
+  /// Sauvegarde les deux PDFs séparément et retourne leurs chemins.
+  /// ⚠️ Ne pas appeler sur Web (pas de système de fichiers).
+  static Future<ContratLocationFilePair> saveBothToFile(
+    ContratLocationPdfPair pair,
+    String contratId,
+  ) async {
+    if (kIsWeb) {
+      throw UnsupportedError(
+          'saveBothToFile non disponible sur Web — utilisez saveBytes() et téléchargez.');
+    }
+    final appDir = await getApplicationDocumentsDirectory();
+    final id     = _idFmt(contratId);
+
+    final fileFr = File('${appDir.path}/contrat_location_${id}_FR.pdf');
+    final fileAr = File('${appDir.path}/contrat_location_${id}_AR.pdf');
+
+    await fileFr.writeAsBytes(await pair.fr.save());
+    await fileAr.writeAsBytes(await pair.ar.save());
+
+    return ContratLocationFilePair(fr: fileFr, ar: fileAr);
+  }
+
   static Future<File> saveToFile(pw.Document doc, String contratId) async {
+    if (kIsWeb) {
+      throw UnsupportedError(
+          'saveToFile non disponible sur Web — utilisez saveBytes().');
+    }
     final bytes  = await doc.save();
     final appDir = await getApplicationDocumentsDirectory();
-    final name   = 'contrat_location_${_idFmt(contratId)}.pdf';
+    final name   = 'contrat_location_${_idFmt(contratId)}_FR.pdf';
     final file   = File('${appDir.path}/$name');
     await file.writeAsBytes(bytes);
     return file;
@@ -875,27 +1025,52 @@ class ContratLocationPdfGenerator {
     ]);
   }
 
-  static pw.Widget _buildConditionsGeneralesPageAr(ContratLocationDto dto) {
-    pw.Widget article(String titre, String corps) => pw.Column(
-      crossAxisAlignment: pw.CrossAxisAlignment.end,
-      children: [
-        pw.Text(titre,
-            style: pw.TextStyle(fontSize: 8, fontWeight: pw.FontWeight.bold, decoration: pw.TextDecoration.underline),
-            textDirection: pw.TextDirection.rtl, textAlign: pw.TextAlign.right),
-        pw.SizedBox(height: 2),
-        pw.Text(corps,
-            style: const pw.TextStyle(fontSize: 7, color: PdfColors.grey900),
-            textDirection: pw.TextDirection.rtl, textAlign: pw.TextAlign.justify),
-      ],
+  static pw.Widget _buildConditionsGeneralesPageAr(
+    ContratLocationDto dto, {
+    List<Map<String, String>>? articlesAr,
+  }) {
+    // Helper article arabe : _arStyle garantit la police Cairo
+    pw.Widget article(String titre, String corps) => pw.Padding(
+      padding: const pw.EdgeInsets.only(bottom: 8),
+      child: pw.Column(
+        crossAxisAlignment: pw.CrossAxisAlignment.end,
+        children: [
+          pw.Text(
+            titre,
+            style: _arStyle(fontSize: 8, fontWeight: pw.FontWeight.bold, decoration: pw.TextDecoration.underline),
+            textDirection: pw.TextDirection.rtl,
+            textAlign: pw.TextAlign.right,
+          ),
+          pw.SizedBox(height: 2),
+          pw.Text(
+            corps,
+            style: _arStyle(fontSize: 7, color: PdfColors.grey900),
+            textDirection: pw.TextDirection.rtl,
+            textAlign: pw.TextAlign.justify,
+          ),
+        ],
+      ),
     );
 
-    // (contenu identique à v3 — articles arabes 1 à 8 inchangés)
+    final usesDynamic = articlesAr != null && articlesAr.isNotEmpty;
+
     return pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.stretch, children: [
-      pw.Center(child: pw.Text('الشروط العامة للإيجار',
-          style: pw.TextStyle(fontSize: 13, fontWeight: pw.FontWeight.bold, decoration: pw.TextDecoration.underline),
-          textDirection: pw.TextDirection.rtl, textAlign: pw.TextAlign.center)),
+      pw.Center(child: pw.Text(
+        'الشروط العامة للإيجار',
+        style: _arStyle(fontSize: 13, fontWeight: pw.FontWeight.bold, decoration: pw.TextDecoration.underline),
+        textDirection: pw.TextDirection.rtl,
+        textAlign: pw.TextAlign.center,
+      )),
       pw.SizedBox(height: 10),
-      // Articles arabes — garder ton contenu existant ici (identique à v3)
+      if (usesDynamic)
+        pw.Column(
+          crossAxisAlignment: pw.CrossAxisAlignment.end,
+          children: articlesAr!
+              .map((a) => article(a['titre'] ?? '', a['corps'] ?? ''))
+              .toList(),
+        )
+      else
+        pw.Column(),
     ]);
   }
 

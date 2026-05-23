@@ -22,7 +22,7 @@ class ContratsRepository {
           .single();
       return Map<String, dynamic>.from(data);
     } catch (e) {
-    AppLogger.w('Erreur silencieuse ignorée', error: e);
+      AppLogger.w('Erreur silencieuse ignorée', error: e);
       // Paramètres par défaut si la table est vide
       return {
         'nom':      'Garage Auto',
@@ -78,7 +78,7 @@ class ContratsRepository {
           .single();
       return ContratTemplate.fromJson(data);
     } catch (e) {
-    AppLogger.w('Erreur silencieuse ignorée', error: e);
+      AppLogger.w('Erreur silencieuse ignorée', error: e);
       return null;
     }
   }
@@ -106,6 +106,25 @@ class ContratsRepository {
   }
 
   // ── Sauvegarde PDF ─────────────────────────────────────────
+
+  /// Méthode requise par ContratGeneratorService pour téléverser les contrats PDF
+  Future<String> uploadContratPdf(String id, String bucketFolder, Uint8List fileBytes) async {
+    try {
+      final fileName = '$id.pdf';
+      final url = await savePdfToStorage(
+        fileName: fileName,
+        pdfBytes: fileBytes,
+        folder: bucketFolder,
+      );
+      if (url == null) {
+        throw Exception("L'URL renvoyée par le stockage Supabase est nulle.");
+      }
+      return url;
+    } catch (e) {
+      AppLogger.d('ContratsRepository.uploadContratPdf: $e');
+      rethrow;
+    }
+  }
 
   Future<String?> savePdfToStorage({
     required String fileName,
@@ -174,22 +193,23 @@ class ContratsRepository {
       rethrow;
     }
   }
+  
   // ── Articles dynamiques ────────────────────────────────────
 
-/// Récupère les articles actifs d'un type de contrat, triés par ordre.
-/// Utilisé par les générateurs PDF pour remplacer les clauses en dur.
-Future<List<Map<String, dynamic>>> getArticlesActifs(String contratType) async {
-  try {
-    final data = await _client
-        .from('contract_articles')
-        .select()
-        .eq('contrat_type', contratType)
-        .eq('actif', true)
-        .order('ordre');
-    return List<Map<String, dynamic>>.from(data);
-  } catch (e) {
-    AppLogger.d('ContratsRepository.getArticlesActifs: $e');
-    return [];
+  /// Récupère les articles actifs d'un type de contrat, triés par ordre.
+  /// Utilisé par les générateurs PDF pour remplacer les clauses en dur.
+  Future<List<Map<String, dynamic>>> getArticlesActifs(String contratType) async {
+    try {
+      final data = await _client
+          .from('contract_articles')
+          .select()
+          .eq('contrat_type', contratType)
+          .eq('actif', true)
+          .order('ordre');
+      return List<Map<String, dynamic>>.from(data);
+    } catch (e) {
+      AppLogger.d('ContratsRepository.getArticlesActifs: $e');
+      return [];
+    }
   }
-}
 }

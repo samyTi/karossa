@@ -109,7 +109,7 @@ class Vente {
   );
 }
 
-  // Ne jamais envoyer acompte / solde_restant (colonnes supprimées)
+  // Ne jamais envoyer acompte / solde_restant / commission_gerant_mnt (colonnes supprimées ou inexistantes)
   Map<String, dynamic> toJson() => {
     'vehicule_id':           vehiculeId,
     'client_id':             clientId,
@@ -117,7 +117,7 @@ class Vente {
     'prix_vente':            prixVente,
     'mode_paiement':         modePaiement,
     'commission_gerant_pct': commissionGerantPct,
-    'commission_gerant_mnt': commissionGerantMnt,
+    // commission_gerant_mnt NON envoyé — calculé côté client uniquement
     'statut_paiement':       statutPaiement.name,
     'notes':                 notes,
   };

@@ -197,7 +197,7 @@ class _EchangeFormScreenState extends ConsumerState<EchangeFormScreen> {
         'valeur_reprise':          _valeur,
         'complement_client':       _complement,
         'commission_gerant_pct':   _com,
-        'commission_gerant_mnt':   _comMnt,
+        // commission_gerant_mnt non envoyé — colonne inexistante en base
         'date_echange':            DateTime.now().toIso8601String().substring(0, 10),
         'notes': _notesCtrl.text.trim().isEmpty ? null : _notesCtrl.text.trim(),
         'created_by': ref.read(supabaseClientProvider).auth.currentUser?.id,

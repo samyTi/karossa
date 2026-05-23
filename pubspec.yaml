@@ -14,8 +14,7 @@ dependencies:
   
   # HTTP client
   http: ^1.2.2
-  web: ^1.0.0
- 
+
   # IA Gemini (SDK direct — optionnel si vous utilisez le backend)
   google_generative_ai: ^0.4.6                  
 
@@ -89,9 +88,15 @@ flutter:
         - asset: assets/fonts/Cairo-Regular.ttf
         - asset: assets/fonts/Cairo-Bold.ttf
           weight: 700
+    - family: Roboto
+      fonts:
+        - asset: assets/fonts/Roboto-Regular.ttf
+        - asset: assets/fonts/Roboto-Bold.ttf
+          weight: 700
   assets:
     - assets/images/
     - assets/icons/
     - assets/fonts/
     - assets/fonts/Amiri-Regular.ttf
     - assets/fonts/Amiri-Bold.ttf
+  

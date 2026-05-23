@@ -4,7 +4,7 @@ import '../../../core/providers/supabase_provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/services/carte_grise_ocr_service.dart';
@@ -12,6 +12,8 @@ import '../../../shared/widgets/custom_app_bar.dart';
 import '../../../shared/services/notification_service.dart';
 import '../../auth/domain/profile_model.dart';
 import 'vehicules_provider.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'dart:typed_data';
 
 class VehiculeFormScreen extends ConsumerStatefulWidget {
   final String? vehiculeId;
@@ -42,8 +44,8 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
   String _boite     = 'manuelle';
   String _statut    = 'disponible';
 
+  // Contient l'ensemble des URLs issues de Supabase Storage (Upload direct et immédiat)
   final List<String> _photosUrls = [];
-  final List<File>   _photosLocal = [];
 
   // Propriétaires : {profileId -> pourcentage}
   final Map<String, double> _proprietes = {};
@@ -57,6 +59,7 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
       _loadVehicule();
     }
   }
+
   @override
   void dispose() {
     _marqueCtrl.dispose();
@@ -73,6 +76,7 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
     _flespiDeviceIdCtrl.dispose();
     super.dispose();
   }
+
   Future<void> _loadProfiles() async {
     final data = await ref.read(supabaseClientProvider).from('profiles').select();
     setState(() {
@@ -83,7 +87,6 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
   Future<void> _loadVehicule() async {
     if (widget.vehiculeId == null) return;
     
-    // Charger les données du véhicule
     final data = await ref.read(supabaseClientProvider)
         .from('vehicules')
         .select()
@@ -109,14 +112,12 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
       final flespiId = data['flespi_device_id'];
       _flespiDeviceIdCtrl.text = flespiId != null ? flespiId.toString() : '';
       
-      // Charger les photos existantes
       final photos = data['photos'] as List<dynamic>?;
       if (photos != null) {
         _photosUrls.addAll(photos.map((p) => p.toString()));
       }
     });
     
-    // Charger les propriétaires
     final proprietesData = await ref.read(supabaseClientProvider)
         .from('vehicule_proprietes')
         .select()
@@ -127,10 +128,9 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
         _proprietes[prop['proprietaire_id']] = (prop['part_pct'] as num).toDouble();
       }
     });
-      }
+  }
 
-  double get _totalParts =>
-    _proprietes.values.fold(0.0, (s, v) => s + v);
+  double get _totalParts => _proprietes.values.fold(0.0, (s, v) => s + v);
 
   @override
   Widget build(BuildContext context) {
@@ -145,22 +145,21 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            // ── Photos ───────────────────────────────────────
+            // ── Photos Section (Cloud avec CachedNetworkImage) ─────────────────
             const _SectionTitle('Photos'),
             SizedBox(
               height: 110,
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: [
-                  ..._photosLocal.map((f) => _PhotoThumb(
-                    child: Image.file(f, fit: BoxFit.cover),
-                    onDelete: () =>
-                      setState(() => _photosLocal.remove(f)),
-                  )),
                   ..._photosUrls.map((u) => _PhotoThumb(
-                    child: Image.network(u, fit: BoxFit.cover),
-                    onDelete: () =>
-                      setState(() => _photosUrls.remove(u)),
+                    child: CachedNetworkImage(
+                      imageUrl: u,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+                      errorWidget: (context, url, error) => const Icon(Icons.broken_image, color: Colors.red),
+                    ),
+                    onDelete: () => setState(() => _photosUrls.remove(u)),
                   )),
                   _AddPhotoBtn(
                     uploading: _uploading,
@@ -219,7 +218,6 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
                   ),
                 ),
                 const SizedBox(width: 10),
-
                 Expanded(
                   child: _Field(
                     ctrl: _chassisCtrl,
@@ -228,17 +226,13 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
                 ),
               ],
             ),
-
             const SizedBox(height: 10),
-
             _Field(
               ctrl: _flespiDeviceIdCtrl,
               label: 'Flespi Device ID (GPS)',
               type: TextInputType.number,
               validator: (v) {
-                if (v != null &&
-                    v.isNotEmpty &&
-                    int.tryParse(v) == null) {
+                if (v != null && v.isNotEmpty && int.tryParse(v) == null) {
                   return 'ID invalide';
                 }
                 return null;
@@ -407,35 +401,45 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
   }
 
   /// Scan OCR d'une carte grise
+  /// CORRECTIF : utilise readAsBytes() (XFile) au lieu de File(dart:io)
+  /// → compatible Flutter Web, Android et iOS
   Future<void> _scanCarteGrise() async {
+    // Sur Web, la caméra native n'est pas disponible : on propose seulement la galerie
+    final bool isWeb = kIsWeb;
+
     try {
-      // Ouvrir le sélecteur d'image
       final picker = ImagePicker();
-      final source = await showModalBottomSheet<ImageSource>(
-        context: context,
-        builder: (ctx) => SafeArea(
-          child: Column(mainAxisSize: MainAxisSize.min, children: [
-            ListTile(
-              leading: const Icon(Icons.camera_alt),
-              title: const Text('Prendre en photo la carte grise'),
-              onTap: () => Navigator.pop(ctx, ImageSource.camera),
-            ),
-            ListTile(
-              leading: const Icon(Icons.photo_library),
-              title: const Text('Choisir une photo de la carte grise'),
-              onTap: () => Navigator.pop(ctx, ImageSource.gallery),
-            ),
-          ]),
-        ),
-      );
-      
+
+      ImageSource? source;
+      if (isWeb) {
+        // Sur Web : pas de caméra native, on passe directement à la galerie
+        source = ImageSource.gallery;
+      } else {
+        source = await showModalBottomSheet<ImageSource>(
+          context: context,
+          builder: (ctx) => SafeArea(
+            child: Column(mainAxisSize: MainAxisSize.min, children: [
+              ListTile(
+                leading: const Icon(Icons.camera_alt),
+                title: const Text('Prendre en photo la carte grise'),
+                onTap: () => Navigator.pop(ctx, ImageSource.camera),
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: const Text('Choisir une photo de la carte grise'),
+                onTap: () => Navigator.pop(ctx, ImageSource.gallery),
+              ),
+            ]),
+          ),
+        );
+      }
+
       if (source == null) return;
-      
+
       final xfile = await picker.pickImage(
-        source: source, imageQuality: 85, maxWidth: 1600);
+          source: source, imageQuality: 85, maxWidth: 1600);
       if (xfile == null) return;
-      
-      // Afficher un indicateur de chargement
+
       if (!mounted) return;
       showDialog(
         context: context,
@@ -456,15 +460,48 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
           ),
         ),
       );
-      
-      // Traiter l'image avec l'OCR
-      final ocrService = CarteGriseOcrService();
-      final data = await ocrService.scanCarteGrise(File(xfile.path));
-      
-      // Fermer le dialog
+
+      // ── CORRECTIF PRINCIPAL ──────────────────────────────────────────────
+      // Lire les bytes via XFile (pas dart:io File) → fonctionne sur Web
+      final Uint8List imageBytes = await xfile.readAsBytes();
+
+      // Récupérer la clé Gemini depuis showroom_settings (Supabase)
+      final supabase = ref.read(supabaseClientProvider);
+      final settingsRow = await supabase
+          .from('showroom_settings')
+          .select('gemini_api_key')
+          .limit(1)
+          .maybeSingle();
+      final geminiKey = settingsRow?['gemini_api_key'] as String? ?? '';
+
+      if (geminiKey.isEmpty) {
+        if (mounted) Navigator.pop(context);
+        if (mounted) {
+          NotificationService().error(
+              'Clé API Gemini non configurée. Allez dans Paramètres > Showroom.');
+        }
+        return;
+      }
+
+      final mimeType = xfile.mimeType ?? 'image/jpeg';
+      // Sur Web, la clé est obligatoire ; sur mobile, ML Kit fonctionne sans.
+      if (kIsWeb && geminiKey.isEmpty) {
+        if (mounted) Navigator.pop(context);
+        if (mounted) {
+          NotificationService().error(
+              'Clé API Gemini non configurée. Allez dans Paramètres > Showroom.');
+        }
+        return;
+      }
+
+      final ocrService = CarteGriseOcrService(
+        geminiApiKey: geminiKey.isNotEmpty ? geminiKey : null,
+      );
+      final data = await ocrService.scanCarteGrise(imageBytes, mimeType: mimeType);
+      // ── FIN CORRECTIF ────────────────────────────────────────────────────
+
       if (mounted) Navigator.pop(context);
-      
-      // Remplir les champs avec les données extraites
+
       if (data.isValid) {
         setState(() {
           if (data.marque != null) _marqueCtrl.text = data.marque!;
@@ -472,83 +509,97 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
           if (data.annee != null) _anneeCtrl.text = data.annee.toString();
           if (data.immatriculation != null) _immatCtrl.text = data.immatriculation!;
           if (data.numChassis != null) _chassisCtrl.text = data.numChassis!;
-          
-          // Normaliser le type de carburant
+
           if (data.energie != null) {
             final energie = data.energie!.toLowerCase();
             if (energie.contains('essence')) {
               _carburant = 'essence';
-            } else if (energie.contains('diesel') || energie.contains('gas')) _carburant = 'diesel';
-            else if (energie.contains('electrique') || energie.contains('elec')) _carburant = 'electrique';
-            else if (energie.contains('hybride')) _carburant = 'hybride';
-            else if (energie.contains('glp') || energie.contains('gaz')) _carburant = 'glp';
+            } else if (energie.contains('diesel') || energie.contains('gas')) {
+              _carburant = 'diesel';
+            } else if (energie.contains('electrique') || energie.contains('elec')) {
+              _carburant = 'electrique';
+            } else if (energie.contains('hybride')) {
+              _carburant = 'hybride';
+            } else if (energie.contains('glp') || energie.contains('gaz')) {
+              _carburant = 'glp';
+            }
           }
         });
-        
+
         if (mounted) {
           NotificationService().success('Carte grise analysée avec succès !');
         }
       } else {
         if (mounted) {
           NotificationService().warning(
-            'Analyse terminée mais certaines données sont manquantes. Veuillez compléter manuellement.');
+              'Analyse terminée mais certaines données sont manquantes. Veuillez compléter manuellement.');
         }
       }
     } catch (e) {
-      // Fermer le dialog si ouvert
       if (mounted) Navigator.pop(context);
-      
       if (mounted) {
         NotificationService().error('Erreur lors de l\'analyse OCR: ${e.toString()}');
       }
     }
   }
 
+  /// Gestion hybride de la sélection et de l'upload immédiat vers Supabase Storage
   Future<void> _pickPhoto() async {
     final picker = ImagePicker();
-    final source = await showModalBottomSheet<ImageSource>(
-      context: context,
-      builder: (ctx) => SafeArea(
-        child: Column(mainAxisSize: MainAxisSize.min, children: [
-          ListTile(
-            leading: const Icon(Icons.camera_alt),
-            title: const Text('Prendre une photo'),
-            onTap: () => Navigator.pop(ctx, ImageSource.camera),
-          ),
-          ListTile(
-            leading: const Icon(Icons.photo_library),
-            title: const Text('Choisir depuis la galerie'),
-            onTap: () => Navigator.pop(ctx, ImageSource.gallery),
-          ),
-        ]),
-      ),
+    final image = await picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 80,
     );
-    if (source == null) return;
-    final xfile = await picker.pickImage(
-      source: source, imageQuality: 75, maxWidth: 1200);
-    if (xfile == null) return;
-    setState(() => _photosLocal.add(File(xfile.path)));
-  }
 
-  Future<List<String>> _uploadPhotos() async {
-    final urls = List<String>.from(_photosUrls);
-    for (final file in _photosLocal) {
-      setState(() => _uploading = true);
-      final bytes    = await file.readAsBytes();
-      final ext      = file.path.split('.').last;
-      final fileName =
-        '${DateTime.now().millisecondsSinceEpoch}.$ext';
-      await ref.read(supabaseClientProvider).storage
-        .from('vehicules-photos')
-        .uploadBinary(fileName, bytes,
-          fileOptions: FileOptions(contentType: 'image/$ext'));
-      final url = ref.read(supabaseClientProvider).storage
-        .from('vehicules-photos')
-        .getPublicUrl(fileName);
-      urls.add(url);
+    if (image == null) return;
+
+    setState(() => _uploading = true);
+
+    try {
+      final supabase = ref.read(supabaseClientProvider);
+      final fileName = '${DateTime.now().millisecondsSinceEpoch}_${image.name}';
+      final path = widget.vehiculeId != null 
+          ? '${widget.vehiculeId}/$fileName' 
+          : 'temp/$fileName';
+
+      // Extraction sous forme binaire brute (Valide sous Android, iOS et Web)
+      final Uint8List fileBytes = await image.readAsBytes();
+
+      await supabase.storage.from('vehicules').uploadBinary(
+            path,
+            fileBytes,
+            fileOptions: FileOptions(
+              contentType: image.mimeType ?? 'image/jpeg',
+              upsert: true,
+            ),
+          );
+
+      final String publicUrl = supabase.storage.from('vehicules').getPublicUrl(path);
+
+      setState(() {
+        _photosUrls.add(publicUrl);
+      });
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Photo ajoutée avec succès'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erreur lors de l\'upload de la photo : $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      setState(() => _uploading = false);
     }
-    setState(() => _uploading = false);
-    return urls;
   }
 
   Future<void> _submit() async {
@@ -562,33 +613,27 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
     }
     setState(() => _loading = true);
     try {
-      final photoUrls = await _uploadPhotos();
       final repo = ref.read(vehiculesRepositoryProvider);
       final vehiculeData = {
         'marque':              _marqueCtrl.text.trim(),
         'modele':              _modeleCtrl.text.trim(),
         'annee':               int.parse(_anneeCtrl.text),
-        'couleur':             _couleurCtrl.text.trim().isEmpty
-                                 ? null : _couleurCtrl.text.trim(),
-        'immatriculation':     _immatCtrl.text.trim().isEmpty
-                                 ? null : _immatCtrl.text.trim(),
-        'num_chassis':         _chassisCtrl.text.trim().isEmpty
-                                 ? null : _chassisCtrl.text.trim(),
+        'couleur':             _couleurCtrl.text.trim().isEmpty ? null : _couleurCtrl.text.trim(),
+        'immatriculation':     _immatCtrl.text.trim().isEmpty ? null : _immatCtrl.text.trim(),
+        'num_chassis':         _chassisCtrl.text.trim().isEmpty ? null : _chassisCtrl.text.trim(),
         'carburant':           _carburant,
         'boite':               _boite,
         'kilometrage':         int.tryParse(_kmCtrl.text) ?? 0,
         'prix_vente':          double.tryParse(_prixVenteCtrl.text),
         'prix_location_jour':  double.tryParse(_prixLocCtrl.text),
         'statut':              _statut,
-        'photos':              photoUrls,
-        'notes':               _notesCtrl.text.trim().isEmpty
-                                 ? null : _notesCtrl.text.trim(),
-        'etat_vehicule':       _etatVehiculeCtrl.text.trim().isEmpty
-                                 ? null : _etatVehiculeCtrl.text.trim(),
-        'flespi_device_id':   _flespiDeviceIdCtrl.text.trim().isEmpty
-                                 ? null : int.tryParse(_flespiDeviceIdCtrl.text.trim()),
+        'photos':              _photosUrls, // Utilise directement les urls cloud collectées
+        'notes':               _notesCtrl.text.trim().isEmpty ? null : _notesCtrl.text.trim(),
+        'etat_vehicule':       _etatVehiculeCtrl.text.trim().isEmpty ? null : _etatVehiculeCtrl.text.trim(),
+        'flespi_device_id':    _flespiDeviceIdCtrl.text.trim().isEmpty ? null : int.tryParse(_flespiDeviceIdCtrl.text.trim()),
         'created_by':          ref.read(supabaseClientProvider).auth.currentUser?.id,
       };
+      
       final proprietesList = _proprietes.entries.map((e) => {
         'proprietaire_id': e.key,
         'part_pct':        e.value,
@@ -599,6 +644,7 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
       } else {
         await repo.update(widget.vehiculeId!, vehiculeData);
       }
+      
       ref.invalidate(vehiculesProvider);
       if (mounted) {
         context.pop();
@@ -608,10 +654,8 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
             : 'Vehicule modifie avec succes')));
       }
     } catch (e, stackTrace) {
-      // Afficher un message d'erreur plus détaillé
       String errorMessage = 'Erreur lors de l\'enregistrement';
       
-      // Vérifier le type d'erreur
       if (e.toString().contains('PostgresException')) {
         errorMessage = 'Erreur de base de données. Vérifiez que tous les champs obligatoires sont remplis et que les parts des propriétaires totalisent 100%.';
       } else if (e.toString().contains('StorageException')) {
@@ -624,7 +668,6 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
       
       if (mounted) {
         NotificationService().error(errorMessage);
-        // Afficher le détail complet dans un dialog pour debugging
         showDialog(
           context: context,
           builder: (ctx) => AlertDialog(

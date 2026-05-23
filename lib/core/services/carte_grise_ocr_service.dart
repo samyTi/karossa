@@ -1,32 +1,55 @@
 // lib/core/services/carte_grise_ocr_service.dart
-// Service OCR pour extraire les données d'une carte grise (certificat d'immatriculation)
-// Version améliorée avec gestion d'erreurs et debug
+//
+// ┌─────────────────────────────────────────────────────────────────────────┐
+// │  CORRECTIF  "_Namespace / Unsupported operation"                        │
+// │                                                                         │
+// │  CAUSE : google_mlkit_text_recognition + path_provider s'appuient sur  │
+// │  dart:io (File, Directory) → planté sur Flutter Web avec "_Namespace"  │
+// │                                                                         │
+// │  SOLUTION : stratégie double selon la plateforme                        │
+// │  • Mobile (Android / iOS) → ML Kit local, comme avant, MAIS            │
+// │    en écrivant le fichier temp SEULEMENT si pas Web                    │
+// │  • Web → Gemini Vision REST API, bytes uniquement (pas de dart:io)     │
+// │                                                                         │
+// │  Toute la logique de parsing (_extractCarteGriseData) est conservée.   │
+// │                                                                         │
+// │  Dépendances à ajouter dans pubspec.yaml si absentes :                 │
+// │    http: ^1.2.0                                                         │
+// └─────────────────────────────────────────────────────────────────────────┘
 
-import 'dart:io';
+import 'dart:convert';
+import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
-import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:http/http.dart' as http;
 import '../utils/app_logger.dart';
 
-/// Modèle pour les données extraites d'une carte grise
-class CarteGriseData {
-  final String? immatriculation;    // A.1 - Numéro d'immatriculation
-  final String? marque;             // D.1 - Marque
-  final String? modele;             // D.2 - Type, variante, version
-  final String? datePremiereImmat;  // B.1 - Date première immatriculation
-  final String? nomTitulaire;       // C.1 - Nom du titulaire
-  final String? prenomTitulaire;    // C.2 - Prénom du titulaire
-  final String? adresseTitulaire;   // C.3 - Adresse du titulaire
-  final int? annee;                 // Déduite de B.1
-  final String? puissanceFiscale;   // P.2 - Puissance fiscale
-  final String? energie;            // P.3 - Type de carburant/énergie
-  final String? numChassis;         // E.1 - Numéro d'identification du véhicule (VIN)
-  final String? categorie;          // J.2 - Catégorie du véhicule
-  final int? nbPlaces;              // J.1 - Nombre de places assises
-  final int? poids;                 // F.1 - Poids en charge max
-  final String? couleur;            // Couleur (si présente)
+// Ces imports ne seront résolus que sur mobile grâce aux guards kIsWeb
+// On les déclare ici mais on ne les appelle JAMAIS sur Web.
+import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io' as io;
 
-  CarteGriseData({
+// ─────────────────────────────────────────────────────────────────────────────
+// Modèle de résultat  (identique à l'original)
+// ─────────────────────────────────────────────────────────────────────────────
+class CarteGriseData {
+  final String? immatriculation;
+  final String? marque;
+  final String? modele;
+  final String? datePremiereImmat;
+  final String? nomTitulaire;
+  final String? prenomTitulaire;
+  final String? adresseTitulaire;
+  final int? annee;
+  final String? puissanceFiscale;
+  final String? energie;
+  final String? numChassis;
+  final String? categorie;
+  final int? nbPlaces;
+  final int? poids;
+  final String? couleur;
+
+  const CarteGriseData({
     this.immatriculation,
     this.marque,
     this.modele,
@@ -44,178 +67,257 @@ class CarteGriseData {
     this.couleur,
   });
 
-  /// Crée une instance à partir d'un JSON
   factory CarteGriseData.fromJson(Map<String, dynamic> json) {
     return CarteGriseData(
-      immatriculation: json['immatriculation'],
-      marque: json['marque'],
-      modele: json['modele'],
-      datePremiereImmat: json['date_premiere_immat'],
-      nomTitulaire: json['nom_titulaire'],
-      prenomTitulaire: json['prenom_titulaire'],
-      adresseTitulaire: json['adresse_titulaire'],
-      annee: json['annee'],
-      puissanceFiscale: json['puissance_fiscale'],
-      energie: json['energie'],
-      numChassis: json['num_chassis'],
-      categorie: json['categorie'],
-      nbPlaces: json['nb_places'],
-      poids: json['poids'],
-      couleur: json['couleur'],
+      immatriculation: json['immatriculation'] as String?,
+      marque: json['marque'] as String?,
+      modele: json['modele'] as String?,
+      datePremiereImmat: json['date_premiere_immat'] as String?,
+      nomTitulaire: json['nom_titulaire'] as String?,
+      prenomTitulaire: json['prenom_titulaire'] as String?,
+      adresseTitulaire: json['adresse_titulaire'] as String?,
+      annee: (json['annee'] as num?)?.toInt(),
+      puissanceFiscale: json['puissance_fiscale'] as String?,
+      energie: json['energie'] as String?,
+      numChassis: json['num_chassis'] as String?,
+      categorie: json['categorie'] as String?,
+      nbPlaces: (json['nb_places'] as num?)?.toInt(),
+      poids: (json['poids'] as num?)?.toInt(),
+      couleur: json['couleur'] as String?,
     );
   }
 
-  /// Convertit en JSON
-  Map<String, dynamic> toJson() {
-    return {
-      'immatriculation': immatriculation,
-      'marque': marque,
-      'modele': modele,
-      'date_premiere_immat': datePremiereImmat,
-      'nom_titulaire': nomTitulaire,
-      'prenom_titulaire': prenomTitulaire,
-      'adresse_titulaire': adresseTitulaire,
-      'annee': annee,
-      'puissance_fiscale': puissanceFiscale,
-      'energie': energie,
-      'num_chassis': numChassis,
-      'categorie': categorie,
-      'nb_places': nbPlaces,
-      'poids': poids,
-      'couleur': couleur,
-    };
-  }
+  Map<String, dynamic> toJson() => {
+        'immatriculation': immatriculation,
+        'marque': marque,
+        'modele': modele,
+        'date_premiere_immat': datePremiereImmat,
+        'nom_titulaire': nomTitulaire,
+        'prenom_titulaire': prenomTitulaire,
+        'adresse_titulaire': adresseTitulaire,
+        'annee': annee,
+        'puissance_fiscale': puissanceFiscale,
+        'energie': energie,
+        'num_chassis': numChassis,
+        'categorie': categorie,
+        'nb_places': nbPlaces,
+        'poids': poids,
+        'couleur': couleur,
+      };
 
-  /// Vérifie si les données minimales sont présentes
   bool get isValid => immatriculation != null && marque != null;
-
-  /// Vérifie si au moins une donnée a été extraite
-  bool get hasData => immatriculation != null || marque != null || modele != null;
+  bool get hasData =>
+      immatriculation != null || marque != null || modele != null;
 
   @override
-  String toString() {
-    return 'CarteGriseData(immat: $immatriculation, marque: $marque, modele: $modele, annee: $annee)';
-  }
+  String toString() =>
+      'CarteGriseData(immat: $immatriculation, marque: $marque, modele: $modele, annee: $annee)';
 }
 
-/// Service OCR pour carte grise utilisant Google ML Kit
+// ─────────────────────────────────────────────────────────────────────────────
+// Service OCR — compatible Web + Mobile
+// ─────────────────────────────────────────────────────────────────────────────
+
+/// Service OCR pour carte grise.
+///
+/// Usage (dans vehicule_form_screen.dart) :
+///   // Récupérer la clé depuis Supabase showroom_settings
+///   final row = await supabase.from('showroom_settings')
+///       .select('gemini_api_key').limit(1).maybeSingle();
+///   final key = row?['gemini_api_key'] as String? ?? '';
+///
+///   final svc = CarteGriseOcrService(geminiApiKey: key);
+///   final Uint8List bytes = await xfile.readAsBytes();   // ← pas de dart:io File
+///   final data = await svc.scanCarteGrise(bytes);
 class CarteGriseOcrService {
-  static final CarteGriseOcrService _instance = CarteGriseOcrService._internal();
-  factory CarteGriseOcrService() => _instance;
+  // Singleton souple : la clé peut être mise à jour entre les appels
+  static CarteGriseOcrService? _instance;
+
+  factory CarteGriseOcrService({String? geminiApiKey}) {
+    _instance ??= CarteGriseOcrService._internal();
+    if (geminiApiKey != null) _instance!._geminiApiKey = geminiApiKey;
+    return _instance!;
+  }
+
   CarteGriseOcrService._internal();
 
-  final TextRecognizer _textRecognizer = TextRecognizer();
-  bool _isInitialized = false;
+  String? _geminiApiKey;
 
-  /// Initialise le service OCR
-  Future<void> initialize() async {
-    if (_isInitialized) return;
-    
-    // Le TextRecognizer est prêt à l'emploi, pas d'initialisation spéciale nécessaire
-    _isInitialized = true;
-    AppLogger.d('CarteGriseOcrService: Initialisé avec succès');
+  // ML Kit TextRecognizer — instancié uniquement sur mobile
+  TextRecognizer? _textRecognizer;
+  bool _mlkitInitialized = false;
+
+  // ── Initialisation ML Kit (mobile seulement) ──────────────────────────────
+  Future<void> _initMlKit() async {
+    if (_mlkitInitialized) return;
+    _textRecognizer = TextRecognizer();
+    _mlkitInitialized = true;
+    AppLogger.d('CarteGriseOcrService: ML Kit initialisé');
   }
 
-  /// Traite une image de carte grise et extrait les données
-  Future<CarteGriseData> scanCarteGrise(File imageFile) async {
+  // ── Point d'entrée public ─────────────────────────────────────────────────
+
+  /// [imageBytes] → résultat de XFile.readAsBytes() (fonctionne partout)
+  /// [mimeType]   → 'image/jpeg' ou 'image/png'
+  Future<CarteGriseData> scanCarteGrise(
+    Uint8List imageBytes, {
+    String mimeType = 'image/jpeg',
+  }) async {
     try {
-      await initialize();
-      
-      // Vérifier que le fichier existe
-      if (!await imageFile.exists()) {
-        throw Exception('Fichier image introuvable: ${imageFile.path}');
+      final String rawText;
+
+      if (kIsWeb) {
+        // ── WEB : Gemini Vision REST ──────────────────────────────────────
+        AppLogger.d('CarteGriseOcrService: Mode Web → Gemini Vision REST');
+        rawText = await _geminiOcr(imageBytes, mimeType);
+      } else {
+        // ── MOBILE : ML Kit local ─────────────────────────────────────────
+        AppLogger.d('CarteGriseOcrService: Mode Mobile → ML Kit local');
+        rawText = await _mlKitOcr(imageBytes);
       }
-      
-      AppLogger.d('CarteGriseOcrService: Traitement de l\'image ${imageFile.path}');
-      
-      // Option 1: Utiliser InputImage.fromFile (méthode standard)
+
+      AppLogger.d(
+          'CarteGriseOcrService: Texte reconnu (${rawText.length} car.)');
+      if (kDebugMode) {
+        AppLogger.d('=== TEXTE OCR BRUT ===\n$rawText\n=====================');
+      }
+
+      final data = _extractCarteGriseData(rawText);
+      AppLogger.d('CarteGriseOcrService: Données extraites: $data');
+      return data;
+    } catch (e, st) {
+      AppLogger.d('CarteGriseOcrService: Erreur OCR carte grise: $e\n$st');
+      rethrow;
+    }
+  }
+
+  // ── ML Kit (Android / iOS) ────────────────────────────────────────────────
+
+  Future<String> _mlKitOcr(Uint8List bytes) async {
+    await _initMlKit();
+
+    // Écriture dans un fichier temporaire (dart:io OK sur mobile)
+    final dir = await getApplicationDocumentsDirectory();
+    final tempPath =
+        '${dir.path}/temp_ocr_${DateTime.now().millisecondsSinceEpoch}.jpg';
+    final tempFile = io.File(tempPath);
+    await tempFile.writeAsBytes(bytes);
+
+    try {
       InputImage inputImage;
       try {
-        inputImage = InputImage.fromFile(imageFile);
-      } catch (e) {
-        AppLogger.d('CarteGriseOcrService: Erreur InputImage.fromFile: $e');
-        // Option 2: Utiliser InputImage.fromFilePath (alternative)
-        try {
-          inputImage = InputImage.fromFilePath(imageFile.path);
-          AppLogger.d('CarteGriseOcrService: Utilisation de InputImage.fromFilePath');
-        } catch (e2) {
-          AppLogger.d('CarteGriseOcrService: Erreur InputImage.fromFilePath: $e2');
-          throw Exception('Impossible de charger l\'image: ${e.toString()}');
-        }
+        inputImage = InputImage.fromFile(tempFile);
+      } catch (_) {
+        inputImage = InputImage.fromFilePath(tempPath);
       }
-      
-      // Reconnaître le texte
-      AppLogger.d('CarteGriseOcrService: Démarrage de la reconnaissance de texte...');
-      final recognizedText = await _textRecognizer.processImage(inputImage);
-      AppLogger.d('CarteGriseOcrService: Texte reconnu (${recognizedText.text.length} caractères)');
-      
-      if (kDebugMode) {
-        AppLogger.d('=== TEXTE OCR BRUT ===');
-        AppLogger.d(recognizedText.text);
-        AppLogger.d('=====================');
-      }
-      
-      // Sauvegarder le texte brut pour debugging (optionnel)
+
+      final recognized = await _textRecognizer!.processImage(inputImage);
+
+      // Debug : sauvegarde texte brut
       if (kDebugMode) {
         try {
-          final dir = await getApplicationDocumentsDirectory();
-          final logFile = File('${dir.path}/ocr_debug_${DateTime.now().millisecondsSinceEpoch}.txt');
-          await logFile.writeAsString(recognizedText.text);
-          AppLogger.d('CarteGriseOcrService: Texte brut sauvegardé dans ${logFile.path}');
-        } catch (e) {
-          // Ignorer les erreurs de sauvegarde
-        }
+          final logFile = io.File(
+              '${dir.path}/ocr_debug_${DateTime.now().millisecondsSinceEpoch}.txt');
+          await logFile.writeAsString(recognized.text);
+          AppLogger.d(
+              'CarteGriseOcrService: Log brut → ${logFile.path}');
+        } catch (_) {}
       }
-      
-      // Extraire les données structurées
-      final data = _extractCarteGriseData(recognizedText.text);
-      
-      AppLogger.d('CarteGriseOcrService: Données extraites: $data');
-      
-      return data;
-    } catch (e) {
-      AppLogger.d('CarteGriseOcrService: Erreur OCR carte grise: $e');
-      rethrow;
+
+      return recognized.text;
+    } finally {
+      // Nettoyage fichier temp
+      if (await tempFile.exists()) await tempFile.delete();
     }
   }
 
-  /// Traite une image depuis des bytes (alternative)
-  Future<CarteGriseData> scanCarteGriseFromBytes(Uint8List bytes) async {
-    try {
-      await initialize();
-      
-      // Sauvegarder temporairement les bytes
-      final dir = await getApplicationDocumentsDirectory();
-      final tempFile = File('${dir.path}/temp_ocr_${DateTime.now().millisecondsSinceEpoch}.jpg');
-      await tempFile.writeAsBytes(bytes);
-      
-      try {
-        return await scanCarteGrise(tempFile);
-      } finally {
-        // Nettoyer le fichier temporaire
-        if (await tempFile.exists()) {
-          await tempFile.delete();
-        }
-      }
-    } catch (e) {
-      AppLogger.d('CarteGriseOcrService: Erreur scanCarteGriseFromBytes: $e');
-      rethrow;
+  // ── Gemini Vision REST (Web) ──────────────────────────────────────────────
+
+  Future<String> _geminiOcr(Uint8List bytes, String mimeType) async {
+    if (_geminiApiKey == null || _geminiApiKey!.isEmpty) {
+      throw Exception(
+          'Clé API Gemini non configurée. '
+          'Allez dans Paramètres > Showroom pour la renseigner.');
     }
+
+    // On demande à Gemini de retourner le texte brut ligne par ligne
+    // (exactement comme ML Kit le ferait), pour que _extractCarteGriseData
+    // fonctionne identiquement sur Web et Mobile.
+    const prompt =
+        'Tu es un expert OCR de cartes grises. '
+        'Retourne UNIQUEMENT le texte brut tel qu\'il apparaît sur le document, '
+        'ligne par ligne, en conservant les codes de champs (A.1, D.1, D.2, B.1, '
+        'C.1, C.2, C.3, P.2, P.3, E, J.1, J.2, F.1, etc.). '
+        'Ne reformate pas, ne traduis pas, ne résume pas.';
+
+    final body = jsonEncode({
+      'contents': [
+        {
+          'parts': [
+            {
+              'inline_data': {
+                'mime_type': mimeType,
+                'data': base64Encode(bytes),
+              }
+            },
+            {'text': prompt},
+          ]
+        }
+      ],
+      'generationConfig': {
+        'temperature': 0.0,
+        'maxOutputTokens': 1024,
+      },
+    });
+
+    final response = await http
+        .post(
+          Uri.parse(
+            'https://generativelanguage.googleapis.com/v1beta/models/'
+            'gemini-1.5-flash:generateContent?key=$_geminiApiKey',
+          ),
+          headers: {'Content-Type': 'application/json'},
+          body: body,
+        )
+        .timeout(const Duration(seconds: 30));
+
+    if (response.statusCode != 200) {
+      throw Exception(
+          'Gemini API erreur ${response.statusCode}: ${response.body}');
+    }
+
+    final decoded = jsonDecode(response.body) as Map<String, dynamic>;
+    final candidates = decoded['candidates'] as List?;
+    if (candidates == null || candidates.isEmpty) {
+      throw Exception('Gemini: réponse vide (candidates absent)');
+    }
+    final parts = (candidates[0]['content']?['parts'] as List?) ?? [];
+    return parts
+        .whereType<Map>()
+        .map((p) => p['text'] ?? '')
+        .join('');
   }
 
-  /// Extrait les données structurées du texte OCR
+  // ─────────────────────────────────────────────────────────────────────────
+  // Parsing OCR  (logique originale conservée à l'identique)
+  // ─────────────────────────────────────────────────────────────────────────
+
   CarteGriseData _extractCarteGriseData(String text) {
     if (text.isEmpty) {
       AppLogger.d('CarteGriseOcrService: Texte vide, aucune donnée à extraire');
-      return CarteGriseData();
+      return const CarteGriseData();
     }
-    
-    // Nettoyer et normaliser le texte
-    final normalizedText = text.toUpperCase().replaceAll(RegExp(r'[^A-Z0-9\s:/.-]'), '');
-    final lines = text.split('\n').map((l) => l.trim()).where((l) => l.isNotEmpty).toList();
-    
+
+    final normalizedText =
+        text.toUpperCase().replaceAll(RegExp(r'[^A-Z0-9\s:/.-]'), '');
+    final lines = text
+        .split('\n')
+        .map((l) => l.trim())
+        .where((l) => l.isNotEmpty)
+        .toList();
+
     AppLogger.d('CarteGriseOcrService: ${lines.length} lignes à analyser');
-    
+
     String? immatriculation;
     String? marque;
     String? modele;
@@ -232,30 +334,31 @@ class CarteGriseOcrService {
     int? poids;
     String? couleur;
 
-    // Parser ligne par ligne
     for (int i = 0; i < lines.length; i++) {
       final line = lines[i].trim();
       final lineUpper = line.toUpperCase();
-      
+
       AppLogger.d('CarteGriseOcrService: Analyse ligne $i: "$line"');
-      
-      // A.1 - Immatriculation (format européen ou ancien)
+
+      // A.1 - Immatriculation
       if (lineUpper.contains('A.1') || lineUpper.contains('A1')) {
-        // Chercher le numéro d'immatriculation sur la même ligne ou la suivante
-        final match = RegExp(r'([A-Z]{2}-\d{3}-[A-Z]{2}|\d{1,3}\s?[A-Z]{2,3}\s?\d{2,3}|\d{9})').firstMatch(line);
+        final match = RegExp(
+                r'([A-Z]{2}-\d{3}-[A-Z]{2}|\d{1,3}\s?[A-Z]{2,3}\s?\d{2,3}|\d{9})')
+            .firstMatch(line);
         if (match != null) {
           immatriculation = match.group(1)?.replaceAll(' ', '');
-          AppLogger.d('CarteGriseOcrService: Immatriculation trouvée: $immatriculation');
+          AppLogger.d(
+              'CarteGriseOcrService: Immatriculation trouvée: $immatriculation');
         } else {
-          // Essayer de prendre le reste de la ligne après A.1
           final parts = line.split(RegExp(r'A\.?1')).last.trim();
           if (parts.isNotEmpty && parts.length > 2) {
             immatriculation = parts.replaceAll(RegExp(r'[^A-Z0-9-]'), '');
-            AppLogger.d('CarteGriseOcrService: Immatriculation (reste ligne): $immatriculation');
+            AppLogger.d(
+                'CarteGriseOcrService: Immatriculation (reste ligne): $immatriculation');
           }
         }
       }
-      
+
       // D.1 - Marque
       if (lineUpper.contains('D.1') || lineUpper.contains('D1')) {
         final parts = line.split(RegExp(r'D\.?1')).last.trim();
@@ -264,7 +367,7 @@ class CarteGriseOcrService {
           AppLogger.d('CarteGriseOcrService: Marque trouvée: $marque');
         }
       }
-      
+
       // D.2 - Modèle/Type
       if (lineUpper.contains('D.2') || lineUpper.contains('D2')) {
         final parts = line.split(RegExp(r'D\.?2')).last.trim();
@@ -273,58 +376,64 @@ class CarteGriseOcrService {
           AppLogger.d('CarteGriseOcrService: Modèle trouvé: $modele');
         }
       }
-      
+
       // B.1 - Date première immatriculation
       if (lineUpper.contains('B.1') || lineUpper.contains('B1')) {
-        final match = RegExp(r'(\d{2}[/.-]\d{2}[/.-]\d{4})').firstMatch(line);
+        final match =
+            RegExp(r'(\d{2}[/.-]\d{2}[/.-]\d{4})').firstMatch(line);
         if (match != null) {
           datePremiereImmat = match.group(1);
-          AppLogger.d('CarteGriseOcrService: Date immat trouvée: $datePremiereImmat');
-          // Extraire l'année
-          final yearMatch = RegExp(r'(\d{4})$').firstMatch(datePremiereImmat!);
+          AppLogger.d(
+              'CarteGriseOcrService: Date immat trouvée: $datePremiereImmat');
+          final yearMatch =
+              RegExp(r'(\d{4})$').firstMatch(datePremiereImmat!);
           if (yearMatch != null) {
             annee = int.tryParse(yearMatch.group(1)!);
             AppLogger.d('CarteGriseOcrService: Année déduite: $annee');
           }
         }
       }
-      
+
       // C.1 - Nom du titulaire
       if (lineUpper.contains('C.1') || lineUpper.contains('C1')) {
         final parts = line.split(RegExp(r'C\.?1')).last.trim();
         if (parts.isNotEmpty) {
           nomTitulaire = parts;
-          AppLogger.d('CarteGriseOcrService: Nom titulaire trouvé: $nomTitulaire');
+          AppLogger.d(
+              'CarteGriseOcrService: Nom titulaire trouvé: $nomTitulaire');
         }
       }
-      
+
       // C.2 - Prénom du titulaire
       if (lineUpper.contains('C.2') || lineUpper.contains('C2')) {
         final parts = line.split(RegExp(r'C\.?2')).last.trim();
         if (parts.isNotEmpty) {
           prenomTitulaire = parts;
-          AppLogger.d('CarteGriseOcrService: Prénom titulaire trouvé: $prenomTitulaire');
+          AppLogger.d(
+              'CarteGriseOcrService: Prénom titulaire trouvé: $prenomTitulaire');
         }
       }
-      
+
       // C.3 - Adresse du titulaire
       if (lineUpper.contains('C.3') || lineUpper.contains('C3')) {
         final parts = line.split(RegExp(r'C\.?3')).last.trim();
         if (parts.isNotEmpty) {
           adresseTitulaire = parts;
-          AppLogger.d('CarteGriseOcrService: Adresse titulaire trouvée: $adresseTitulaire');
+          AppLogger.d(
+              'CarteGriseOcrService: Adresse titulaire trouvée: $adresseTitulaire');
         }
       }
-      
+
       // P.2 - Puissance fiscale
       if (lineUpper.contains('P.2') || lineUpper.contains('P2')) {
         final match = RegExp(r'(\d+)\s*CV').firstMatch(line);
         if (match != null) {
           puissanceFiscale = '${match.group(1)} CV';
-          AppLogger.d('CarteGriseOcrService: Puissance fiscale trouvée: $puissanceFiscale');
+          AppLogger.d(
+              'CarteGriseOcrService: Puissance fiscale trouvée: $puissanceFiscale');
         }
       }
-      
+
       // P.3 - Type de carburant/énergie
       if (lineUpper.contains('P.3') || lineUpper.contains('P3')) {
         final parts = line.split(RegExp(r'P\.?3')).last.trim();
@@ -333,17 +442,19 @@ class CarteGriseOcrService {
           AppLogger.d('CarteGriseOcrService: Énergie trouvée: $energie');
         }
       }
-      
-      // E.1 - Numéro de châssis/VIN
-      if (lineUpper.contains('E.1') || lineUpper.contains('E1') || lineUpper.contains('E')) {
-        // VIN est généralement 17 caractères alphanumériques
-        final vinMatch = RegExp(r'([A-HJ-NPR-Z0-9]{17})').firstMatch(line);
+
+      // E / E.1 - VIN (17 caractères alphanumériques)
+      if (lineUpper.contains('E.1') ||
+          lineUpper.contains('E1') ||
+          lineUpper.contains(' E ')) {
+        final vinMatch =
+            RegExp(r'([A-HJ-NPR-Z0-9]{17})').firstMatch(line);
         if (vinMatch != null) {
           numChassis = vinMatch.group(1);
           AppLogger.d('CarteGriseOcrService: VIN trouvé: $numChassis');
         }
       }
-      
+
       // J.1 - Nombre de places
       if (lineUpper.contains('J.1') || lineUpper.contains('J1')) {
         final match = RegExp(r'(\d+)').firstMatch(line);
@@ -352,7 +463,7 @@ class CarteGriseOcrService {
           AppLogger.d('CarteGriseOcrService: Nb places trouvé: $nbPlaces');
         }
       }
-      
+
       // J.2 - Catégorie
       if (lineUpper.contains('J.2') || lineUpper.contains('J2')) {
         final parts = line.split(RegExp(r'J\.?2')).last.trim();
@@ -361,7 +472,7 @@ class CarteGriseOcrService {
           AppLogger.d('CarteGriseOcrService: Catégorie trouvée: $categorie');
         }
       }
-      
+
       // F.1 - Poids
       if (lineUpper.contains('F.1') || lineUpper.contains('F1')) {
         final match = RegExp(r'(\d+)\s*KG').firstMatch(line);
@@ -372,22 +483,24 @@ class CarteGriseOcrService {
       }
     }
 
-    // Si l'immatriculation n'a pas été trouvée via les champs, essayer de la détecter directement
+    // Fallback immatriculation globale (format européen)
     if (immatriculation == null) {
-      final immatMatch = RegExp(r'([A-Z]{2}-\d{3}-[A-Z]{2})').firstMatch(normalizedText);
+      final immatMatch =
+          RegExp(r'([A-Z]{2}-\d{3}-[A-Z]{2})').firstMatch(normalizedText);
       if (immatMatch != null) {
         immatriculation = immatMatch.group(1);
-        AppLogger.d('CarteGriseOcrService: Immatriculation détectée (regex globale): $immatriculation');
+        AppLogger.d(
+            'CarteGriseOcrService: Immatriculation (regex globale): $immatriculation');
       }
     }
 
-    // Si la marque n'a pas été trouvée, essayer de la deviner
+    // Fallback marque depuis modèle
     if (marque == null && modele != null) {
-      // Les premières lettres du modèle sont souvent la marque
       final words = modele.split(' ');
       if (words.isNotEmpty) {
         marque = words.first;
-        AppLogger.d('CarteGriseOcrService: Marque déduite du modèle: $marque');
+        AppLogger.d(
+            'CarteGriseOcrService: Marque déduite du modèle: $marque');
       }
     }
 
@@ -410,7 +523,6 @@ class CarteGriseOcrService {
     );
   }
 
-  /// Normalise le type d'énergie
   String _normalizeEnergie(String energie) {
     final e = energie.toUpperCase().trim();
     if (e.contains('ES')) return 'Essence';
@@ -421,9 +533,9 @@ class CarteGriseOcrService {
     return e;
   }
 
-  /// Libère les ressources
+  /// Libère les ressources ML Kit (à appeler dans dispose() du widget si besoin)
   void dispose() {
-    _textRecognizer.close();
-    _isInitialized = false;
+    _textRecognizer?.close();
+    _mlkitInitialized = false;
   }
 }

@@ -10,9 +10,6 @@ import 'package:intl/intl.dart';
 import '../../../../core/providers/supabase_provider.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/services/contrat_generator_service.dart';
-import '../../locations/domain/location_model.dart';
-import '../../ventes/domain/vente_model.dart';
-import '../../echanges/domain/echange_model.dart';
 
 // ── Providers ────────────────────────────────────────────────────────────────
 
@@ -172,22 +169,14 @@ class _LocationsTab extends ConsumerWidget {
     final id = data['id'] as String;
     try {
       _showLoadingSnack(context, 'Génération du contrat…');
-      final client = ref.read(supabaseClientProvider);
-      // Recharger la location complète avec toutes les jointures
-      final full = await client
-          .from('locations')
-          .select(
-              '*, vehicules(marque, modele, annee, couleur, immatriculation, carburant, boite, etat_vehicule, num_chassis),'
-              'clients(prenom, nom, telephone, adresse, num_cni, num_permis),'
-              'location_repartitions(*, profiles(prenom))')
-          .eq('id', id)
-          .single();
-
-      final location = Location.fromJson(full);
+      
+      // FIX : Appel corrigé avec les 3 arguments positionnels requis
       await ContratGeneratorService.generateAndShareLocation(
-        location: location,
-        ref: ref,
+        context,
+        ref,
+        id,
       );
+
       if (context.mounted) {
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
         _showSuccessSnack(context, 'Contrat généré avec succès');
@@ -236,21 +225,14 @@ class _VentesTab extends ConsumerWidget {
     final id = data['id'] as String;
     try {
       _showLoadingSnack(context, 'Génération du contrat…');
-      final client = ref.read(supabaseClientProvider);
-      final full = await client
-          .from('ventes')
-          .select(
-              '*, vehicules(marque, modele, annee, couleur, immatriculation, carburant, boite, num_chassis),'
-              'clients(prenom, nom, telephone, adresse, num_cni),'
-              'vente_paiements(id, montant, date_paiement, mode)')
-          .eq('id', id)
-          .single();
 
-      final vente = Vente.fromJson(full);
+      // FIX : Appel corrigé avec les 3 arguments positionnels requis
       await ContratGeneratorService.generateAndShareVente(
-        vente: vente,
-        ref: ref,
+        context,
+        ref,
+        id,
       );
+
       if (context.mounted) {
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
         _showSuccessSnack(context, 'Contrat généré avec succès');
@@ -299,20 +281,14 @@ class _EchangesTab extends ConsumerWidget {
     final id = data['id'] as String;
     try {
       _showLoadingSnack(context, 'Génération du contrat…');
-      final client = ref.read(supabaseClientProvider);
-      final full = await client
-          .from('echanges')
-          .select(
-              '*, vehicules!echanges_vehicule_cede_id_fkey(marque, modele, annee, couleur, immatriculation),'
-              'clients(prenom, nom, telephone, adresse, num_cni)')
-          .eq('id', id)
-          .single();
 
-      final echange = Echange.fromJson(full);
+      // FIX : Appel corrigé avec les 3 arguments positionnels requis
       await ContratGeneratorService.generateAndShareEchange(
-        echange: echange,
-        ref: ref,
+        context,
+        ref,
+        id,
       );
+
       if (context.mounted) {
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
         _showSuccessSnack(context, 'Contrat généré avec succès');
@@ -348,7 +324,6 @@ class _ContratTile extends StatelessWidget {
   String get _vehiculeNom {
     final v = data['vehicules'];
     if (v == null) {
-      // échange: nom du véhicule repris en texte
       return '${data['vehicule_reprise_marque'] ?? ''} ${data['vehicule_reprise_modele'] ?? ''}'.trim();
     }
     final immat = v['immatriculation'];
@@ -390,7 +365,6 @@ class _ContratTile extends StatelessWidget {
         padding: const EdgeInsets.all(14),
         child: Row(
           children: [
-            // Icône type
             Container(
               width: 44,
               height: 44,
@@ -401,7 +375,6 @@ class _ContratTile extends StatelessWidget {
               child: Icon(type.icon, color: type.color, size: 22),
             ),
             const SizedBox(width: 12),
-            // Infos
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -448,10 +421,8 @@ class _ContratTile extends StatelessWidget {
                 ],
               ),
             ),
-            // Actions
             Column(
               children: [
-                // Badge contrat existant
                 if (_hasPdf)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 4),
@@ -472,7 +443,6 @@ class _ContratTile extends StatelessWidget {
                       ),
                     ),
                   ),
-                // Bouton génération PDF
                 IconButton(
                   icon: Icon(
                     _hasPdf

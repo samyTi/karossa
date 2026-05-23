@@ -53,6 +53,8 @@ class EchangesRepository {
 
   /// Crée un nouvel échange/contrat
   Future<Echange> create(Map<String, dynamic> data) async {
+    // commission_gerant_mnt n'existe pas en base — toujours supprimer avant insert
+    data.remove('commission_gerant_mnt');
     final result = await _client
       .from('echanges')
       .insert(data)

@@ -9,6 +9,9 @@ import '../../../core/theme/app_text_styles.dart';
 import '../../../shared/widgets/custom_app_bar.dart';
 import '../domain/profile_model.dart';
 import 'auth_provider.dart';
+// ── Imports pour le badge des demandes web ──
+import '../../web_demandes/domain/web_demandes_providers.dart';
+import '../../web_demandes/domain/web_demande_model.dart';
 
 /// Provider pour charger les informations du showroom depuis la base de données
 final showroomSettingsProvider = FutureProvider((ref) async {
@@ -23,6 +26,9 @@ class ProfileScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final profileAsync = ref.watch(currentProfileProvider);
     final showroomAsync = ref.watch(showroomSettingsProvider);
+    
+    // Écouter les requêtes du site web pour le badge d'alerte
+    final webDemandesAsync = ref.watch(webDemandesListProvider);
 
     return profileAsync.when(
       loading: () => const Scaffold(body: Center(child: CircularProgressIndicator())),
@@ -31,6 +37,12 @@ class ProfileScreen extends ConsumerWidget {
         if (profile == null) {
           return const Scaffold(body: Center(child: Text('Profil introuvable')));
         }
+
+        // Récupérer le nombre de demandes en attente de traitement
+        final int nbEnAttente = webDemandesAsync.maybeWhen(
+          data: (list) => list.where((d) => d.statut == DemandeWebStatut.enAttente).length,
+          orElse: () => 0,
+        );
 
         return Scaffold(
           appBar: const CustomAppBar(
@@ -78,6 +90,17 @@ class ProfileScreen extends ConsumerWidget {
               if (profile.isGerant) ...[
                 const _SectionTitle(title: 'Administration Showroom'),
                 const SizedBox(height: 8),
+                
+                // ✅ Nouveau bouton d'accès au module Web branché sur votre route
+                _ActionTile(
+                  icon: Icons.cloud_download_outlined,
+                  title: 'Demandes Web & Leads',
+                  subtitle: 'Réservations, achats et échanges du site',
+                  color: Colors.orange,
+                  badgeCount: nbEnAttente > 0 ? nbEnAttente : null,
+                  onTap: () => context.push('/admin/web-demandes'),
+                ),
+                
                 _ActionTile(
                   icon: Icons.people_alt_outlined,
                   title: 'Gérer l\'équipe',
@@ -290,7 +313,16 @@ class _ActionTile extends StatelessWidget {
   final String title, subtitle;
   final Color color;
   final VoidCallback onTap;
-  const _ActionTile({required this.icon, required this.title, required this.subtitle, required this.color, required this.onTap});
+  final int? badgeCount; // ✅ Ajout du paramètre optionnel pour les notifications
+
+  const _ActionTile({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.color,
+    required this.onTap,
+    this.badgeCount,
+  });
 
   @override
   Widget build(BuildContext context) => Card(
@@ -301,7 +333,25 @@ class _ActionTile extends StatelessWidget {
         child: Icon(icon, color: color, size: 20)),
       title: Text(title, style: AppTextStyles.heading3),
       subtitle: Text(subtitle, style: AppTextStyles.bodySecondary),
-      trailing: const Icon(Icons.chevron_right),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (badgeCount != null) // ✅ Affichage dynamique de la pastille rouge
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: AppColors.retard,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                '$badgeCount',
+                style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
+              ),
+            ),
+          const SizedBox(width: 4),
+          const Icon(Icons.chevron_right),
+        ],
+      ),
       onTap: onTap,
     ),
   );

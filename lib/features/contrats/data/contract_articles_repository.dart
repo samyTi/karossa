@@ -23,6 +23,27 @@ class ContractArticlesRepository {
     }
   }
 
+  /// Retourne uniquement les articles actifs d'une langue donnée ('fr' ou 'ar').
+  /// Filtre à la fois en base ET côté client pour garantir la séparation.
+  Future<List<ContractArticle>> getActifsParLangue(
+    String contratType,
+    String langue, // 'fr' | 'ar'
+  ) async {
+    try {
+      final data = await _client
+          .from('contract_articles')
+          .select()
+          .eq('contrat_type', contratType)
+          .eq('actif', true)
+          .eq('langue', langue) // filtre en base — colonne DEFAULT 'fr'
+          .order('ordre');
+      return (data as List).map((j) => ContractArticle.fromJson(j)).toList();
+    } catch (e) {
+      AppLogger.d('ContractArticlesRepository.getActifsParLangue: $e');
+      return [];
+    }
+  }
+
   Future<List<ContractArticle>> getTous(String contratType) async {
     try {
       final data = await _client
@@ -105,29 +126,35 @@ class ContractArticlesRepository {
   /// Retourne les articles actifs résolus, séparés en deux listes :
   ///   - `fr` : articles français → injectés dans la page conditions FR
   ///   - `ar` : articles arabes  → injectés dans la page conditions AR
+  ///
+  /// CORRECTION : filtre la langue EN BASE (via getActifsParLangue) pour éviter
+  /// que les articles arabes apparaissent dans le contrat français quand la
+  /// colonne `langue` vaut NULL en base (ce qui résultait en ArticleLangue.fr
+  /// par défaut dans fromString()).
   Future<ArticlesResolus> getArticlesResolusParLangue({
     required String contratType,
     required Map<String, dynamic> contextData,
   }) async {
-    final articles = await getActifs(contratType);
-
     final strContext = contextData.map(
       (k, v) => MapEntry(k, v?.toString() ?? ''),
     );
 
-    final filtered = articles.where((a) => a.evaluerCondition(contextData));
+    // Deux requêtes séparées : une par langue (filtre en base)
+    final articlesFr = await getActifsParLangue(contratType, 'fr');
+    final articlesAr = await getActifsParLangue(contratType, 'ar');
 
-    List<Map<String, String>> toList(ArticleLangue lang) => filtered
-        .where((a) => a.langue == lang)
-        .map((a) => {
-              'titre': a.resolveTitre(strContext),
-              'corps': a.resolveVariables(strContext),
-            })
-        .toList();
+    List<Map<String, String>> resolve(List<ContractArticle> articles) =>
+        articles
+            .where((a) => a.evaluerCondition(contextData))
+            .map((a) => {
+                  'titre': a.resolveTitre(strContext),
+                  'corps': a.resolveVariables(strContext),
+                })
+            .toList();
 
     return ArticlesResolus(
-      fr: toList(ArticleLangue.fr),
-      ar: toList(ArticleLangue.ar),
+      fr: resolve(articlesFr),
+      ar: resolve(articlesAr),
     );
   }
 

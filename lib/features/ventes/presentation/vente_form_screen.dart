@@ -12,6 +12,8 @@ import '../../vehicules/presentation/vehicules_provider.dart';
 import '../../../core/services/contrat_generator_service.dart';
 import '../../../shared/services/notification_service.dart';
 import '../domain/vente_model.dart';
+import '../../admin/domain/showroom_settings_model.dart';
+import '../../admin/presentation/showroom_settings_provider.dart';
 
 class VenteFormScreen extends ConsumerStatefulWidget {
   final String? vehiculeId;
@@ -29,14 +31,41 @@ class _State extends ConsumerState<VenteFormScreen> {
   String _modePaiement = 'especes';
   final _prixCtrl    = TextEditingController();
   final _acompteCtrl = TextEditingController(text: '0');
-  final _comCtrl     = TextEditingController(text: '5');
+  final _comCtrl     = TextEditingController();
   final _notesCtrl   = TextEditingController();
+
+  // Type de commission chargé depuis les settings (pct ou fixe)
+  CommissionType _comType = CommissionType.pct;
+  bool _settingsLoaded = false;
 
   double get _prix    => double.tryParse(_prixCtrl.text) ?? 0;
   double get _acompte => double.tryParse(_acompteCtrl.text) ?? 0;
-  double get _com     => double.tryParse(_comCtrl.text) ?? 5;
-  double get _comMnt  => _prix * _com / 100;
+  double get _comVal  => double.tryParse(_comCtrl.text) ?? 0;
+  double get _comMnt  => _comType == CommissionType.pct
+      ? _prix * _comVal / 100
+      : _comVal;
   double get _solde   => _prix - _acompte;
+
+  @override
+  void initState() {
+    super.initState();
+    // Charger les settings dès que le widget est prêt
+    WidgetsBinding.instance.addPostFrameCallback((_) => _loadSettings());
+  }
+
+  void _loadSettings() {
+    if (_settingsLoaded) return;
+    final settingsAsync = ref.read(showroomSettingsTypedProvider);
+    settingsAsync.whenData((s) {
+      if (!mounted) return;
+      setState(() {
+        _comType = s.commissionVente.type;
+        _comCtrl.text = s.commissionVente.valeur
+            .toStringAsFixed(s.commissionVente.valeur == s.commissionVente.valeur.truncate() ? 0 : 2);
+        _settingsLoaded = true;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -161,9 +190,7 @@ class _State extends ConsumerState<VenteFormScreen> {
               child: Column(children: [
                 _r('Prix de vente', '${_prix.toInt()} DA',
                   bold: true),
-                _r('Commission Gérant (${_com.toInt()}%)',
-                  '${_comMnt.toInt()} DA',
-                  color: AppColors.gerant),
+                _r('Commission Gérant (${_comVal.toInt()}%)', '${_comMnt.toInt()} DA', color: AppColors.gerant),
                 _r('Part Propriétaire',
                   '${(_prix - _comMnt).toInt()} DA',
                   color: AppColors.proprietaireShowroom),
@@ -230,8 +257,8 @@ class _State extends ConsumerState<VenteFormScreen> {
         'acompte':              _acompte,
         'solde_restant':        _solde,
         'mode_paiement':        _modePaiement,
-        'commission_gerant_pct': _com,
-        'commission_gerant_mnt': _comMnt,
+        'commission_gerant_pct': _comVal,
+        // commission_gerant_mnt non envoyé — colonne inexistante en base
         'statut_paiement':      _acompte >= _prix
                                   ? 'complet' : 'partiel',
         'notes':                _notesCtrl.text.trim().isEmpty

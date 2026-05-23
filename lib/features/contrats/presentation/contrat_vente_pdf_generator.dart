@@ -7,13 +7,24 @@
 //   pdf: ^3.11.0
 //   path_provider: ^2.1.0
 //   intl: ^0.19.0
+//
+// CORRECTION v2 — caractères spéciaux français :
+//   Ajout police Roboto (Latin étendu) pour corriger é à ç ê – ' « » etc.
+//   Ajouter dans pubspec.yaml sous flutter > fonts :
+//     - family: Roboto
+//       fonts:
+//         - asset: assets/fonts/Roboto-Regular.ttf
+//         - asset: assets/fonts/Roboto-Bold.ttf
+//           weight: 700
 
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
+
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  DTO
@@ -116,6 +127,34 @@ class ContratVentePdfGenerator {
   static String _idFmt(String id) =>
       id.length >= 8 ? id.substring(0, 8).toUpperCase() : id.toUpperCase();
 
+  // ── Police latine (cache statique) ───────────────────────────────────────
+  // Sans TTF, Helvetica (défaut) ne supporte pas é à ç ê è ù â œ – ' « »
+
+  static pw.Font? _latinFont;
+  static pw.Font? _latinFontBold;
+
+  static Future<void> _loadLatinFont() async {
+    if (_latinFont != null) return;
+    try {
+      final regular = await rootBundle.load('assets/fonts/Roboto-Regular.ttf');
+      final bold    = await rootBundle.load('assets/fonts/Roboto-Bold.ttf');
+      _latinFont     = pw.Font.ttf(regular);
+      _latinFontBold = pw.Font.ttf(bold);
+    } catch (e) {
+      // ignore: avoid_print
+      print('[ContratVentePdf] ⚠️ Police latine non chargée : $e');
+      _latinFont     = null;
+      _latinFontBold = null;
+    }
+  }
+
+  // ── Point d'entrée asynchrone (recommandé) ───────────────────────────────
+
+  static Future<pw.Document> buildAsync(ContratVenteDto dto) async {
+    await _loadLatinFont();
+    return build(dto);
+  }
+
   // ── Point d'entrée principal ──────────────────────────────
 
   static pw.Document build(ContratVenteDto dto) {
@@ -123,12 +162,23 @@ class ContratVentePdfGenerator {
     final color = _hexColor(dto.agenceCouleurHex);
     final light = PdfColor(color.red, color.green, color.blue, 0.12);
 
+    pw.Widget withLatinTheme(pw.Widget child) {
+      if (_latinFont == null) return child;
+      return pw.Theme(
+        data: pw.ThemeData.withFont(
+          base: _latinFont!,
+          bold: _latinFontBold ?? _latinFont!,
+        ),
+        child: child,
+      );
+    }
+
     doc.addPage(pw.MultiPage(
       pageFormat: PdfPageFormat.a4,
       margin: const pw.EdgeInsets.symmetric(horizontal: 22, vertical: 22),
-      header: (ctx) => _buildHeader(dto, color),
-      footer: (ctx) => _buildFooter(dto, ctx),
-      build: (ctx) => [
+      header: (ctx) => withLatinTheme(_buildHeader(dto, color)),
+      footer: (ctx) => withLatinTheme(_buildFooter(dto, ctx)),
+      build: (ctx) => [withLatinTheme(pw.Column(children: [
         // 1. Acheteur
         _sectionTitle('INFORMATIONS ACHETEUR', color),
         pw.SizedBox(height: 4),
@@ -195,7 +245,7 @@ class ContratVentePdfGenerator {
 
         // 5. Signatures
         _signatures(dto, color, light),
-      ],
+      ]))]
     ));
 
     return doc;

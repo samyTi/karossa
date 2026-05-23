@@ -7,7 +7,7 @@ import 'package:go_router/go_router.dart';
 import '../../features/contrats/presentation/contrats_screen.dart';
 import '../../features/auth/presentation/auth_provider.dart';
 import '../../features/auth/presentation/login_screen.dart';
-import '../../features/auth/presentation/profile_screen.dart';
+import '../../features/auth/presentation/profile_screen.dart'; // 💡 Chemin ajusté vers features/profile
 import '../../features/dashboard/presentation/modern_dashboard.dart';
 import '../../features/menu/presentation/modern_menu_screen.dart';
 import '../../features/vehicules/presentation/vehicule_contracts_screen.dart';
@@ -36,24 +36,33 @@ import '../../features/admin/presentation/settings_screen.dart';
 import '../../features/achats/presentation/achats_screen.dart';
 import '../../features/achats/presentation/achat_form_screen.dart';
 import '../../features/achats/presentation/achat_detail_screen.dart';
-// ✅ gps_map_screen renommé en gps_fleet_map_screen
 import '../../features/gps/presentation/gps_fleet_map_screen.dart';
 import '../../features/gps/presentation/gps_alerts_screen.dart';
-// ✅ gps_screen déplacé de screens/ vers presentation/
 import '../../features/gps/presentation/gps_screen.dart';
 import '../../features/notifications/presentation/notifications_screen.dart';
 import '../../features/ai/presentation/ai_chat_screen.dart';
 import '../../features/contrats/presentation/contract_articles_admin_screen.dart';
+import '../../features/web_demandes/presentation/web_demandes_screen.dart';
 
+// Import indispensable pour mapper la clé d'Overlay globale
+import '../../shared/services/notification_service.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authStateProvider);
 
   return GoRouter(
     initialLocation: '/dashboard',
+    
+    // 🌐 AJOUT MAJEUR : Liaison de la clé globale pour corriger le bug de l'Overlay indéfinie
+    navigatorKey: NotificationService.navigatorKey,
+
     redirect: (context, state) {
+      // Évite les sauts de redirection si Supabase charge encore l'état de session
+      if (authState.isLoading) return null;
+
       final isLoggedIn   = authState.valueOrNull != null;
       final isLoginRoute = state.matchedLocation == '/login';
+      
       if (!isLoggedIn && !isLoginRoute) return '/login';
       if (isLoggedIn  && isLoginRoute)  return '/dashboard';
       return null;
@@ -178,6 +187,12 @@ final routerProvider = Provider<GoRouter>((ref) {
             GoRoute(
               path: '/more',
               builder: (_, __) => const ModernMenuScreen(),
+              routes: [
+                GoRoute(
+                  path: 'web-demandes',
+                  builder: (_, __) => const WebDemandesScreen(),
+                ),
+              ],
             ),
           ]),
         ],
@@ -272,11 +287,11 @@ final routerProvider = Provider<GoRouter>((ref) {
       // ── GPS ───────────────────────────────────────────────────────────────
       GoRoute(
         path: '/gps',
-        builder: (_, __) => const GpsScreen(),      // ✅ liste véhicules GPS
+        builder: (_, __) => const GpsScreen(),
         routes: [
           GoRoute(
             path: 'map',
-            builder: (_, __) => const GpsFleetMapScreen(), // ✅ carte flotte
+            builder: (_, __) => const GpsFleetMapScreen(),
           ),
           GoRoute(
             path: 'alertes',

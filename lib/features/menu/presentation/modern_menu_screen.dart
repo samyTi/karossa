@@ -125,6 +125,14 @@ class ModernMenuScreen extends ConsumerWidget {
                     route: '/echanges',
                   ),
                   Divider(height: 1, color: Colors.grey.shade100),
+                  // ✅ BRANCHEMENT : Demandes Web & Leads ajoutées ici
+                  const _MenuListRow(
+                    label: 'Demandes Web & Leads',
+                    icon: Icons.cloud_download_outlined,
+                    color: AppColors.secondary,
+                    route: '/more/web-demandes', // ✅ Doit correspondre exactement à /more/web-demandes
+                  ),
+                  Divider(height: 1, color: Colors.grey.shade100),
                   const _MenuListRow(
                     label: 'Contrats PDF',
                     icon: Icons.description_outlined,
@@ -224,7 +232,6 @@ class ModernMenuScreen extends ConsumerWidget {
                     route: '/ai-chat',
                   ),
                   Divider(height: 1, color: Colors.grey.shade100),
-                  // ✅ FIX : Le mot-clé const a été retiré ici pour autoriser l'accès à .shade700
                   _MenuListRow(
                     label: 'Notifications & Alertes',
                     icon: Icons.notifications_none_outlined,

@@ -184,61 +184,78 @@ class _VehiculeCard extends StatelessWidget {
   const _VehiculeCard({required this.vehicule, required this.onTap});
 
   @override
-  Widget build(BuildContext context) => Card(
-    margin: const EdgeInsets.only(bottom: 10),
-    child: InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Row(children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: SizedBox(width: 80, height: 60,
-              child: vehicule.photos.isNotEmpty
-                ? CachedNetworkImage(imageUrl: vehicule.photos.first,
-                    fit: BoxFit.cover,
-                    errorWidget: (_, __, ___) => const _PhotoPlaceholder())
-                : const _PhotoPlaceholder()),
-          ),
-          const SizedBox(width: 12),
-          Expanded(child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(children: [
-                Expanded(child: Text(vehicule.displayName,
-                  style: AppTextStyles.heading3, maxLines: 1,
-                  overflow: TextOverflow.ellipsis)),
-                StatusBadge(statut: vehicule.statut),
-              ]),
-              const SizedBox(height: 4),
-              Text('${vehicule.kilometrage} km${vehicule.immatriculation != null
-                   ? ' · ${vehicule.immatriculation}' : ''}',
-                style: AppTextStyles.bodySecondary),
-              const SizedBox(height: 4),
-              Wrap(spacing: 6, children: [
-                if (vehicule.prixLocationJour != null)
-                  _Chip('${vehicule.prixLocationJour!.toInt()} DA/j',
-                    AppColors.secondary),
-                if (vehicule.prixVente != null)
-                  _Chip('${vehicule.prixVente!.toInt()} DA',
-                    AppColors.primary),
-              ]),
-              if (vehicule.proprietes.isNotEmpty) ...[
-                const SizedBox(height: 2),
-                Text(vehicule.proprietes
-                  .map((p) => '${p.proprietaireNom} ${p.partPct.toInt()}%')
-                  .join(' · '),
-                  style: AppTextStyles.label, maxLines: 1,
-                  overflow: TextOverflow.ellipsis),
+  Widget build(BuildContext context) {
+    // ✅ Correction 1 & 2 : Déclaration correcte de la variable avec le bon nom (vehicule au lieu de v)
+    // et intégration dans un vrai bloc {}
+    final String? urlDeLimage = vehicule.photos.isNotEmpty ? vehicule.photos.first : null;
+
+    return Card(
+      margin: const EdgeInsets.only(bottom: 10),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Row(children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: SizedBox(
+                width: 80, 
+                height: 60,
+                child: urlDeLimage != null && urlDeLimage.isNotEmpty
+                  ? CachedNetworkImage(
+                      imageUrl: urlDeLimage,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => const Center(
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                      errorWidget: (context, url, error) {
+                        debugPrint("Erreur affichage image catalogue Supabase: $error");
+                        return const _PhotoPlaceholder(); // Revenir au placeholder si l'URL réseau échoue
+                      },
+                    )
+                  : const _PhotoPlaceholder(),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(children: [
+                  Expanded(child: Text(vehicule.displayName,
+                    style: AppTextStyles.heading3, maxLines: 1,
+                    overflow: TextOverflow.ellipsis)),
+                  StatusBadge(statut: vehicule.statut),
+                ]),
+                const SizedBox(height: 4),
+                Text('${vehicule.kilometrage} km${vehicule.immatriculation != null
+                     ? ' · ${vehicule.immatriculation}' : ''}',
+                  style: AppTextStyles.bodySecondary),
+                const SizedBox(height: 4),
+                Wrap(spacing: 6, children: [
+                  if (vehicule.prixLocationJour != null)
+                    _Chip('${vehicule.prixLocationJour!.toInt()} DA/j',
+                      AppColors.secondary),
+                  if (vehicule.prixVente != null)
+                    _Chip('${vehicule.prixVente!.toInt()} DA',
+                      AppColors.primary),
+                ]),
+                if (vehicule.proprietes.isNotEmpty) ...[
+                  const SizedBox(height: 2),
+                  Text(vehicule.proprietes
+                    .map((p) => '${p.proprietaireNom} ${p.partPct.toInt()}%')
+                    .join(' · '),
+                    style: AppTextStyles.label, maxLines: 1,
+                    overflow: TextOverflow.ellipsis),
+                ],
               ],
-            ],
-          )),
-          const Icon(Icons.chevron_right, color: AppColors.textSecondary),
-        ]),
+            )),
+            const Icon(Icons.chevron_right, color: AppColors.textSecondary),
+          ]),
+        ),
       ),
-    ),
-  );
+    );
+  }
 }
 
 class _Chip extends StatelessWidget {
@@ -342,7 +359,6 @@ void _showFiltersDialog(BuildContext context, WidgetRef ref) {
         actions: [
           TextButton(
             onPressed: () {
-              // Réinitialiser les filtres
               ref.read(marqueFiltreProvider.notifier).state = null;
               ref.read(anneeMinProvider.notifier).state = null;
               ref.read(anneeMaxProvider.notifier).state = null;
@@ -353,7 +369,6 @@ void _showFiltersDialog(BuildContext context, WidgetRef ref) {
           ),
           ElevatedButton(
             onPressed: () {
-              // Appliquer les filtres
               ref.read(marqueFiltreProvider.notifier).state =
                   marqueController.text.isEmpty ? null : marqueController.text;
               ref.read(anneeMinProvider.notifier).state =

@@ -51,7 +51,8 @@ class VentesRepository {
     try {
       payload
         ..remove('acompte')
-        ..remove('solde_restant');
+        ..remove('solde_restant')
+        ..remove('commission_gerant_mnt'); // colonne inexistante en base
       final data = await _client
           .from('ventes')
           .insert(payload)
@@ -68,7 +69,8 @@ class VentesRepository {
     try {
       payload
         ..remove('acompte')
-        ..remove('solde_restant');
+        ..remove('solde_restant')
+        ..remove('commission_gerant_mnt'); // colonne inexistante en base
       await _client.from('ventes').update(payload).eq('id', id);
     } catch (e, st) {
       AppLogger.e('VentesRepository.update', error: e, stackTrace: st);
