@@ -3,6 +3,7 @@
 
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
+import 'package:garage_auto/core/extensions/l10n_extension.dart';
 
 /// Affiche un dialogue de confirmation.
 /// Retourne true si l'utilisateur confirme la suppression.
@@ -34,7 +35,7 @@ Future<bool> showDeleteConfirm(
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(ctx, false),
-          child: const Text('Annuler'),
+          child: Text(context.l10n.btnAnnuler),
         ),
         ElevatedButton(
           onPressed: () => Navigator.pop(ctx, true),
@@ -44,7 +45,7 @@ Future<bool> showDeleteConfirm(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8)),
           ),
-          child: const Text('Supprimer'),
+          child: Text(context.l10n.btnSupprimer),
         ),
       ],
     ),
@@ -68,7 +69,7 @@ void showUndoSnackbar(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10)),
       action: SnackBarAction(
-        label: 'Annuler',
+        label: context.l10n.btnAnnuler,
         textColor: Colors.amber,
         onPressed: onUndo,
       ),

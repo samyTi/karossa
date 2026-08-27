@@ -7,6 +7,7 @@ import '../../../shared/widgets/custom_app_bar.dart';
 import '../../../shared/widgets/empty_state.dart';
 import 'gps_provider.dart';
 import '../domain/gps_alerte.dart'; // ✅ corrigé : gps_alerte.dart au lieu de gps_models.dart
+import 'package:garage_auto/core/extensions/l10n_extension.dart';
 
 class GpsAlertsScreen extends ConsumerWidget {
   const GpsAlertsScreen({super.key});
@@ -18,18 +19,18 @@ class GpsAlertsScreen extends ConsumerWidget {
     final alerteSource = ref.read(gpsAlerteSourceProvider);
 
     return Scaffold(
-      appBar: const CustomAppBar(
-        title: 'Alertes GPS',
+      appBar: CustomAppBar(
+        title: context.l10n.alertesGps,
         showHomeButton: true,
       ),
       body: alertesAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error:   (e, _) => Center(child: Text('Erreur : $e')),
+        error:   (e, _) => Center(child: Text(context.l10n.erreurAvecDetail(e.toString()))),
         data: (alertes) {
           if (alertes.isEmpty) {
-            return const EmptyState(
+            return EmptyState(
               icon: Icons.check_circle_outline,
-              message: 'Aucune alerte GPS — toutes les alertes apparaîtront ici',
+              message: context.l10n.aucuneAlerteGpsToutesLesAlertes,
             );
           }
           return ListView.builder(
@@ -104,7 +105,7 @@ class _AlertCard extends StatelessWidget {
             ? null
             : TextButton(
                 onPressed: onMarqueLue,
-                child: const Text('Lu'),
+                child: Text(context.l10n.lu),
               ),
         isThreeLine: true,
       ),

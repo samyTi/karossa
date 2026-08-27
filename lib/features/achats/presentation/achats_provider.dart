@@ -1,19 +1,23 @@
 // lib/features/achats/presentation/achats_provider.dart
-//
-// CHANGEMENT : le repository est maintenant instancié avec le client injecté.
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/providers/supabase_provider.dart';
+import '../../auth/presentation/auth_provider.dart'; // 🚀 NOUVEAU : Nécessaire pour surveiller le showroom actif
 import '../data/achats_repository.dart';
 import '../domain/achat_model.dart';
 
 // ── Repository ────────────────────────────────────────────────────────────────
 
+// 🚀 MODIFICATION : Injection dynamique du showroomId actif dans le Repository
 final achatsRepositoryProvider = Provider<AchatsRepository>((ref) {
-  return AchatsRepository(ref.watch(supabaseClientProvider));
+  final client = ref.watch(supabaseClientProvider);
+  final showroomId = ref.watch(currentShowroomIdProvider);
+  
+  return AchatsRepository(client, showroomId: showroomId ?? '');
 });
 
 // ── Providers ─────────────────────────────────────────────────────────────────
+// ✅ Ces listes et statistiques s'auto-adaptent au showroom courant sans toucher à leur code !
 
 final achatsProvider = FutureProvider.autoDispose<List<Achat>>((ref) {
   return ref.watch(achatsRepositoryProvider).getAchats();

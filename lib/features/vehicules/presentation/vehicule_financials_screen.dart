@@ -6,6 +6,7 @@ import '../../../core/extensions/money_extensions.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../data/vehicule_financials_repository.dart';
 import '../domain/vehicule_financials.dart';
+import 'package:garage_auto/core/extensions/l10n_extension.dart';
 
 // Provider local à cet écran
 final _financialsProvider =
@@ -34,7 +35,7 @@ class VehiculeFinancialsScreen extends ConsumerWidget {
           children: [
             Text(vehiculeNom,
                 style: const TextStyle(fontSize: 16)),
-            const Text('Analyse financière',
+            Text(context.l10n.analyseFinanciere,
                 style: TextStyle(fontSize: 12, fontWeight: FontWeight.normal)),
           ],
         ),
@@ -53,12 +54,12 @@ class VehiculeFinancialsScreen extends ConsumerWidget {
             children: [
               const Icon(Icons.error_outline, size: 48, color: Colors.red),
               const SizedBox(height: 12),
-              Text('Erreur: $e', textAlign: TextAlign.center),
+              Text(context.l10n.erreurAvecDetail(e.toString()), textAlign: TextAlign.center),
               const SizedBox(height: 12),
               ElevatedButton(
                 onPressed: () =>
                     ref.invalidate(_financialsProvider(vehiculeId)),
-                child: const Text('Réessayer'),
+                child: Text(context.l10n.reessayer),
               ),
             ],
           ),
@@ -140,11 +141,11 @@ class _DepensesCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Row(children: [
-              Icon(Icons.arrow_circle_down, color: Colors.red),
-              SizedBox(width: 8),
-              Text('DÉPENSES',
-                  style: TextStyle(
+            Row(children: [
+              const Icon(Icons.arrow_circle_down, color: Colors.red),
+              const SizedBox(width: 8),
+              Text(context.l10n.depensesUpper,
+                  style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 15)),
             ]),
             const Divider(height: 20),
@@ -173,11 +174,11 @@ class _RevenusCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Row(children: [
-              Icon(Icons.arrow_circle_up, color: Colors.green),
-              SizedBox(width: 8),
-              Text('REVENUS',
-                  style: TextStyle(
+            Row(children: [
+              const Icon(Icons.arrow_circle_up, color: Colors.green),
+              const SizedBox(width: 8),
+              Text(context.l10n.revenusUpper,
+                  style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 15)),
             ]),
             const Divider(height: 20),
@@ -213,11 +214,11 @@ class _OccupationCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Row(children: [
-              Icon(Icons.car_rental, color: Colors.blue),
-              SizedBox(width: 8),
-              Text('LOCATIONS',
-                  style: TextStyle(
+            Row(children: [
+              const Icon(Icons.car_rental, color: Colors.blue),
+              const SizedBox(width: 8),
+              Text(context.l10n.locationsUpper,
+                  style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 15)),
             ]),
             const Divider(height: 20),

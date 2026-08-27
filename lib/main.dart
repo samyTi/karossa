@@ -17,7 +17,7 @@ Future<void> main() async {
   await initializeDateFormatting('fr');
   await Supabase.initialize(
     url: AppConfig.supabaseUrl,
-    anonKey: AppConfig.supabaseAnonKey,
+    publishableKey: AppConfig.supabaseAnonKey,  // au lieu de anonKey:
   );
 
   await Hive.initFlutter();

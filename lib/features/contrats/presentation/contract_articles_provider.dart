@@ -2,14 +2,19 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/providers/supabase_provider.dart';
+import '../../auth/presentation/auth_provider.dart'; // 🚀 NOUVEAU : Import pour écouter le showroom actif
 import '../data/contract_articles_repository.dart';
 import '../domain/contract_article_model.dart';
 
 // ── Repository ─────────────────────────────────────────────
 
+// 🚀 MODIFICATION : Injection du showroomId actif dans le Repository d'articles
 final contractArticlesRepositoryProvider =
     Provider<ContractArticlesRepository>((ref) {
-  return ContractArticlesRepository(ref.watch(supabaseClientProvider));
+  final client = ref.watch(supabaseClientProvider);
+  final showroomId = ref.watch(currentShowroomIdProvider);
+  
+  return ContractArticlesRepository(client, showroomId: showroomId ?? '');
 });
 
 // ── Lecture admin (tous — actifs + inactifs) ───────────────

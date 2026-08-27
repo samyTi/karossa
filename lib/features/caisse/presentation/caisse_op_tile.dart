@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
-import '../data/caisse_operation.dart';
+import '../domain/caisse_operation.dart';
 // Import du dossier screens qui est au même niveau que presentation/
 import './caisse_detail_screen.dart';
 

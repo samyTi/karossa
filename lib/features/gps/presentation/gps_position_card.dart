@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_colors.dart';
 import '../domain/gps_position.dart';
 import 'gps_provider.dart';
+import 'package:garage_auto/core/extensions/l10n_extension.dart';
 
 // ── Bouton GPS pour la AppBar ─────────────────────────────────────────────
 // Usage : actions: [ if (vehicule.flespiDeviceId != null) GpsAppBarButton(...) ]
@@ -31,7 +32,7 @@ class GpsAppBarButton extends ConsumerWidget {
     final state  = ref.watch(gpsLiveProvider(params));
 
     return IconButton(
-      tooltip: 'Position GPS',
+      tooltip: context.l10n.positionGps,
       icon: _GpsIcon(isLoading: state.isLoading, isOnline: state.position?.isOnline),
       onPressed: () {
         // Charge la position si pas encore chargée
@@ -69,7 +70,7 @@ class _GpsIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return const SizedBox(
+      return SizedBox(
         width: 20, height: 20,
         child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
       );
@@ -136,13 +137,13 @@ class _GpsBottomSheetState extends ConsumerState<_GpsBottomSheet> {
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
 
           // Titre + bouton refresh
           Row(
             children: [
-              const Icon(Icons.gps_fixed, color: AppColors.primary, size: 20),
-              const SizedBox(width: 8),
+              Icon(Icons.gps_fixed, color: AppColors.primary, size: 20),
+              SizedBox(width: 8),
               Expanded(
                 child: Text(
                   widget.vehiculeNom,
@@ -150,19 +151,19 @@ class _GpsBottomSheetState extends ConsumerState<_GpsBottomSheet> {
                 ),
               ),
               IconButton(
-                icon: const Icon(Icons.refresh, size: 20),
-                tooltip: 'Rafraîchir',
+                icon: Icon(Icons.refresh, size: 20),
+                tooltip: context.l10n.rafraichir,
                 onPressed: state.isLoading
                     ? null
                     : () => ref.read(gpsLiveProvider(params).notifier).refresh(),
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
 
           // Contenu selon état
           if (state.isLoading)
-            const Center(child: Padding(
+            Center(child: Padding(
               padding: EdgeInsets.all(24),
               child: CircularProgressIndicator(),
             ))
@@ -190,7 +191,7 @@ class _PositionTiles extends StatelessWidget {
       children: [
         _Tile(
           icon:  Icons.location_on_outlined,
-          label: 'Coordonnées',
+          label: context.l10n.coordonnees,
           value: '${position.latitude.toStringAsFixed(5)}, '
                  '${position.longitude.toStringAsFixed(5)}',
           color: AppColors.primary,
@@ -221,13 +222,13 @@ class _PositionTiles extends StatelessWidget {
           ),
         _Tile(
           icon:  Icons.access_time_outlined,
-          label: 'Dernière position',
+          label: context.l10n.dernierePosition,
           value: _formatTime(position.fixTime),
           color: position.isOnline ? AppColors.secondary : AppColors.textSecondary,
         ),
         _Tile(
           icon:  position.isOnline ? Icons.wifi : Icons.wifi_off,
-          label: 'Statut',
+          label: context.l10n.champStatut,
           value: position.isOnline ? 'En ligne' : 'Hors ligne',
           color: position.isOnline ? AppColors.secondary : AppColors.textSecondary,
         ),
@@ -268,7 +269,7 @@ class _Tile extends StatelessWidget {
       child: Row(
         children: [
           Icon(icon, color: color, size: 18),
-          const SizedBox(width: 12),
+          SizedBox(width: 12),
           Expanded(
             child: Text(label,
               style: const TextStyle(color: AppColors.textSecondary, fontSize: 13)),
@@ -300,8 +301,8 @@ class _ErrorTile extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const Icon(Icons.gps_off, color: AppColors.error, size: 18),
-          const SizedBox(width: 10),
+          Icon(Icons.gps_off, color: AppColors.error, size: 18),
+          SizedBox(width: 10),
           Expanded(
             child: Text(message,
               style: const TextStyle(color: AppColors.error, fontSize: 13)),
@@ -316,12 +317,10 @@ class _EmptyTile extends StatelessWidget {
   const _EmptyTile();
   @override
   Widget build(BuildContext context) {
-    return const Center(
+    return Center(
       child: Padding(
         padding: EdgeInsets.all(24),
-        child: Text(
-          'Appuyez sur rafraîchir pour charger la position.',
-          textAlign: TextAlign.center,
+        child: Text(context.l10n.appuyezSurRafraichirPourChargerLa, textAlign: TextAlign.center,
           style: TextStyle(color: AppColors.textSecondary),
         ),
       ),
@@ -417,7 +416,7 @@ class _GpsPositionCardState extends ConsumerState<GpsPositionCard> {
                     size: 18,
                   ),
                 ),
-                const SizedBox(width: 10),
+                SizedBox(width: 10),
                 Expanded(
                   child: Text(
                     widget.vehiculeNom,
@@ -442,17 +441,17 @@ class _GpsPositionCardState extends ConsumerState<GpsPositionCard> {
                     ),
                   ),
                 ),
-                const SizedBox(width: 4),
+                SizedBox(width: 4),
                 SizedBox(
                   width: 32, height: 32,
                   child: state.isLoading
-                      ? const Padding(
+                      ? Padding(
                           padding: EdgeInsets.all(6),
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
                       : IconButton(
                           padding: EdgeInsets.zero,
-                          icon: const Icon(Icons.refresh, size: 18),
+                          icon: Icon(Icons.refresh, size: 18),
                           color: AppColors.textSecondary,
                           onPressed: () => ref
                               .read(gpsLiveProvider(params).notifier)
@@ -464,9 +463,9 @@ class _GpsPositionCardState extends ConsumerState<GpsPositionCard> {
 
             // ── Détails position ──────────────────────────────────────
             if (pos != null) ...[
-              const SizedBox(height: 10),
+              SizedBox(height: 10),
               const Divider(height: 1),
-              const SizedBox(height: 10),
+              SizedBox(height: 10),
               Row(
                 children: [
                   _DetailChip(
@@ -476,7 +475,7 @@ class _GpsPositionCardState extends ConsumerState<GpsPositionCard> {
                     color: AppColors.primary,
                   ),
                   if (pos.heading != null) ...[
-                    const SizedBox(width: 8),
+                    SizedBox(width: 8),
                     _DetailChip(
                       icon:  Icons.navigation_outlined,
                       label: '${pos.heading!.toStringAsFixed(0)}°',
@@ -485,7 +484,7 @@ class _GpsPositionCardState extends ConsumerState<GpsPositionCard> {
                   ],
                 ],
               ),
-              const SizedBox(height: 6),
+              SizedBox(height: 6),
               Text(
                 _relativeTime(pos.fixTime),
                 style: const TextStyle(
@@ -497,7 +496,7 @@ class _GpsPositionCardState extends ConsumerState<GpsPositionCard> {
 
             // ── Message d'erreur ──────────────────────────────────────
             if (state.hasError && !state.isLoading) ...[
-              const SizedBox(height: 8),
+              SizedBox(height: 8),
               Text(
                 state.failure!.message,
                 style: const TextStyle(
@@ -537,7 +536,7 @@ class _DetailChip extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Icon(icon, size: 13, color: color),
-        const SizedBox(width: 4),
+        SizedBox(width: 4),
         Text(label, style: TextStyle(fontSize: 12, color: color, fontWeight: FontWeight.w500)),
       ],
     );

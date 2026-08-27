@@ -17,6 +17,10 @@ class ModernCard extends StatefulWidget {
   final BorderRadius? borderRadius;
   final Border? border;
 
+  /// Affiche un liseré dégradé bleu-cyan (marque Numidia OS) en haut de la carte.
+  /// À utiliser avec parcimonie pour mettre en avant une carte (résumé, mise en avant).
+  final bool accentBar;
+
   const ModernCard({
     super.key,
     required this.child,
@@ -29,6 +33,7 @@ class ModernCard extends StatefulWidget {
     this.elevation,
     this.borderRadius,
     this.border,
+    this.accentBar = false,
   });
 
   @override
@@ -106,6 +111,26 @@ class _ModernCardState extends State<ModernCard> with SingleTickerProviderStateM
       ),
       child: widget.child,
     );
+
+    if (widget.accentBar) {
+      card = ClipRRect(
+        borderRadius: radius,
+        child: Stack(
+          children: [
+            card,
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                height: 3,
+                decoration: BoxDecoration(gradient: ThemeTokens.brandGradient),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
 
     if (widget.isClickable) {
       card = MouseRegion(
@@ -255,6 +280,7 @@ class StatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cardColor = color ?? AppColors.primary;
+    final useBrandGradient = color == null;
 
     return ModernCard(
       padding: const EdgeInsets.all(AppSpacing.md),
@@ -264,10 +290,18 @@ class StatCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Icon(
-                icon,
-                size: 20,
-                color: cardColor.withValues(alpha: 0.7),
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  gradient: useBrandGradient ? ThemeTokens.brandGradient : null,
+                  color: useBrandGradient ? null : cardColor.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
+                ),
+                child: Icon(
+                  icon,
+                  size: 16,
+                  color: useBrandGradient ? Colors.white : cardColor,
+                ),
               ),
               if (showTrend && trend != null)
                 Container(

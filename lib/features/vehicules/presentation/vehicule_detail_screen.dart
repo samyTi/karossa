@@ -13,6 +13,8 @@ import '../domain/vehicule_model.dart';
 import 'vehicules_provider.dart';
 // ✅ Import corrigé : presentation/ au lieu de widgets/
 import '../../gps/presentation/gps_position_card.dart';
+import 'vehicule_quick_financial.dart';
+import 'package:garage_auto/core/extensions/l10n_extension.dart';
 
 class VehiculeDetailScreen extends ConsumerWidget {
   final String id;
@@ -28,7 +30,7 @@ class VehiculeDetailScreen extends ConsumerWidget {
           body: const Center(child: CircularProgressIndicator())),
       error: (e, _) => Scaffold(
           appBar: AppBar(),
-          body: Center(child: Text('Erreur: $e'))),
+          body: Center(child: Text(context.l10n.erreurAvecDetail(e.toString())))),
       data: (v) => _Body(vehicule: v, ref: ref),
     );
   }
@@ -71,7 +73,7 @@ class _Body extends StatelessWidget {
                 ),
               IconButton(
                 icon: const Icon(Icons.history),
-                tooltip: 'Historique',
+                tooltip: context.l10n.tabHistorique,
                 onPressed: () =>
                     context.push('/vehicules/${vehicule.id}/history'),
               ),
@@ -123,6 +125,10 @@ class _Body extends StatelessWidget {
 
                   // ── Boutons IA + Analyse financière ────────────────────
                   _SmartActionsRow(vehicule: vehicule),
+                  const SizedBox(height: 20),
+
+                  // ── Bilan financier rapide ──────────────────────────────
+                  VehiculeQuickFinancial(vehiculeId: vehicule.id),
                   const SizedBox(height: 20),
 
                   // ── Caractéristiques ───────────────────────────────────
@@ -467,8 +473,7 @@ class _MarquerDisponibleBtn extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10)),
           ),
           icon: const Icon(Icons.check_circle_outline),
-          label: const Text('Marquer disponible',
-              style: TextStyle(fontWeight: FontWeight.w600)),
+          label: Text(context.l10n.marquerDisponible, style: TextStyle(fontWeight: FontWeight.w600)),
           onPressed: () async {
             await ref.read(supabaseClientProvider)
                 .from('vehicules')

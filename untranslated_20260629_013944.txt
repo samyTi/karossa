@@ -1,0 +1,10 @@
+# Chaînes françaises NON présentes dans l'ARB
+# Ajoutez-les manuellement dans app_fr.arb
+
+Ajouter le véhicule proposé
+Décrivez tout ce qui ne fonctionne pas ou est endommagé (pannes, rayures, bosses…).
+Indiquez la raison et la date à laquelle vous récupérez le véhicule.
+Je reconnais avoir pris connaissance du contrat de location et de ses conditions générales
+Modèle IA (gemini_model)
+Nouvelle réparation
+Prix accordé

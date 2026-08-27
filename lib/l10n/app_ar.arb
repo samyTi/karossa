@@ -1,0 +1,1148 @@
+{
+  "@@locale": "ar",
+  "navAccueil": "الرئيسية",
+  "navClients": "العملاء",
+  "navLocations": "الإيجارات",
+  "navPlus": "المزيد",
+  "navVehicules": "السيارات",
+  "tabActifs": "النشطة",
+  "tabEnCours": "جارية",
+  "tabHistorique": "السجل",
+  "tabStatistiques": "الإحصائيات",
+  "tabTermines": "المنتهية",
+  "titreAchats": "المشتريات",
+  "titreCaisse": "الصندوق",
+  "titreClients": "العملاء",
+  "titreContrats": "العقود",
+  "titreDashboard": "لوحة التحكم",
+  "titreEchanges": "المبادلات",
+  "titreEntretien": "الصيانة والتنبيهات",
+  "titreFinance": "مالية الملاك",
+  "titreGps": "تتبع GPS",
+  "titreLocations": "الإيجارات",
+  "titreNotifications": "الإشعارات",
+  "titreParametres": "الإعدادات",
+  "titreReparations": "الإصلاحات",
+  "titreUtilisateurs": "المستخدمون",
+  "titreVehicules": "السيارات",
+  "titreVentes": "المبيعات",
+  "aRisque": "خطر",
+  "accesAuxPerformances": "الوصول إلى الأداء ومتابعة السيارات المرتبطة",
+  "alerteControleTechnique": "فحص تقني",
+  "analyseDesRendementsEtStatutsDe": "تحليل العوائد وحالات العقود",
+  "annule": "ملغى",
+  "annulee": "ملغاة",
+  "annulees": "ملغاة",
+  "associe": "شريك",
+  "aucunAchatEnCours": "لا يوجد شراء جارٍ",
+  "aucunVehiculeAssocieACetteReservation": "لا توجد سيارة مرتبطة بهذا الحجز.",
+  "aucunVehiculeAssocieLaLocationNe": "⚠️ لا توجد سيارة مرتبطة — لا يمكن إنشاء الإيجار.",
+  "boiteAutomatique": "أوتوماتيك",
+  "boiteManuelle": "يدوي",
+  "btnAnnuler": "إلغاء",
+  "carburantDiesel": "ديزل",
+  "carburantElectrique": "كهربائي",
+  "carburantEssence": "بنزين",
+  "carburantHybride": "هجين",
+  "carburantPropreteDegradationsConstatees": "الوقود، النظافة، الأضرار المُلاحَظة...",
+  "champStatut": "الحالة",
+  "changerLeStatut": "تغيير الحالة",
+  "cheque": "شيك",
+  "clientBlacklist": "قائمة سوداء",
+  "clientFiable": "عميل موثوق",
+  "clientRisque": "محفوف بالمخاطر",
+  "commissionGerant": "عمولة المدير",
+  "commissionsDuGerant": "عمولات المدير",
+  "comptesGerantsAssociesEtProprietaires": "حسابات المدير والشركاء والملاك",
+  "disponibles": "متاح",
+  "enCours": "جارٍ",
+  "enRetard": "متأخر",
+  "especes": "نقداً",
+  "gerant": "مدير",
+  "gestionCompleteDuShowroom": "الإدارة الكاملة لمعرض السيارات يومياً",
+  "indisponibleALaLocationPendantLes": "غير متاح للإيجار أثناء الأعمال",
+  "interruptionControleTechnique": "فحص تقني",
+  "leGerant": "المدير",
+  "locationAnnule": "ملغى",
+  "locationEnCours": "جارٍ",
+  "locationRetard": "متأخر",
+  "locationTermine": "منتهٍ",
+  "locationsEnCours": "الإيجارات الجارية",
+  "marquerDisponible": "تحديد كمتاح",
+  "modeCheque": "شيك",
+  "modeEspeces": "نقداً",
+  "modeVirement": "تحويل بنكي",
+  "paiementComplet": "مدفوع بالكامل",
+  "paiementPartiel": "مدفوع جزئياً",
+  "partProprietaireS": "حصة المالك (الملاك)",
+  "proprietaire": "المالك",
+  "proprietaireDuShowroom": "مالك المعرض وأسطول السيارات",
+  "repElectrique": "كهرباء",
+  "retardDeRetour": "تأخر الإرجاع",
+  "roleAssocie": "شريك",
+  "roleGerant": "مدير",
+  "roleProprietaire": "مالك",
+  "statutClient": "حالة العميل",
+  "statutDeLaFlotteAuto": "Statut de la Flotte Auto",
+  "statutDeLaLocation": "Statut de la location",
+  "statutDisponible": "متاح",
+  "statutFinal": "الحالة النهائية",
+  "statutLoue": "مؤجَّر",
+  "statutReparation": "في الإصلاح",
+  "statutReserve": "محجوز",
+  "statutVendu": "مباع",
+  "termine": "منتهٍ",
+  "terminee": "منتهية",
+  "terminees": "منتهية",
+  "vehiculeVendu": "سيارة مباعة",
+  "votreRole": "دورك",
+  "achatsDeVehicules": "شراء السيارات",
+  "annee": "السنة *",
+  "anneeInvalide": "سنة غير صحيحة",
+  "anneeMax": "السنة الحد الأقصى",
+  "anneeMin": "السنة الحد الأدنى",
+  "aucunContratTrouvePourCeVehicule": "لا يوجد عقد لهذه السيارة",
+  "aucunHistoriquePourCeVehicule": "لا يوجد سجل لهذه السيارة",
+  "carrosserieVehiculeCede": "هيكل السيارة المُسلَّمة",
+  "carrosserieVehiculeRepris": "هيكل السيارة المُستردة",
+  "champKilometrage": "عداد الكيلومترات",
+  "champPrixAchat": "سعر الشراء",
+  "champPrixVente": "سعر البيع",
+  "checkInVehicule": "تسجيل دخول السيارة",
+  "choisirUnVehicule": "اختر سيارة",
+  "contratsDuVehicule": "عقود السيارة",
+  "detailParCategorie": "تفصيل حسب الفئة",
+  "deviceIdFlespiManquantPourCe": "معرّف Flespi مفقود لهذه السيارة.",
+  "etatDuVehicule": "حالة السيارة",
+  "etatDuVehiculeAuRetourOptionnel": "حالة السيارة عند الإرجاع (اختياري)",
+  "etatDuVehiculeDommagesAvantLocation": "حالة السيارة — الأضرار قبل الإيجار",
+  "historiqueDuVehicule": "سجل السيارة",
+  "immatriculation": "رقم التسجيل",
+  "kilometrage": "عداد الكيلومترات",
+  "kilometrageEcheanceOptionnel": "كيلومترات الاستحقاق (اختياري)",
+  "laDureeSeraCalculeeAuRetour": "ستُحسب المدة عند إرجاع السيارة",
+  "laDureeSeraCalculeeLorsDu": "ستُحسب المدة عند إرجاع السيارة",
+  "leMontantTotalSeraCalculeAu": "سيُحسب المبلغ الإجمالي عند إرجاع السيارة.",
+  "marque": "الماركة *",
+  "marquerCommeSoldee": "تحديد كمسدَّدة",
+  "marquerGpsCommeLues": "تحديد تنبيهات GPS كمقروءة",
+  "marquezLesDommagesConstatesAuRetour": "سجّل الأضرار عند الإرجاع",
+  "modele": "الموديل",
+  "modeleGemini": "نموذج Gemini",
+  "nChassis": "رقم الشاصي",
+  "notesEtatDuVehiculeAuDepart": "ملاحظات حالة السيارة عند المغادرة",
+  "notesEtatDuVehiculeAuRetour": "ملاحظات حالة السيارة عند الإرجاع",
+  "nouveauVehicule": "سيارة جديدة",
+  "parcAutomobilesVehicules": "أسطول السيارات",
+  "passerLeVehiculeEnReparation": "إرسال السيارة للإصلاح",
+  "prixCatalogue": "سعر الكتالوج",
+  "prixLocationJour": "سعر الإيجار / يوم",
+  "rechercherClientTelephoneVehicule": "البحث (عميل، هاتف، سيارة...)",
+  "rechercherUnVehiculeMarqueModeleImmatriculation": "البحث عن سيارة (ماركة، موديل، رقم التسجيل...)",
+  "rechercherVehiculeOuClient": "البحث عن سيارة أو عميل...",
+  "recupererLeVehicule": "استلام السيارة",
+  "remarquesObservations": "ملاحظات / مشاهدات",
+  "repartitionDuParc": "توزيع الأسطول",
+  "retourVehicule": "إرجاع السيارة",
+  "selectionnerLeCatalogueDeVehicules": "اختر كتالوج السيارات",
+  "selectionnerLeVehicule": "اختر السيارة",
+  "selectionnezLeTypeCorrespondantAuDommage": "اختر نوع الضرر المُسجَّل",
+  "seraDeduitDesRevenusDuVehicule": "سيُخصم من إيرادات السيارة",
+  "toucherPourMarquer": "اضغط للتسجيل",
+  "trajetParcouru": "المسافة المقطوعة",
+  "vehicule": "السيارة",
+  "vehiculeAjouteAuStock": "✅ تمت إضافة السيارة إلى المخزون!",
+  "vehiculeCedeDuMagasin": "السيارة المُسلَّمة (من المعرض)",
+  "vehiculeCible": "السيارة المستهدفة",
+  "vehiculeExistant": "سيارة موجودة",
+  "vehiculeId": "معرّف السيارة",
+  "vehiculePropose": "السيارة المقترحة",
+  "vehiculeReprisDuClient": "السيارة المُستردة (من العميل)",
+  "vehicules": "السيارات",
+  "aucuneInterruptionEnregistree": "لا توجد انقطاعات مسجَّلة",
+  "aucuneLocationActive": "لا يوجد إيجار نشط",
+  "aucuneLocationTrouvee": "لم يُعثر على إيجار.",
+  "aucuneRepartitionEnregistreePourCetteLocation": "لا توجد توزيعات مسجَّلة لهذا الإيجار.",
+  "cetteActionVaCreerUneLocation": "سيُنشئ هذا الإجراء إيجاراً من هذا الحجز.",
+  "champCaution": "التأمين",
+  "champPrixJour": "السعر / يوم",
+  "conditionsGeneralesDeLocation": "الشروط العامة للإيجار",
+  "configurerLesMentionsLegalesLocationVente": "Configurer les mentions légales (location, vente, échange)",
+  "contratDeLocation": "عقد الإيجار",
+  "convertirEnLocation": "تحويل إلى إيجار",
+  "creerLaLocation": "إنشاء الإيجار",
+  "detailsDeLaLocation": "تفاصيل الإيجار",
+  "enLocation": "مؤجَّر",
+  "erreurCreationLocationHistoriqueReponseInattendue": "خطأ في إنشاء سجل الإيجار: استجابة غير متوقعة",
+  "erreurCreationLocationReponseInattendue": "خطأ في إنشاء الإيجار: استجابة غير متوقعة",
+  "gererLesInterruptions": "إدارة الانقطاعات",
+  "interruptionAssurance": "تأمين",
+  "interruptionAutre": "أخرى",
+  "interruptionReparation": "إصلاح",
+  "interruptionVidange": "تغيير الزيت",
+  "interruptions": "الانقطاعات",
+  "interruptionsDeContrat": "انقطاعات العقد",
+  "journalDeBord": "دفتر اليومية",
+  "journalDesReparations": "سجل الإصلاحات",
+  "joursFacturables": "أيام قابلة للفاتورة",
+  "kmDepart": "كم المغادرة",
+  "kmRetour": "كم الإرجاع",
+  "laLocationSeDerouleSansInterruption": "يسير الإيجار دون انقطاع.",
+  "locationCreeeAvecSucces": "✅ تم إنشاء الإيجار بنجاح!",
+  "locationIntrouvable": "الإيجار غير موجود",
+  "locationSigneeBmwSerie3": "إيجار موقَّع - BMW سلسلة 3",
+  "modifierLaLocation": "تعديل الإيجار",
+  "moyenneLocation": "المعدل / إيجار",
+  "nouvelleLocation": "إيجار جديد",
+  "prixJour": "السعر / يوم",
+  "recapitulatifInterne": "ملخص داخلي",
+  "retenueCaution": "احتجاز التأمين",
+  "revenusLocatifs": "إيرادات الإيجار",
+  "revenusLocations": "إيرادات الإيجارات",
+  "selectionnerLes50DernieresLocations": "Sélectionner les 50 dernières locations",
+  "selectionnezLeMemeClientPourDupliquer": "اختر نفس العميل لنسخ الإيجار",
+  "supprimerLaLocation": "حذف الإيجار",
+  "totalLocations": "إجمالي الإيجارات",
+  "uniteJour": "يوم",
+  "uniteJours": "أيام",
+  "urgentMoinsDe7Jours": "عاجل - أقل من 7 أيام",
+  "adresseOptionnel": "العنوان (اختياري)",
+  "aucunClientEnregistre": "لا يوجد عميل مسجَّل",
+  "champAdresse": "العنوان",
+  "champEmail": "البريد الإلكتروني",
+  "champTelephone": "الهاتف",
+  "clientEnregistre": "عميل مسجَّل",
+  "clientIntrouvable": "العميل غير موجود",
+  "clientNormal": "عادي",
+  "clientsrepositoryAucunShowroomSelectionne": "مستودع العملاء: لا يوجد معرض محدد.",
+  "complementClient": "مبلغ إضافي من العميل",
+  "dateDeRestitutionAuClient": "تاريخ التسليم للعميل",
+  "documentInterneConfidentielNePasRemettre": "وثيقة داخلية — سرية — لا تُسلَّم للعميل",
+  "emailOptionnel": "البريد الإلكتروني (اختياري)",
+  "gestionDesClients": "إدارة العملاء",
+  "leClient": "العميل",
+  "nCni": "رقم بطاقة الهوية",
+  "nPermis": "رقم رخصة القيادة",
+  "noteInterne": "ملاحظة داخلية",
+  "nouveauClient": "عميل جديد",
+  "portefeuilleClients": "محفظة العملاء",
+  "rechercherUnClient": "البحث عن عميل...",
+  "restituerAuClient": "تسليم للعميل",
+  "selectionnerLeClient": "اختر العميل",
+  "telephone": "الهاتف",
+  "telephoneCopie": "تم نسخ الهاتف",
+  "vosPermissionsAcces": "صلاحيات الوصول",
+  "achatsVentes": "شراء / بيع",
+  "aucuneVenteEnregistree": "لا توجد مبيعات مسجَّلة",
+  "aucuneVenteTrouvee": "لم يُعثر على بيع.",
+  "contratDeVente": "عقد البيع",
+  "erreurLorsDeLaCreationDe": "خطأ عند إنشاء البيع",
+  "nouveauBonDeVente": "فاتورة بيع جديدة",
+  "nouvelleVente": "بيع جديد",
+  "prixDeVente": "سعر البيع *",
+  "venteIntrouvable": "البيع غير موجود",
+  "achatsReprises": "شراء واسترداد",
+  "aucunEchangeEnregistre": "لا توجد مبادلات مسجَّلة",
+  "aucunEchangeTrouve": "لم يُعثر على مبادلة.",
+  "changerLeType": "تغيير النوع:",
+  "dossierEchangeReprise": "ملف المبادلة / الاسترداد",
+  "echangeReprise": "مبادلة / استرداد",
+  "echangesReprises": "المبادلات / الاسترداد",
+  "echangesrepositoryAucunShowroomSelectionne": "مستودع المبادلات: لا يوجد معرض محدد.",
+  "nouvelAchatReprise": "شراء / استرداد جديد",
+  "nouvelEchange": "مبادلة جديدة",
+  "observationsComplementaires": "ملاحظات إضافية",
+  "propositionDeReprise": "عرض استرداد",
+  "reservationsAchatsEtEchangesDuSite": "حجوزات وشراء ومبادلات الموقع",
+  "valeurReprise": "قيمة الاسترداد",
+  "achatIntrouvable": "الشراء غير موجود",
+  "aucunAchat": "لا يوجد شراء",
+  "aucunAchatEnregistre": "لا يوجد شراء مسجَّل",
+  "aucunAchatValide": "لا يوجد شراء مُعتمَد",
+  "dateAchat": "تاريخ الشراء",
+  "detailAchat": "تفاصيل الشراء",
+  "informationsVendeur": "معلومات البائع",
+  "negociation": "التفاوض",
+  "nomDuVendeur": "اسم البائع *",
+  "nouvelAchat": "شراء جديد",
+  "prixAccorde": "السعر المتفق عليه *",
+  "totalAchats": "إجمالي المشتريات",
+  "@_caisse": "الصندوق والمالية",
+  "aucuneOperationEnregistree": "لا توجد عمليات مسجَّلة",
+  "caisserepositoryAucunShowroomidTrouve": "الصندوق: لا يوجد معرّف معرض.",
+  "dateDuVersement": "تاريخ الدفع",
+  "encaisse": "محصَّل",
+  "entree": "دخل (+)",
+  "entrees": "المداخيل",
+  "garageAutoReleveMensuel": "كراسة - كشف شهري",
+  "gestionDeCaisse": "إدارة الصندوق",
+  "gestionDeLaCaisse": "إدارة الصندوق",
+  "msgSucces": "تمت العملية بنجاح",
+  "nouveauVersement": "دفعة جديدة",
+  "nouvelleOperation": "عملية جديدة",
+  "rapportsReleves": "التقارير والكشوفات",
+  "soldeEstime": "الرصيد التقديري",
+  "sortie": "مصروف (-)",
+  "supprimerCeVersement": "حذف هذه الدفعة؟",
+  "totalEncaisse": "إجمالي المحصَّل",
+  "caisseOperationSubtitle": "دخل أو مصروف من صندوق المعرض",
+  "transfertEntreUtilisateurs": "تحويل بين المستخدمين",
+  "transfertSubtitle": "مستخدم يعطي مالاً لمستخدم آخر",
+  "payePar": "مدفوع بواسطة",
+  "showroomCaisse": "المعرض (الصندوق)",
+  "aRembourser": "(قابل للاسترداد)",
+  "quiDonne": "من يعطي",
+  "quiRecoit": "من يستلم",
+  "remboursable": "قابل للاسترداد",
+  "transfertRemboursableSubtitle": "سيتعين على المستفيد إعادة هذا المال",
+  "transfertDonSubtitle": "هدية نهائية، لا يوجد استرداد مخطط له",
+  "alerteAssurance": "تأمين",
+  "alerteCreee": "تم إنشاء التنبيه",
+  "alertePneus": "إطارات",
+  "alerteVidange": "تغيير الزيت",
+  "alerteVignette": "الوصل",
+  "alertesGps": "تنبيهات GPS",
+  "aucuneAlerteD": "لا يوجد تنبيه",
+  "aucuneAlerteGpsToutesLesAlertes": "لا توجد تنبيهات GPS — ستظهر التنبيهات هنا",
+  "aucuneReparationEnregistree": "لا توجد إصلاحات مسجَّلة",
+  "carrosserieDepart": "الهيكل عند المغادرة",
+  "carrosserieRetour": "الهيكل عند الإرجاع",
+  "depensesReparations": "مصاريف الإصلاحات",
+  "entretienPeriodique": "الصيانة الدورية",
+  "entretienRevisions": "الصيانة والمراجعات",
+  "etatCarrosserie": "حالة الهيكل",
+  "etatCarrosserieAuDepart": "حالة الهيكل عند المغادرة",
+  "etatCarrosserieAuRetour": "حالة الهيكل عند الإرجاع",
+  "etatCarrosserieDepart": "حالة الهيكل — المغادرة",
+  "etatCarrosserieRetour": "حالة الهيكل — الإرجاع",
+  "etatDeLaCarrosserie": "حالة الهيكل",
+  "exPneuAvantUseJanteRayee": "مثال: إطار أمامي بالٍ، جنط مخدوش...",
+  "exPneuUseJanteRayee": "مثال: إطار بالٍ، جنط مخدوش...",
+  "notificationsAlertes": "الإشعارات والتنبيهات",
+  "nouvelleAlerte": "تنبيه جديد",
+  "nouvelleReparation": "إصلاح جديد",
+  "prestataire": "مزوِّد الخدمة",
+  "repCarrosserie": "هيكل",
+  "repMecanique": "ميكانيك",
+  "repPneus": "إطارات",
+  "reparationEnregistree": "تم تسجيل الإصلاح",
+  "reparations": "الإصلاحات",
+  "reparationsrepositoryAucunShowroomSelectionne": "مستودع الإصلاحات: لا يوجد معرض محدد.",
+  "totalDepensesReparations": "إجمالي مصاريف الإصلاحات",
+  "apercuDuContrat": "معاينة العقد",
+  "apercuDuPdf": "معاينة PDF",
+  "articlesDesContrats": "بنود العقود",
+  "aucunArticleTrouve": "لم يُعثر على بند.",
+  "btnGenererPdf": "توليد PDF",
+  "btnNouveauContrat": "عقد جديد",
+  "clausesArticlesDesContrats": "البنود والمواد",
+  "contratOuvertSansDateDeFin": "عقد مفتوح (بدون تاريخ انتهاء)",
+  "contratsPdf": "عقود PDF",
+  "dateDeSignature": "تاريخ التوقيع",
+  "documentCertifieKarossa": "وثيقة مُعتمَدة - Karossa",
+  "documentGenereParKarossa": "وثيقة صادرة عن Karossa",
+  "erreurLorsDuChargementDesContrats": "خطأ عند تحميل العقود",
+  "exArticle1Responsabilites": "مثال: المادة 1 — المسؤوليات",
+  "exporterPdf": "تصدير PDF",
+  "garageAutoDocumentOfficiel": "كراسة - وثيقة رسمية",
+  "genererContrat": "توليد عقد",
+  "genererEtPartagerLeContratPdf": "توليد ومشاركة عقد PDF",
+  "genererLeContratPdf": "توليد عقد PDF",
+  "gestionDesClausesArticles": "إدارة البنود",
+  "gestionDesDocuments": "إدارة الوثائق",
+  "informationsInternesNonAfficheesDansLe": "معلومات داخلية — غير مُدرَجة في العقد",
+  "langueDuContrat": "لغة العقد",
+  "nouveauContrat": "عقد جديد",
+  "nouvelArticle": "بند جديد",
+  "numeroDeContrat": "رقم العقد",
+  "optionsDuContrat": "خيارات العقد",
+  "partagerLePdf": "مشاركة PDF",
+  "telechargerLePdf": "تحميل PDF",
+  "afficherLeTrajet": "عرض المسار",
+  "analyseDeLaCarteGrise": "تحليل بطاقة الرمادية...",
+  "appuyezSurRafraichirPourChargerLa": "اضغط على تحديث لتحميل الموقع.",
+  "carteFlotte": "خريطة الأسطول",
+  "carteGpsFlotte": "خريطة GPS — الأسطول",
+  "chargementDuTrajet": "جارٍ تحميل المسار...",
+  "choisirUnePhotoDeLaCarte": "اختر صورة البطاقة الرمادية",
+  "clesApiGeminiFlespiEtCoordonnees": "مفاتيح API Gemini وFlespi والإحداثيات",
+  "dernierePosition": "آخر موقع",
+  "flespiDeviceIdGps": "معرّف Flespi (GPS)",
+  "gpsFlotte": "GPS — الأسطول",
+  "gpsPasserelleFlespi": "GPS وبوابة Flespi",
+  "motDePasseFlespi": "كلمة مرور Flespi",
+  "positionGps": "موقع GPS",
+  "prendreEnPhotoLaCarteGrise": "التقط صورة البطاقة الرمادية",
+  "scannerCarteGrise": "مسح البطاقة الرمادية",
+  "suiviGpsBalises": "تتبع GPS والإشارات",
+  "tokenFlespi": "رمز Flespi",
+  "urlFlespi": "رابط Flespi",
+  "utilisateurFlespi": "مستخدم Flespi",
+  "administrateurPrincipal": "المسؤول الرئيسي - يدير الإعدادات العامة",
+  "administrationShowroom": "إدارة المعرض",
+  "ajouterUnUtilisateur": "إضافة مستخدم...",
+  "aucunUtilisateurTrouve": "لم يُعثر على مستخدم",
+  "bienvenueDansVotreGestionnaireDeShowroom": "مرحباً بك في مدير المعرض",
+  "cleApiGemini": "مفتاح API Gemini",
+  "configurationDuShowroom": "إعدادات المعرض",
+  "editionUtilisateur": "تعديل المستخدم...",
+  "geminiReponseVideCandidatesAbsent": "Gemini: استجابة فارغة (المرشحون غائبون)",
+  "gererLesUtilisateurs": "إدارة المستخدمين",
+  "gestionDesUtilisateurs": "إدارة المستخدمين",
+  "impossibleDeSauvegarderAucunShowroomActif": "تعذّر الحفظ: لا يوجد معرض نشط.",
+  "karossaShowroom": "معرض Karossa",
+  "modeSombre": "الوضع الداكن",
+  "nomDuShowroom": "اسم المعرض",
+  "parametresDuShowroom": "إعدادات المعرض",
+  "parametresSauvegardes": "تم حفظ الإعدادات",
+  "parametresSysteme": "إعدادات النظام",
+  "showroomRattache": "المعرض المُرتبط",
+  "typeDeCommission": "نوع العمولة",
+  "ajouterAuStock": "إضافة إلى المخزون",
+  "ajouterPaiement": "إضافة دفعة",
+  "ajouterUnPaiement": "إضافة دفعة",
+  "btnAjouter": "إضافة",
+  "btnConfirmer": "تأكيد",
+  "btnCreer": "إنشاء",
+  "btnEditer": "تعديل",
+  "btnEnregistrer": "حفظ",
+  "btnExporter": "تصدير",
+  "btnFermer": "إغلاق",
+  "btnModifier": "تعديل",
+  "btnNouveau": "جديد",
+  "btnPartager": "مشاركة",
+  "btnRechercher": "بحث",
+  "btnReinitialiser": "إعادة تعيين",
+  "btnRetour": "رجوع",
+  "btnSauvegarder": "حفظ",
+  "btnSupprimer": "حذف",
+  "btnTelecharger": "تحميل",
+  "btnValider": "تحقق",
+  "btnVoir": "عرض",
+  "cetteActionEstIrreversibleConfirmer": "هذا الإجراء لا يمكن التراجع عنه. تأكيد؟",
+  "confirmerL": "تأكيد",
+  "confirmerLeRejetDeCetteDemande": "تأكيد رفض هذا الطلب؟",
+  "dateRetourReelle": "تاريخ الإرجاع الفعلي",
+  "dateRetourReelleOptionnel": "تاريخ الإرجاع الفعلي (اختياري)",
+  "detailsDuRetour": "تفاصيل الإرجاع",
+  "enregistrer": "حفظ",
+  "enregistrerLeRetour": "تسجيل الإرجاع",
+  "essayezDeModifierLesFiltres": "جرّب تغيير الفلاتر",
+  "exporterCsv": "تصدير CSV",
+  "informationsDeRetour": "معلومات الإرجاع",
+  "kmAuRetour": "كم عند الإرجاع",
+  "observationsAuRetour": "ملاحظات الإرجاع",
+  "reinitialiser": "إعادة تعيين",
+  "resteAPercevoir": "المتبقي للتحصيل",
+  "retourConformeDeLaGolf8": "إرجاع سليم لـ Golf 8",
+  "retourEnregistreAvecSucces": "تم تسجيل الإرجاع بنجاح.",
+  "retourPrevu": "الإرجاع المتوقع",
+  "retourReel": "الإرجاع الفعلي",
+  "sauvegarder": "حفظ",
+  "supprimer": "حذف؟",
+  "supprimerCeDommage": "حذف هذا الضرر",
+  "supprimerCePaiement": "حذف هذه الدفعة",
+  "supprimerLaDemande": "حذف الطلب",
+  "voirLaFacture": "عرض الفاتورة",
+  "voirTout": "عرض الكل",
+  "voulezVousVraimentFermerVotreSession": "هل تريد حقاً الخروج من Karossa؟",
+  "champDate": "التاريخ",
+  "champDescription": "الوصف",
+  "champMontant": "المبلغ",
+  "champNom": "الاسم",
+  "champNotes": "ملاحظات",
+  "champPrenom": "اللقب",
+  "msgChampsObligatoires": "يرجى ملء جميع الحقول الإلزامية",
+  "uniteDa": "دج",
+  "uniteDzd": "دج",
+  "uniteKm": "كم",
+  "utilisezVariablePourLesChampsDynamiques": "استخدم {variable} للحقول الديناميكية",
+  "aucunFiltre": "لا يوجد فلتر",
+  "aucunImpactConstate": "لا يوجد أثر مُلاحَظ",
+  "aucunPaiementEnregistre": "لا توجد مدفوعات مسجَّلة",
+  "aucuneDemandeTrouvee": "لم يُعثر على طلب",
+  "aucuneTransactionCeMoisCi": "لا توجد معاملات هذا الشهر",
+  "deconnexion": "تسجيل الخروج",
+  "demandeSupprimee": "تم حذف الطلب.",
+  "erreurDeSynchronisation": "خطأ في المزامنة",
+  "fonctionnaliteDeTelechargementAImplementer": "ميزة التحميل قيد التطوير",
+  "idInvalide": "معرّف غير صحيح",
+  "impossibleDeChargerLesNotifications": "تعذّر تحميل الإشعارات",
+  "impossibleDeContacterLia": "تعذّر الاتصال بخادم الذكاء الاصطناعي",
+  "impossibleDeRecupererLesDonneesFinancieres": "تعذّر استرداد البيانات المالية",
+  "msgAucunResultat": "لا توجد نتائج",
+  "msgChargement": "جارٍ التحميل...",
+  "msgConfirmationSuppression": "تأكيد الحذف",
+  "msgConnexionRequise": "مطلوب تسجيل الدخول",
+  "msgErreurGenerale": "حدث خطأ",
+  "msgSuppressionIrreversible": "هذا الإجراء لا يمكن التراجع عنه.",
+  "photoAjouteeAvecSucces": "تمت إضافة الصورة بنجاح",
+  "profilIntrouvable": "الملف الشخصي غير موجود",
+  "accepte": "مقبول",
+  "activiteRecente": "النشاط الأخير",
+  "actualiserLesFiches": "تحديث الملفات",
+  "analyseFinanciere": "التحليل المالي",
+  "approuve": "مُعتمَد",
+  "approuvees": "مُعتمَدة",
+  "arrivee": "الوصول",
+  "assistantVirtuelIa": "المساعد الذكي الاصطناعي",
+  "bilanFinancier": "الميزانية المالية",
+  "budgetMax": "الحد الأقصى للميزانية",
+  "categorie": "الفئة",
+  "ceMois": "هذا الشهر",
+  "choisissezUnIntervalleDeDates": "اختر نطاقاً زمنياً",
+  "comparatifAnnuelDa": "المقارنة السنوية (دج)",
+  "conditionsGenerale": "- الشروط العامة:",
+  "connectezVousAVotreCompte": "سجّل الدخول إلى حسابك",
+  "coordonnees": "الإحداثيات",
+  "coutTotal": "التكلفة الإجمالية",
+  "date": "التاريخ: _______________",
+  "dateDeRecuperation": "تاريخ الاستلام",
+  "dateDepart": "تاريخ المغادرة",
+  "datesDeReservationManquantes": "تواريخ الحجز مفقودة.",
+  "deduireDuProfitAvantRepartition": "يُخصم من الربح قبل التوزيع",
+  "definissezLeTauxParDefautPre": "حدد المعدل الافتراضي المُعبَّأ مسبقاً في كل نموذج.",
+  "dejaVerse": "مدفوع مسبقاً",
+  "demandeDeDevis": "طلب تسعيرة",
+  "demanderAKarossaai": "اسأل KarossaAI...",
+  "demandesWebLeads": "طلبات الموقع والعملاء المحتملون",
+  "depart": "المغادرة",
+  "depenseTotale": "الإنفاق الكلي",
+  "depenses": "المصروفات",
+  "description": "الوصف",
+  "detacherLeContexteActuel": "فصل السياق الحالي",
+  "detail": "التفاصيل",
+  "detailsFinanciers": "التفاصيل المالية",
+  "devisePrincipale": "العملة الرئيسية",
+  "diagnosticRlsConsole": "تشخيص RLS (وحدة التحكم)",
+  "dinarAlgerienFixeDzd": "الدينار الجزائري الثابت (دج)",
+  "dommagesPannesAnomaliesOptionnel": "الأضرار / الأعطال / الشذوذات (اختياري)",
+  "duree": "المدة",
+  "dzdDa": "دج",
+  "economieNegociee": "الوفر المُتفاوَض عليه",
+  "enAtelier": "في الورشة",
+  "enAttente": "في الانتظار",
+  "enEvaluation": "قيد التقييم",
+  "etesVousSurDeVouloirVous": "هل أنت متأكد من تسجيل الخروج؟",
+  "exRayureSurAileAvantGauche": "مثال: خدش على الجناح الأمامي الأيسر، تكييف معطل...",
+  "exRevision60000KmChez": "مثال: مراجعة 60.000 كم في ورشة...",
+  "filtresActifs": "الفلاتر النشطة",
+  "filtresAvances": "فلاتر متقدمة",
+  "fonctionnaliteDePartageAImplementer": "ميزة المشاركة قيد التطوير",
+  "garageAuto": "كراسة",
+  "generationDesMetriquesKarossa": "جارٍ توليد مقاييس Karossa...",
+  "impactFinancier": "الأثر المالي",
+  "informationsDeContact": "معلومات الاتصال",
+  "informationsGenerales": "معلومات عامة",
+  "injecterDesDonneesDeGestion": "حقن بيانات الإدارة",
+  "intelligenceArtificielle": "الذكاء الاصطناعي",
+  "kmAuDepart": "كم عند المغادرة",
+  "kmAuMoment": "كم في اللحظة",
+  "laDateDeDebutDoitEtre": "يجب أن يكون تاريخ البداية قبل تاريخ النهاية.",
+  "laSommeDesPartsDoitEtre": "مجموع الحصص يجب أن يساوي 100٪",
+  "listeNoire": "قائمة سوداء",
+  "logsDeDiagnosticEcritsDansLa": "🔍 سجلات التشخيص مكتوبة في وحدة تحكم Flutter",
+  "modeDePaiement": "طريقة الدفع",
+  "modeMixte": "مختلط",
+  "monProfil": "ملفي الشخصي",
+  "montantBrut": "المبلغ الإجمالي",
+  "montantDa": "المبلغ (دج)",
+  "montantDeduit": "المبلغ المخصوم",
+  "montantFacturable": "المبلغ القابل للفاتورة",
+  "montantFixeDa": "المبلغ الثابت (دج)",
+  "motDePasse": "كلمة المرور",
+  "noteOptionnel": "ملاحظة (اختياري)",
+  "notesInternesOptionnel": "ملاحظات داخلية (اختياري)",
+  "notesOptionnel": "ملاحظات (اختياري)",
+  "notifications": "الإشعارات",
+  "observations": "المشاهدات",
+  "offreFaite": "عرض مُقدَّم",
+  "paiementsRecus": "المدفوعات المستلمة",
+  "pasDeDateDeFin": "بدون تاريخ انتهاء",
+  "periode": "الفترة",
+  "personnalise": "مخصَّص",
+  "pourcentage": "النسبة المئوية (%)",
+  "preferencesSysteme": "التفضيلات والنظام",
+  "prixDemande": "السعر المطلوب",
+  "prixMaxDa": "الحد الأقصى للسعر (دج)",
+  "prixPaiement": "السعر والدفع",
+  "prixSouhaite": "السعر المرغوب",
+  "rafraichir": "تحديث",
+  "rafraichirMaintenant": "تحديث الآن",
+  "reessayer": "إعادة المحاولة",
+  "registreDuCommerceRc": "السجل التجاري",
+  "rejetees": "مرفوضة",
+  "repAutre": "أخرى",
+  "repartitionDesGains": "توزيع الأرباح",
+  "resume": "الملخص",
+  "resumeFinancier": "الملخص المالي",
+  "revenuTotal": "الإيراد الكلي",
+  "revenusVsDepenses": "الإيرادات مقابل المصروفات",
+  "seConnecter": "تسجيل الدخول",
+  "seDeconnecter": "تسجيل الخروج",
+  "statistiques": "الإحصائيات",
+  "tauxOccupation": "نسبة الإشغال",
+  "totalBrut": "الإجمالي الخام",
+  "totalGenere": "الإجمالي المولَّد",
+  "totalReparti": "إجمالي الموزَّع",
+  "tousLesTypes": "جميع الأنواع",
+  "toutEffacer": "مسح الكل",
+  "toutEstEnOrdre": "كل شيء على ما يرام 👍",
+  "toutRafraichir": "تحديث الكل",
+  "toutesLesCategories": "جميع الفئات",
+  "toutesLesFiches": "جميع الملفات",
+  "typeD": "نوع",
+  "typeDeDommage": "نوع الضرر",
+  "urlDuLogo": "رابط الشعار",
+  "urlSupabaseStorageNulle": "رابط Supabase Storage فارغ.",
+  "valeursFinancieres": "القيم المالية",
+  "valides": "مُعتمَدة",
+  "aiEffacerHistorique": "مسح السجل",
+  "aiContextualiserAssistant": "ربط المساعد بقاعدة البيانات",
+  "aiAnalyseEtatGlobalParc": "تحليل الحالة العامة لأسطول السيارات",
+  "aiNLocationsRecentes": "{count} إيجارات حديثة",
+  "aiCatalogueNVehicules": "الكتالوج ({count} سيارة)",
+  "aiContratsChargesContexte": "✅ تم تحميل {count} عقداً في السياق.",
+  "aiVehiculesSynchronisesKarossa": "✅ تم مزامنة {count} سيارة مع KarossaAI.",
+  "erreurAvecDetail": "خطأ: {error}",
+  "erreurChargementMessage": "خطأ في التحميل: {message}",
+  "erreurSuppression": "خطأ في الحذف: {error}",
+  "erreurConversion": "خطأ في التحويل: {error}",
+  "contratGenereAvecSucces": "تم إنشاء العقد بنجاح",
+  "clientInconnu": "عميل غير معروف",
+  "vehiculeInconnu": "سيارة غير معروفة",
+  "oui": "نعم",
+  "non": "لا",
+  "champTitre": "العنوان",
+  "champCorps": "المحتوى",
+  "modifierArticle": "تعديل المادة",
+  "modifierChamp": "تعديل — {label}",
+  "langue": "اللغة",
+  "champValeur": "القيمة",
+  "modeleIaLabel": "نموذج الذكاء الاصطناعي (gemini_model)",
+  "commissionPourLabel": "العمولة — {label}",
+  "commissionVente": "البيع",
+  "commissionLocation": "الإيجار",
+  "commissionAchat": "الشراء",
+  "commissionEchange": "المبادلة",
+  "gererLequipe": "إدارة الفريق",
+  "clesApiGeminiEtFlespi": "مفاتيح API Gemini وFlespi ومعلومات الاتصال",
+  "voulezVousVraimentFermerSession": "هل تريد حقاً تسجيل الخروج من Karossa؟",
+  "contratOuvert": "عقد مفتوح",
+  "suppressionInterruption": "حذف الانقطاع؟",
+  "joursSerontRecalculesAuto": "هذا الإجراء لا يمكن التراجع عنه. سيتم إعادة حساب الأيام تلقائياً.",
+  "champMotif": "السبب",
+  "nJoursRetard": "تأخر {count} يوم",
+  "nJoursRetardBullet": "• تأخر {count} يوم",
+  "nJoursInterruptionDeduits": "{count} أيام انقطاع مخصومة",
+  "dupliquer": "تكرار",
+  "filterTous": "الكل",
+  "enCoursEnPause": "⏸ جارٍ",
+  "enRetardAvecCount": "⚠️ متأخر ({count})",
+  "historiqueAvecCount": "السجل ({count})",
+  "nZones": "{count} منطقة",
+  "labelNotesDepart": "الانطلاق: {notes}",
+  "labelNotesRetour": "الإرجاع: {notes}",
+  "champDistance": "المسافة",
+  "kmDepartHelper": "الانطلاق: {km} كم",
+  "traitementEnCours": "جارٍ المعالجة…",
+  "interruptionDemarre": "بدأ الانقطاع — تم استلام السيارة في {date}",
+  "vehiculeRestitue": "تم إعادة السيارة في {date} — {count} يوم مخصوم",
+  "interruptionSupprimee": "تم حذف الانقطاع",
+  "depuisLeDateCount": "منذ {date} · {count} يوم",
+  "indiquerRaisonDateRecuperation": "أدخل السبب والتاريخ الذي استلمت فيه السيارة. سيتم خصم هذه الأيام من الفاتورة.",
+  "dateRecuperationVehicule": "تاريخ استلام السيارة",
+  "titreDetailsMontants": "المبالغ",
+  "paiementsRecusCount": "المدفوعات المستلمة ({count})",
+  "champFinancier": "مالي",
+  "totalLabel": "المجموع",
+  "detailsOperation": "تفاصيل العملية",
+  "filterSorties": "المصاريف",
+  "filterSolde": "الرصيد",
+  "acompte": "مبلغ مقدم",
+  "champMois": "الشهر",
+  "champAnneeLabel": "السنة",
+  "champType": "النوع",
+  "totalCommissions": "مجموع العمولات",
+  "champCommission": "العمولة",
+  "anonyme": "مجهول",
+  "demandeSucces": "تمت معالجة الطلب بنجاح.",
+  "photosCount": "الصور ({count})",
+  "champPhoto": "صورة",
+  "btnRejeter": "رفض",
+  "btnApprouver": "قبول",
+  "champMessage": "الرسالة",
+  "gpsDepuis": "من {date}",
+  "gpsAu": "إلى {date}",
+  "preset1Heure": "ساعة واحدة",
+  "preset3Heures": "3 ساعات",
+  "preset8Heures": "8 ساعات",
+  "presetHier": "أمس",
+  "preset24Heures": "24 ساعة",
+  "preset3Jours": "3 أيام",
+  "preset7Jours": "7 أيام",
+  "sectionClient": "العميل",
+  "vehiculeCede": "السيارة المُسلَّمة",
+  "vehiculeRepris": "السيارة المُستردة",
+  "modeleChamp": "الموديل *",
+  "telephoneObligatoire": "الهاتف *",
+  "achatEnregistreAvecSucces": "✅ تم تسجيل الشراء بنجاح",
+  "prixAccordeLabel": "السعر المتفق عليه",
+  "modeleIaGemini": "نموذج الذكاء الاصطناعي (gemini_model)",
+  "echangeEnregistreAvecSucces": "✅ تم تسجيل المبادلة بنجاح",
+  "kmDepartInferieur": "< كم المغادرة",
+  "dateRetourAvantDebut": "لا يمكن أن يكون تاريخ الإرجاع الفعلي قبل تاريخ البداية",
+  "locationMiseAJour": "✅ تم تحديث الإيجار بنجاح!",
+  "contratOuvertSansDateFin": "عقد مفتوح (بدون تاريخ انتهاء)",
+  "clientListeNoire": "⚠️ هذا العميل في القائمة السوداء! كن حذراً.",
+  "notesEtatVehiculeDepart": "ملاحظات حالة السيارة عند المغادرة (اختياري)",
+  "pdfGenereAvecSucces": "✅ تم توليد PDF بنجاح",
+  "locationSupprimee": "تم حذف الإيجار.",
+  "exMarqueVehicule": "مثال: Renault, Peugeot...",
+  "sommePartsDoit100": "مجموع الحصص يجب أن يساوي 100٪",
+  "anneeInvalideSimple": "سنة غير صحيحة",
+  "cleApiGeminiNonConfiguree": "مفتاح API Gemini غير مُهيَّأ. اذهب إلى الإعدادات > المعرض.",
+  "carteGriseAnalysee": "✅ تم تحليل البطاقة الرمادية بنجاح!",
+  "analyseTermineeDonneesManquantes": "اكتمل التحليل لكن بعض البيانات مفقودة. يرجى الإكمال يدوياً.",
+  "venteEnregistreeAvecSucces": "✅ تم تسجيل البيع بنجاح",
+  "ajouterAuStockBtn": "إضافة إلى المخزون",
+  "tooltipPlanning": "الجدول الزمني",
+  "tooltipRetourAccueil": "العودة إلى الرئيسية",
+  "tooltipPlusOptions": "خيارات إضافية",
+  "titrePaiements": "المدفوعات",
+  "confirmerSuppressionLocationMessage": "حذف عقد إيجار {vehicule} الخاص بـ {client}؟\nهذا الإجراء لا رجعة فيه.",
+  "@confirmerSuppressionLocationMessage": {
+    "placeholders": {
+      "vehicule": {
+        "type": "String"
+      },
+      "client": {
+        "type": "String"
+      }
+    }
+  },
+  "cautionMontantDa": "الضمان: {montant} دج",
+  "@cautionMontantDa": {
+    "placeholders": {
+      "montant": {
+        "type": "String"
+      }
+    }
+  },
+  "modifierReparation": "تعديل الإصلاح",
+  "requis": "مطلوب",
+  "reste": "المتبقي",
+  "depasse": "يتجاوز بـ",
+  "enregistrementEnCours": "جارٍ الحفظ...",
+  "enregistrerModifications": "حفظ التغييرات",
+  "enregistrerReparation": "حفظ الإصلاح",
+  "payeePar": "مدفوعة بواسطة",
+  "payeur": "الدافع",
+  "doitSupporterMontant": "من يجب أن يتحمل هذا المبلغ فعلياً",
+  "helperDebiteur": "إذا كان مختلفاً عن الملاك المشاركين، سيتم خصم هذا المبلغ من هذا الشخص وسيتم تعويض الدافع.",
+  "coProprietairesParDefaut": "الملاك المشاركون للسيارة (افتراضياً)",
+  "ajouterPayeur": "إضافة دافع",
+  "choisirProprietairePaiement": "اختر المالك لكل سطر دفع.",
+  "erreurSommePaiements": "مجموع المدفوعات ({somme} دج) يجب أن يساوي التكلفة الإجمالية ({cout} دج).",
+  "reparationModifiee": "تم تحديث الإصلاح",
+  "karossaAi": "KarossaAI",
+  "prendrePhoto": "التقاط صورة",
+  "choisirGalerie": "اختر من المعرض",
+  "erreurGenerationRapport": "خطأ في توليد التقرير: {erreur}",
+  "genererRapportPdfMois": "توليد تقرير PDF شهري",
+  "effacerHistorique": "مسح السجل",
+  "contextualiserAssistant": "ربط المساعد بقاعدة البيانات",
+  "joindrePhoto": "إرفاق صورة (ضرر، فاتورة، بطاقة رمادية...)",
+  "supprimerDefinitivement": "حذف نهائي؟",
+  "confirmerDecimation": "تأكيد التخفيف؟",
+  "tousPointsGpsEntre": "جميع نقاط GPS بين",
+  "etLe": "و",
+  "serontSupprimesDefinitivement": "سيتم حذفها نهائياً",
+  "pourTouteLaFlotte": "للأسطول بأكمله",
+  "actionIrreversible": "هذا الإجراء لا يمكن التراجع عنه.",
+  "surCetIntervalle": "خلال هذه الفترة، سيتم الاحتفاظ بنقطة واحدة فقط كل",
+  "autresPointsSupprimes": "سيتم حذف النقاط الأخرى نهائياً.",
+  "decimer": "تخفيف",
+  "enregistrementsSupprimes": "تم حذف {count} سجل.",
+  "@enregistrementsSupprimes": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "nettoyageHistoriqueGps": "تنظيف سجل GPS",
+  "touteLaFlotte": "الأسطول بأكمله",
+  "intervalleDates": "نطاق التواريخ",
+  "action": "الإجراء",
+  "decimerGarder1Point": "تخفيف (الاحتفاظ بنقطة واحدة كل X)",
+  "decimerRecommandation": "موصى به — يحافظ على اتجاهات المسارات",
+  "supprimerToutIntervalle": "حذف كل شيء في النطاق",
+  "effaceCompletementPeriode": "يمحو الفترة المحددة بالكامل",
+  "lancerDecimation": "تشغيل التخفيف",
+  "gpsAccessDenied": "هذا الإجراء مقصور على المدير أو مالك المعرض.",
+  "gpsCleanupInfo": "يمكن أن ينمو جدول gps_positions بسرعة كبيرة (نقطة واحدة / بضع ثوانٍ لكل سيارة). استخدم هذه الصفحة لتحرير المساحة دون فقدان الاتجاه العام للمسارات (التخفيف)، أو لحذف نطاق محدد.",
+  "@erreurSommePaiements": {
+    "placeholders": {
+      "somme": {
+        "type": "String"
+      },
+      "cout": {
+        "type": "String"
+      }
+    }
+  },
+  "@erreurGenerationRapport": {
+    "placeholders": {
+      "erreur": {
+        "type": "String"
+      }
+    }
+  },
+  "actualiser": "تحديث",
+  "rejete": "مرفوض",
+  "confirmerApprobationDemande": "تأكيد الموافقة على هذا الطلب؟",
+  "bonjourPrenom": "مرحباً، {prenom} 👋",
+  "@bonjourPrenom": {
+    "placeholders": {
+      "prenom": {
+        "type": "String"
+      }
+    }
+  },
+  "actionRequiseRetards": "إجراء مطلوب: {count} سيارة متأخرة عن الإرجاع!",
+  "@actionRequiseRetards": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "fin": "النهاية",
+  "aucunContratLocationActif": "لا يوجد عقد إيجار نشط اليوم",
+  "copier": "نسخ",
+  "marquerRembourse": "وضع علامة مسدد",
+  "supprimerCeTransfert": "حذف هذا التحويل؟",
+  "transfertSeraSupprimeDefinitivement": "سيتم حذف تحويل {montant} نهائيًا.",
+  "@transfertSeraSupprimeDefinitivement": {
+    "placeholders": {
+      "montant": {
+        "type": "String"
+      }
+    }
+  },
+  "soldeRestantTooltip": "الرصيد المتبقي للدفع مع الأخذ بعين الاعتبار التحويلات المالية مع مستخدمين آخرين",
+  "zoneCreeeSucces": "تم إنشاء المنطقة \"{nom}\"",
+  "@zoneCreeeSucces": {
+    "placeholders": {
+      "nom": {
+        "type": "String"
+      }
+    }
+  },
+  "btnContinuer": "متابعة",
+  "champNomZone": "اسم المنطقة",
+  "exempleNomZone": "مثال: صالة عرض الجزائر، الورشة...",
+  "champCouleur": "اللون",
+  "alerterALEntree": "تنبيه عند الدخول",
+  "alerterALaSortie": "تنبيه عند الخروج",
+  "aucunContratTrouvePourVehicule": "لم يتم العثور على أي عقد لهذه المركبة",
+  "fonctionnaliteTelechargementAImplementer": "ميزة التنزيل قيد التنفيذ",
+  "fonctionnalitePartageAImplementer": "ميزة المشاركة قيد التنفيذ",
+  "aucuneDonneePourCetteDate": "لا توجد بيانات لهذا التاريخ",
+  "lectureDeTrajet": "إعادة تشغيل الرحلة",
+  "reconstitutionDuTrajet": "إعادة بناء المسار…",
+  "pointsReconstituesTooltip": "تم إعادة بناء {count} نقطة على طول المسار الأكثر احتمالاً، حيث انقطعت إشارة GPS للحظات.",
+  "@pointsReconstituesTooltip": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "countReconstitues": "{count} معاد بناؤها{plural}",
+  "@countReconstitues": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      },
+      "plural": {
+        "type": "String"
+      }
+    }
+  },
+  "intervalleDeLecture": "فترة التشغيل",
+  "btnAppliquer": "تطبيق",
+  "vitesseDeLecture": "سرعة التشغيل",
+  "syncDansSecondes": "المزامنة خلال {countdown} ثانية",
+  "@syncDansSecondes": {
+    "placeholders": {
+      "countdown": {
+        "type": "String"
+      }
+    }
+  },
+  "aucunVehiculeGps": "لا توجد مركبة مزودة بـ GPS",
+  "planningLocations": "جدول الإيجارات",
+  "aujourdhui": "اليوم",
+  "aucunVehiculeAAfficher": "لا توجد مركبة لعرضها.",
+  "msgMarqueModeleTypeAlerte": "{marque} {modele} — {typeAlerte}",
+  "@msgMarqueModeleTypeAlerte": {
+    "placeholders": {
+      "marque": {
+        "type": "String"
+      },
+      "modele": {
+        "type": "String"
+      },
+      "typeAlerte": {
+        "type": "String"
+      }
+    }
+  },
+  "alerteGpsVehicule": "تنبيه GPS — {vehicule}",
+  "@alerteGpsVehicule": {
+    "placeholders": {
+      "vehicule": {
+        "type": "String"
+      }
+    }
+  },
+  "nouvelleReservationWeb": "حجز جديد عبر الإنترنت",
+  "msgReservationWeb": "{marque} {modele} — من {debut} إلى {fin}",
+  "@msgReservationWeb": {
+    "placeholders": {
+      "marque": {
+        "type": "String"
+      },
+      "modele": {
+        "type": "String"
+      },
+      "debut": {
+        "type": "String"
+      },
+      "fin": {
+        "type": "String"
+      }
+    }
+  },
+  "nouvelleDemandeDevis": "طلب عرض سعر جديد",
+  "propositionRepriseClient": "اقتراح استرداد من العميل",
+  "alaChargeDe": "على عاتق: {resume}",
+  "@alaChargeDe": {
+    "placeholders": {
+      "resume": {
+        "type": "String"
+      }
+    }
+  },
+  "documents": "الوثائق",
+  "centreAlertes": "مركز التنبيهات",
+  "toutLu": "تحديد الكل كمقروء",
+  "aucuneAlerteIci": "لا توجد تنبيهات هنا",
+  "lu": "مقروء",
+  "vitessePeriode": "السرعة — {periode}",
+  "@vitessePeriode": {
+    "placeholders": {
+      "periode": {
+        "type": "String"
+      }
+    }
+  },
+  "repartitionDuTemps": "توزيع الوقت",
+  "retourPrevuValeur": "العودة المتوقعة: {retour}",
+  "@retourPrevuValeur": {
+    "placeholders": {
+      "retour": {
+        "type": "String"
+      }
+    }
+  },
+  "kmh": "كم/سا",
+  "erreurDeChargement": "خطأ في التحميل: {error}",
+  "@erreurDeChargement": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "aucuneDonneeGpsSurPeriode": "لا توجد بيانات GPS لهذه الفترة",
+  "zonesDeCirculation": "مناطق الحركة",
+  "pointsGpsAnalyses": "تم تحليل {count} نقطة GPS",
+  "@pointsGpsAnalyses": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "faible": "منخفض",
+  "eleve": "مرتفع",
+  "vendeur": "البائع",
+  "remarques": "ملاحظات",
+  "statutMisAJour": "تم تحديث الحالة: {statut}",
+  "@statutMisAJour": {
+    "placeholders": {
+      "statut": {
+        "type": "String"
+      }
+    }
+  },
+  "modifierLabel": "تعديل — {label}",
+  "@modifierLabel": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "commissionLabel": "العمولة — {label}",
+  "@commissionLabel": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "identite": "الهوية",
+  "aucuneAlerteEntretienActive": "لا توجد تنبيهات صيانة نشطة",
+  "kmEcheance": "عند {km} كم",
+  "@kmEcheance": {
+    "placeholders": {
+      "km": {
+        "type": "String"
+      }
+    }
+  },
+  "expire": "منتهي الصلاحية",
+  "btnFait": "تم",
+  "catalogue": "الكتالوج",
+  "filtres": "التصفية",
+  "journalAudit": "سجل التدقيق",
+  "aucuneActiviteEnregistreePourCesFiltres": "لم يتم تسجيل أي نشاط لهذه المرشحات.",
+  "gererLEquipe": "إدارة الفريق",
+  "nouvelleAlerteEntretien": "تنبيه صيانة جديد",
+  "typeEntretien": "نوع الصيانة",
+  "depensesUpper": "المصاريف",
+  "revenusUpper": "الإيرادات",
+  "locationsUpper": "الإيجارات",
+  "constatIA": "تقييم الذكاء الاصطناعي",
+  "insightDuJour": "· فكرة اليوم",
+  "autresPointsAConsulter": "+ {autres} نقطة إضافية للمراجعة",
+  "@autresPointsAConsulter": {
+    "placeholders": {
+      "autres": {
+        "type": "String"
+      },
+      "plural": {
+        "type": "String"
+      }
+    }
+  },
+  "vueDEnsemble": "نظرة عامة",
+  "donneesNonDisponibles": "البيانات غير متوفرة",
+  "aucunTrajetAujourdhui": "لا توجد رحلة اليوم",
+  "vsMoisDernier": "مقارنة بالشهر الماضي",
+  "supprimerLInterruption": "حذف هذا التوقف؟",
+  "montants": "المبالغ",
+  "departKm": "الانطلاق: {km} كم",
+  "@departKm": {
+    "placeholders": {
+      "km": {
+        "type": "String"
+      }
+    }
+  },
+  "joursRetard": "تأخير {jours} يوم",
+  "@joursRetard": {
+    "placeholders": {
+      "jours": {
+        "type": "String"
+      }
+    }
+  },
+  "totalPourcent": "المجموع: {pct}%",
+  "@totalPourcent": {
+    "placeholders": {
+      "pct": {
+        "type": "String"
+      }
+    }
+  },
+  "erreurUploadPhoto": "خطأ في تحميل الصورة: {error}",
+  "@erreurUploadPhoto": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "detailDeLErreur": "تفاصيل الخطأ",
+  "entretien": "الصيانة",
+  "dateDAchat": "تاريخ الشراء",
+  "scoreIndisponiblePourPeriode": "الدرجة غير متوفرة لهذه الفترة",
+  "scoreDeConduite": "درجة القيادة",
+  "duDate": "من {date}",
+  "@duDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "auDate": "إلى {date}",
+  "@auDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "enMouvement": "متحرك",
+  "horsLigne": "غير متصل",
+  "entreeDansLaZone": "الدخول إلى المنطقة \"{zone}\"",
+  "@entreeDansLaZone": {
+    "placeholders": {
+      "zone": {
+        "type": "String"
+      }
+    }
+  },
+  "sortieDeLaZone": "الخروج من المنطقة \"{zone}\"",
+  "@sortieDeLaZone": {
+    "placeholders": {
+      "zone": {
+        "type": "String"
+      }
+    }
+  },
+  "champMode": "الطريقة",
+  "contratOuvertPrixJour": "عقد مفتوح — {prix} دج/يوم",
+  "@contratOuvertPrixJour": {
+    "placeholders": {
+      "prix": {
+        "type": "String"
+      }
+    }
+  },
+  "detailsDeLOperation": "تفاصيل العملية",
+  "effacer": "مسح",
+  "retourALAccueil": "العودة إلى الرئيسية",
+  "locationsEffectuees": "تم تنفيذ {count} إيجار",
+  "@locationsEffectuees": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "erreurCritiqueSynchronisation": "خطأ حرج في المزامنة: {error}",
+  "@erreurCritiqueSynchronisation": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  }
+}

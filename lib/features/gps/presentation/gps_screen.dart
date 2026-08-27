@@ -9,8 +9,10 @@ import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../shared/widgets/custom_app_bar.dart';
+import 'gps_cleanup_screen.dart';
 import 'gps_position_card.dart';
 import 'gps_provider.dart';
+import 'package:garage_auto/core/extensions/l10n_extension.dart';
 
 // ── Modèle minimal véhicule GPS ───────────────────────────────────────────
 
@@ -67,18 +69,25 @@ class GpsScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: CustomAppBar(
-        title: 'GPS — Flotte',
+        title: context.l10n.gpsFlotte,
         showHomeButton: true,
         actions: [
           IconButton(
             icon: const Icon(Icons.map_outlined),
-            tooltip: 'Carte flotte',
+            tooltip: context.l10n.carteFlotte,
             onPressed: () => context.push('/gps/map'),
           ),
           IconButton(
             icon: const Icon(Icons.refresh),
-            tooltip: 'Tout rafraîchir',
+            tooltip: context.l10n.toutRafraichir,
             onPressed: () => ref.invalidate(vehiculesGpsProvider),
+          ),
+          IconButton(
+            icon: const Icon(Icons.delete_sweep_outlined),
+            tooltip: context.l10n.nettoyageHistoriqueGps,
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const GpsCleanupScreen()),
+            ),
           ),
         ],
       ),
@@ -128,9 +137,9 @@ class _ErrorView extends StatelessWidget {
           children: [
             const Icon(Icons.error_outline, size: 48, color: AppColors.error),
             const SizedBox(height: 12),
-            Text('Erreur de chargement : $message', textAlign: TextAlign.center),
+            Text(context.l10n.erreurDeChargement(message), textAlign: TextAlign.center),
             const SizedBox(height: 16),
-            FilledButton(onPressed: onRetry, child: const Text('Réessayer')),
+            FilledButton(onPressed: onRetry, child: Text(context.l10n.reessayer)),
           ],
         ),
       ),

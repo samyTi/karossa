@@ -7,6 +7,7 @@ import '../../../shared/widgets/custom_app_bar.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../domain/alerte_model.dart';
 import 'entretien_provider.dart';
+import 'package:garage_auto/core/extensions/l10n_extension.dart';
 
 class EntretienScreen extends ConsumerWidget {
   const EntretienScreen({super.key});
@@ -15,25 +16,25 @@ class EntretienScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final alertes = ref.watch(alertesEntretienProvider);
     return Scaffold(
-      appBar: const CustomAppBar(
-        title: 'Entretien periodique',
+      appBar: CustomAppBar(
+        title: context.l10n.entretienPeriodique,
         showBackButton: false,
         showHomeButton: true,
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push('/entretien/new'),
         icon: const Icon(Icons.add_alert_outlined),
-        label: const Text('Nouvelle alerte'),
+        label: Text(context.l10n.nouvelleAlerte),
         backgroundColor: AppColors.accent,
         foregroundColor: Colors.white,
       ),
       body: alertes.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error:   (e, _) => Center(child: Text('Erreur: $e')),
+        error:   (e, _) => Center(child: Text(context.l10n.erreurAvecDetail(e.toString()))),
         data:    (list) => list.isEmpty
-          ? const EmptyState(
+          ? EmptyState(
               icon: Icons.notifications_none,
-              message: "Aucune alerte d'entretien active")
+              message: context.l10n.aucuneAlerteEntretienActive)
           : ListView.builder(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
               itemCount: list.length,
@@ -97,14 +98,13 @@ class _AlerteCard extends StatelessWidget {
                 '${alerte.dateEcheance!.year}',
                 style: AppTextStyles.label),
             if (alerte.kmEcheance != null)
-              Text('A ${alerte.kmEcheance} km', style: AppTextStyles.label),
+              Text(context.l10n.kmEcheance(alerte.kmEcheance.toString()), style: AppTextStyles.label),
             if (alerte.isExpired)
-              const Text('EXPIRE',
-                style: TextStyle(color: AppColors.retard,
+              Text(context.l10n.expire,
+                style: const TextStyle(color: AppColors.retard,
                   fontSize: 11, fontWeight: FontWeight.w700)),
             if (alerte.isUrgent && !alerte.isExpired)
-              const Text('URGENT - moins de 7 jours',
-                style: TextStyle(color: AppColors.accent,
+              Text(context.l10n.urgentMoinsDe7Jours, style: TextStyle(color: AppColors.accent,
                   fontSize: 11, fontWeight: FontWeight.w700)),
           ],
         )),
@@ -113,7 +113,7 @@ class _AlerteCard extends StatelessWidget {
             await ref.read(entretienRepositoryProvider).marquerFait(alerte.id);
             ref.invalidate(alertesEntretienProvider);
           },
-          child: const Text('Fait'),
+          child: Text(context.l10n.btnFait),
         ),
       ]),
     ),

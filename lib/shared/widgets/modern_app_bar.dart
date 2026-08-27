@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/extensions/l10n_extension.dart';
 import '../../core/constants/app_spacing.dart';
 import '../../core/theme/theme_tokens.dart';
 
@@ -38,19 +39,7 @@ class ModernAppBar extends StatelessWidget implements PreferredSizeWidget {
     final isDark = theme.brightness == Brightness.dark;
     final bgColor = backgroundColor ?? (isDark ? AppColors.surfaceDark : AppColors.primary);
     final gradient = this.gradient ?? (useGradient
-        ? LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: isDark
-                ? [
-                    AppColors.primaryDarkMode,
-                    AppColors.primary,
-                  ]
-                : [
-                    AppColors.primary,
-                    AppColors.primaryDark,
-                  ],
-          )
+        ? (isDark ? ThemeTokens.brandGradientDark : ThemeTokens.brandGradient)
         : null);
 
     return AppBar(
@@ -88,7 +77,7 @@ class _HomeButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconButton(
       icon: const Icon(Icons.home_outlined),
-      tooltip: 'Retour à l\'accueil',
+      tooltip: context.l10n.retourALAccueil,
       onPressed: () => context.go('/dashboard'),
       color: Colors.white,
     );
@@ -138,13 +127,7 @@ class _ScrollAwareAppBarState extends State<ScrollAwareAppBar> {
             ? (isDark ? AppColors.surfaceDark : AppColors.primary)
             : Colors.transparent,
         gradient: isScrolled
-            ? LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: isDark
-                    ? [AppColors.primaryDarkMode, AppColors.primary]
-                    : [AppColors.primary, AppColors.primaryDark],
-              )
+            ? (isDark ? ThemeTokens.brandGradientDark : ThemeTokens.brandGradient)
             : null,
         boxShadow: isScrolled
             ? [

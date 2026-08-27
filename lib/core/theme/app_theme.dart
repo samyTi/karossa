@@ -28,7 +28,7 @@ class AppTheme {
           elevation: 0,
           scrolledUnderElevation: 2,
           centerTitle: false,
-          titleTextStyle: GoogleFonts.nunito(
+          titleTextStyle: GoogleFonts.plusJakartaSans(
             fontSize: 18,
             fontWeight: FontWeight.w700,
             color: Colors.white,
@@ -101,7 +101,7 @@ class AppTheme {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
             ),
-            textStyle: GoogleFonts.nunito(
+            textStyle: GoogleFonts.plusJakartaSans(
               fontSize: 15,
               fontWeight: FontWeight.w600,
               letterSpacing: 0.2,
@@ -117,7 +117,7 @@ class AppTheme {
               horizontal: AppSpacing.md,
               vertical: AppSpacing.sm,
             ),
-            textStyle: GoogleFonts.nunito(
+            textStyle: GoogleFonts.plusJakartaSans(
               fontSize: 15,
               fontWeight: FontWeight.w600,
             ),
@@ -136,7 +136,7 @@ class AppTheme {
               borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
             ),
             side: const BorderSide(color: AppColors.primary, width: 1.5),
-            textStyle: GoogleFonts.nunito(
+            textStyle: GoogleFonts.plusJakartaSans(
               fontSize: 15,
               fontWeight: FontWeight.w600,
             ),
@@ -215,12 +215,12 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
           ),
-          titleTextStyle: GoogleFonts.nunito(
+          titleTextStyle: GoogleFonts.plusJakartaSans(
             fontSize: 18,
             fontWeight: FontWeight.w700,
             color: AppColors.textPrimary,
           ),
-          contentTextStyle: GoogleFonts.nunito(
+          contentTextStyle: GoogleFonts.plusJakartaSans(
             fontSize: 15,
             color: AppColors.textSecondary,
           ),
@@ -309,7 +309,7 @@ class AppTheme {
           elevation: 0,
           scrolledUnderElevation: 2,
           centerTitle: false,
-          titleTextStyle: GoogleFonts.nunito(
+          titleTextStyle: GoogleFonts.plusJakartaSans(
             fontSize: 18,
             fontWeight: FontWeight.w700,
             color: AppColors.textPrimaryDark,
@@ -382,7 +382,7 @@ class AppTheme {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
             ),
-            textStyle: GoogleFonts.nunito(
+            textStyle: GoogleFonts.plusJakartaSans(
               fontSize: 15,
               fontWeight: FontWeight.w600,
               letterSpacing: 0.2,
@@ -398,7 +398,7 @@ class AppTheme {
               horizontal: AppSpacing.md,
               vertical: AppSpacing.sm,
             ),
-            textStyle: GoogleFonts.nunito(
+            textStyle: GoogleFonts.plusJakartaSans(
               fontSize: 15,
               fontWeight: FontWeight.w600,
             ),
@@ -417,7 +417,7 @@ class AppTheme {
               borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
             ),
             side: const BorderSide(color: AppColors.primaryDarkMode, width: 1.5),
-            textStyle: GoogleFonts.nunito(
+            textStyle: GoogleFonts.plusJakartaSans(
               fontSize: 15,
               fontWeight: FontWeight.w600,
             ),
@@ -467,12 +467,12 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
           ),
-          titleTextStyle: GoogleFonts.nunito(
+          titleTextStyle: GoogleFonts.plusJakartaSans(
             fontSize: 18,
             fontWeight: FontWeight.w700,
             color: AppColors.textPrimaryDark,
           ),
-          contentTextStyle: GoogleFonts.nunito(
+          contentTextStyle: GoogleFonts.plusJakartaSans(
             fontSize: 15,
             color: AppColors.textSecondaryDark,
           ),

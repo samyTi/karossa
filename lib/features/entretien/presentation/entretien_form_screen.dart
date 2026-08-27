@@ -5,6 +5,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../vehicules/domain/vehicule_model.dart';
 import '../../vehicules/presentation/vehicules_provider.dart';
 import 'entretien_provider.dart';
+import 'package:garage_auto/core/extensions/l10n_extension.dart';
 
 class EntretienFormScreen extends ConsumerStatefulWidget {
   const EntretienFormScreen({super.key});
@@ -30,7 +31,7 @@ class _State extends ConsumerState<EntretienFormScreen> {
   Widget build(BuildContext context) {
     final vehicules = ref.watch(vehiculesProvider).valueOrNull ?? [];
     return Scaffold(
-      appBar: AppBar(title: const Text("Nouvelle alerte d'entretien")),
+      appBar: AppBar(title: Text(context.l10n.nouvelleAlerteEntretien)),
       body: Form(
         key: _formKey,
         child: ListView(
@@ -38,7 +39,7 @@ class _State extends ConsumerState<EntretienFormScreen> {
           children: [
             DropdownButtonFormField<Vehicule>(
               initialValue: _vehicule,
-              decoration: const InputDecoration(labelText: 'Vehicule'),
+              decoration: InputDecoration(labelText: context.l10n.vehicule),
               items: vehicules.map((v) => DropdownMenuItem<Vehicule>(
                 value: v, child: Text(v.displayName))).toList(),
               onChanged: (v) => setState(() => _vehicule = v),
@@ -47,8 +48,8 @@ class _State extends ConsumerState<EntretienFormScreen> {
             const SizedBox(height: 12),
             DropdownButtonFormField<String>(
               initialValue: _type,
-              decoration: const InputDecoration(
-                labelText: "Type d'entretien"),
+              decoration: InputDecoration(
+                labelText: context.l10n.typeEntretien),
               items: List.generate(_types.length, (i) => DropdownMenuItem<String>(
                 value: _types[i], child: Text(_labels[i]))).toList(),
               onChanged: (v) => setState(() => _type = v!),
@@ -80,14 +81,14 @@ class _State extends ConsumerState<EntretienFormScreen> {
             TextFormField(
               controller: _kmCtrl,
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                labelText: 'Kilometrage echeance (optionnel)',
+              decoration: InputDecoration(
+                labelText: context.l10n.kilometrageEcheanceOptionnel,
                 suffixText: 'km'),
             ),
             const SizedBox(height: 12),
             TextFormField(
               controller: _descCtrl,
-              decoration: const InputDecoration(labelText: 'Note (optionnel)'),
+              decoration: InputDecoration(labelText: context.l10n.noteOptionnel),
             ),
             const SizedBox(height: 20),
             SizedBox(
@@ -123,12 +124,12 @@ class _State extends ConsumerState<EntretienFormScreen> {
       if (mounted) {
         context.pop();
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Alerte creee')));
+          SnackBar(content: Text(context.l10n.alerteCreee)));
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Erreur: $e'),
+        SnackBar(content: Text(context.l10n.erreurAvecDetail(e.toString())),
           backgroundColor: AppColors.retard));
       }
     } finally {

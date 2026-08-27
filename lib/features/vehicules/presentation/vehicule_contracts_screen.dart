@@ -15,6 +15,7 @@ import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/modern_app_bar.dart';
 import '../../echanges/presentation/echanges_provider.dart';
 import '../../echanges/domain/echange_model.dart';
+import 'package:garage_auto/core/extensions/l10n_extension.dart';
 
 /// Provider pour récupérer les contrats d'un véhicule
 final vehiculeContractsProvider = FutureProvider.autoDispose
@@ -37,23 +38,23 @@ class VehiculeContractsScreen extends ConsumerWidget {
     final contractsAsync = ref.watch(vehiculeContractsProvider(vehiculeId));
 
     return Scaffold(
-      appBar: const ModernAppBar(
-        title: 'Contrats du véhicule',
+      appBar: ModernAppBar(
+        title: context.l10n.contratsDuVehicule,
         showHomeButton: true,
       ),
       body: contractsAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.error_outline, size: 48, color: AppColors.error),
-              const SizedBox(height: 16),
+              Icon(Icons.error_outline, size: 48, color: AppColors.error),
+              SizedBox(height: 16),
               Text(
                 'Erreur lors du chargement des contrats',
                 style: AppTextStyles.bodySecondary,
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: 8),
               Text(e.toString(), style: AppTextStyles.label),
             ],
           ),
@@ -82,9 +83,9 @@ class _ContractsBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (contracts.isEmpty) {
-      return const EmptyState(
+      return EmptyState(
         icon: Icons.picture_as_pdf_outlined,
-        message: 'Aucun contrat trouvé pour ce véhicule',
+        message: context.l10n.aucunContratTrouvePourVehicule,
       );
     }
 
@@ -151,13 +152,13 @@ class _ContractCard extends StatelessWidget {
                       color: AppColors.secondary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.swap_horiz,
                       color: AppColors.secondary,
                       size: 20,
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  SizedBox(width: 12),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -173,39 +174,39 @@ class _ContractCard extends StatelessWidget {
                       ],
                     ),
                   ),
-                  const Icon(
+                  Icon(
                     Icons.arrow_forward_ios,
                     size: 14,
                     color: AppColors.textHint,
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: 12),
               const Divider(height: 1),
-              const SizedBox(height: 12),
+              SizedBox(height: 12),
               // Détails du contrat
               _DetailRow(
                 'Véhicule cédé',
                 contract.vehiculeCedeNom ?? vehiculeNom,
               ),
-              const SizedBox(height: 6),
+              SizedBox(height: 6),
               _DetailRow(
                 'Véhicule repris',
                 contract.vehiculeReprisNom,
               ),
-              const SizedBox(height: 6),
+              SizedBox(height: 6),
               _DetailRow(
                 'Client',
                 contract.clientNom ?? '---',
               ),
-              const SizedBox(height: 6),
+              SizedBox(height: 6),
               _DetailRow(
                 'Valeur reprise',
                 contract.valeurReprise.toDA(),
                 valueColor: AppColors.primary,
               ),
               if (contract.complementClient > 0) ...[
-                const SizedBox(height: 6),
+                SizedBox(height: 6),
                 _DetailRow(
                   'Complément client',
                   contract.complementClient.toDA(),
@@ -283,12 +284,12 @@ class _ContractOptionsSheet extends StatelessWidget {
             'Options du contrat',
             style: AppTextStyles.heading2,
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             'Contrat #${contract.id.substring(0, 8)}',
             style: AppTextStyles.bodySecondary,
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: 20),
           _OptionButton(
             icon: Icons.visibility,
             label: 'Aperçu du PDF',
@@ -298,7 +299,7 @@ class _ContractOptionsSheet extends StatelessWidget {
               _previewPdf(context);
             },
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           _OptionButton(
             icon: Icons.download,
             label: 'Télécharger le PDF',
@@ -308,7 +309,7 @@ class _ContractOptionsSheet extends StatelessWidget {
               _downloadPdf(context);
             },
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           _OptionButton(
             icon: Icons.share,
             label: 'Partager le PDF',
@@ -318,7 +319,7 @@ class _ContractOptionsSheet extends StatelessWidget {
               _sharePdf(context);
             },
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           _OptionButton(
             icon: Icons.print,
             label: 'Imprimer',
@@ -328,7 +329,7 @@ class _ContractOptionsSheet extends StatelessWidget {
               _printPdf(context);
             },
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: 20),
         ],
       ),
     );
@@ -346,14 +347,14 @@ class _ContractOptionsSheet extends StatelessWidget {
   Future<void> _downloadPdf(BuildContext context) async {
     // TODO: Implement PDF download using pdf and path_provider
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Fonctionnalité de téléchargement à implémenter')),
+      SnackBar(content: Text(context.l10n.fonctionnaliteTelechargementAImplementer)),
     );
   }
 
   Future<void> _sharePdf(BuildContext context) async {
     // TODO: Implement PDF sharing using share_plus
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Fonctionnalité de partage à implémenter')),
+      SnackBar(content: Text(context.l10n.fonctionnalitePartageAImplementer)),
     );
   }
 
@@ -464,7 +465,7 @@ class _OptionButton extends StatelessWidget {
         child: Row(
           children: [
             Icon(icon, color: color, size: 22),
-            const SizedBox(width: 12),
+            SizedBox(width: 12),
             Text(
               label,
               style: TextStyle(
@@ -490,17 +491,17 @@ class _PdfPreviewScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const ModernAppBar(
-        title: 'Aperçu du contrat',
+      appBar: ModernAppBar(
+        title: context.l10n.apercuDuContrat,
       ),
       body: FutureBuilder(
         future: _generatePdf(contract),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasError) {
-            return Center(child: Text('Erreur: ${snapshot.error}'));
+            return Center(child: Text(context.l10n.erreurAvecDetail(snapshot.error.toString())));
           }
           return PdfPreview(
             build: (format) => snapshot.data!.save(),

@@ -131,15 +131,19 @@ class ThemeTokens {
   // GRADIENTS
   // ═══════════════════════════════════════════════════════════════
 
-  /// Gradient primaire (pour app bar, boutons)
-  static LinearGradient get primaryGradient => const LinearGradient(
+  /// Gradient de marque Numidia OS (Bleu → Cyan, comme le logo "N")
+  /// Utilisé pour : app bar principale, CTA, splash/login, cartes premium
+  static LinearGradient get brandGradient => const LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
         colors: [
           AppColors.primary,
-          AppColors.primaryDark,
+          AppColors.brandCyan,
         ],
       );
+
+  /// Gradient primaire (pour app bar, boutons)
+  static LinearGradient get primaryGradient => brandGradient;
 
   /// Gradient secondaire
   static LinearGradient get secondaryGradient => const LinearGradient(
@@ -171,13 +175,23 @@ class ThemeTokens {
         ],
       );
 
-  /// Gradient sombre (pour dark mode)
+  /// Gradient sombre (pour dark mode, sidebar, splash)
   static LinearGradient get darkGradient => const LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
         colors: [
-          AppColors.surfaceDark,
+          AppColors.brandNavy,
           AppColors.surfaceDarkSecondary,
+        ],
+      );
+
+  /// Gradient de marque pour le mode sombre (Bleu clair → Cyan clair)
+  static LinearGradient get brandGradientDark => const LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          AppColors.primaryDarkMode,
+          AppColors.brandCyanDarkMode,
         ],
       );
 

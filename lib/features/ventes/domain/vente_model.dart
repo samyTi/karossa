@@ -1,6 +1,4 @@
 // lib/features/ventes/domain/vente_model.dart
-// acompte/solde_restant supprimés (colonnes retirées de la DB).
-// Le solde est calculé dynamiquement depuis vente_paiements.
 
 enum VenteStatutPaiement { complet, partiel }
 
@@ -20,9 +18,12 @@ class VentePaiement {
   final String? notes;
 
   const VentePaiement({
-    required this.id, required this.venteId,
-    required this.montant, required this.datePaiement,
-    this.mode, this.notes,
+    required this.id, 
+    required this.venteId,
+    required this.montant, 
+    required this.datePaiement,
+    this.mode, 
+    this.notes,
   });
 
   factory VentePaiement.fromJson(Map<String, dynamic> json) => VentePaiement(
@@ -61,55 +62,70 @@ class Vente {
   final List<VentePaiement> paiements;
 
   const Vente({
-    required this.id, required this.vehiculeId, this.vehiculeNom,
-    required this.clientId, this.clientNom, this.prixCatalogue,
-    required this.prixVente, required this.modePaiement,
-    required this.commissionGerantPct, required this.commissionGerantMnt,
-    required this.statutPaiement, this.notes, this.contratPdfUrl,
-    required this.createdAt, this.paiements = const [],
+    required this.id, 
+    required this.vehiculeId, 
+    this.vehiculeNom,
+    required this.clientId, 
+    this.clientNom, 
+    this.prixCatalogue,
+    required this.prixVente, 
+    required this.modePaiement,
+    required this.commissionGerantPct, 
+    required this.commissionGerantMnt,
+    required this.statutPaiement, 
+    this.notes, 
+    this.contratPdfUrl,
+    required this.createdAt, 
+    this.paiements = const [],
   });
 
-  double get totalPaye =>
-    paiements.fold(0.0, (s, p) => s + p.montant);
-
-  double get soldeRestant =>
-    (prixVente - totalPaye).clamp(0.0, double.infinity);
+  // Calculs dynamiques basés sur les paiements associés
+  double get totalPaye => paiements.fold(0.0, (s, p) => s + p.montant);
+  
+  double get soldeRestant => (prixVente - totalPaye).clamp(0.0, double.infinity);
 
   bool get isSolde => statutPaiement == VenteStatutPaiement.complet;
 
   factory Vente.fromJson(Map<String, dynamic> json) {
-  final veh = json['vehicules'];
-  final cli = json['clients'];
-  final vehiculeNom = veh != null
-      ? '${veh['marque']} ${veh['modele']} ${veh['annee'] ?? ''}'.trim()
-      : null;
-  final clientNom = cli != null
-      ? '${cli['prenom']} ${cli['nom']}'
-      : null;
+    // Extraction des relations (jointures Supabase)
+    final veh = json['vehicules'];
+    final cli = json['clients'];
+    
+    final vehiculeNom = veh != null
+        ? '${veh['marque']} ${veh['modele']} ${veh['annee'] ?? ''}'.trim()
+        : null;
+        
+    final clientNom = cli != null
+        ? '${cli['prenom']} ${cli['nom']}'
+        : null;
 
-  return Vente(
-    id:                   json['id'],
-    vehiculeId:           json['vehicule_id'],
-    vehiculeNom:          vehiculeNom,
-    clientId:             json['client_id'],
-    clientNom:            clientNom,
-    prixCatalogue:        (json['prix_catalogue'] as num?)?.toDouble(),
-    prixVente:            (json['prix_vente'] as num? ?? 0).toDouble(),
-    modePaiement:         json['mode_paiement'] ?? 'especes',
-    commissionGerantPct:  (json['commission_gerant_pct'] as num? ?? 0).toDouble(),
-    commissionGerantMnt:  (json['commission_gerant_mnt'] as num? ?? 0).toDouble(),
-    statutPaiement:       json['statut_paiement'] == 'complet'
-                            ? VenteStatutPaiement.complet
-                            : VenteStatutPaiement.partiel,
-    notes:                json['notes'],
-    contratPdfUrl:        json['contrat_pdf_url'],
-    createdAt:            DateTime.parse(json['created_at']),
-    paiements:            (json['vente_paiements'] as List? ?? [])
-                            .map((p) => VentePaiement.fromJson(p)).toList(),
-  );
-}
+    // Parsing sécurisé des paiements
+    final List<dynamic> paiementsJson = json['vente_paiements'] ?? [];
+    final List<VentePaiement> paiements = paiementsJson
+        .map((p) => VentePaiement.fromJson(p))
+        .toList();
 
-  // Ne jamais envoyer acompte / solde_restant / commission_gerant_mnt (colonnes supprimées ou inexistantes)
+    return Vente(
+      id:                   json['id'],
+      vehiculeId:           json['vehicule_id'],
+      vehiculeNom:          vehiculeNom,
+      clientId:             json['client_id'],
+      clientNom:            clientNom,
+      prixCatalogue:        (json['prix_catalogue'] as num?)?.toDouble(),
+      prixVente:            (json['prix_vente'] as num? ?? 0).toDouble(),
+      modePaiement:         json['mode_paiement'] ?? 'especes',
+      commissionGerantPct:  (json['commission_gerant_pct'] as num? ?? 0).toDouble(),
+      commissionGerantMnt:  (json['commission_gerant_mnt'] as num? ?? 0).toDouble(),
+      statutPaiement:       json['statut_paiement'] == 'complet'
+                              ? VenteStatutPaiement.complet
+                              : VenteStatutPaiement.partiel,
+      notes:                json['notes'],
+      contratPdfUrl:        json['contrat_pdf_url'],
+      createdAt:            DateTime.parse(json['created_at']),
+      paiements:            paiements,
+    );
+  }
+
   Map<String, dynamic> toJson() => {
     'vehicule_id':           vehiculeId,
     'client_id':             clientId,
@@ -117,8 +133,8 @@ class Vente {
     'prix_vente':            prixVente,
     'mode_paiement':         modePaiement,
     'commission_gerant_pct': commissionGerantPct,
-    // commission_gerant_mnt NON envoyé — calculé côté client uniquement
     'statut_paiement':       statutPaiement.name,
     'notes':                 notes,
+    'contrat_pdf_url':       contratPdfUrl,
   };
 }

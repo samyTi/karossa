@@ -1,17 +1,17 @@
 // lib/features/clients/data/clients_repository.dart
-//
-// CHANGEMENT : le client Supabase est reçu en constructeur,
-// plus d'import de main.dart.
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../domain/client_model.dart';
 
 class ClientsRepository {
-  ClientsRepository(this._client);
+  // 🚀 NOUVEAU : Le constructeur exige désormais le showroomId
+  ClientsRepository(this._client, {required this.showroomId});
 
   final SupabaseClient _client;
+  final String showroomId; // 🔥 Identifiant de la concession active
 
   Future<List<Client>> getAll() async {
+    // Grâce au RLS, Supabase filtre automatiquement par showroom_id en arrière-plan
     final data = await _client
         .from('clients')
         .select()
@@ -38,9 +38,15 @@ class ClientsRepository {
   }
 
   Future<Client> create(Map<String, dynamic> clientData) async {
+    // 🚀 Injection automatique du showroom_id dans les métadonnées du client
+    final fullClientData = {
+      ...clientData,
+      'showroom_id': showroomId,
+    };
+
     final data = await _client
         .from('clients')
-        .insert(clientData)
+        .insert(fullClientData)
         .select()
         .single();
     return Client.fromJson(data);

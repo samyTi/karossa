@@ -1,41 +1,133 @@
-// lib/features/contrats/presentation/screens/contrats_screen.dart
-//
-// Écran Contrats — liste les contrats générés (locations, ventes, échanges)
-// directement depuis Supabase avec actions PDF.
+// lib/features/contrats/presentation/contrats_screen.dart
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+
+// Core
 import '../../../../core/providers/supabase_provider.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/services/contrat_generator_service.dart';
+import 'dart:typed_data';
+import '../../../../core/services/pdf/contrat_orchestrator.dart';
+import '../../../../core/services/pdf/vehicle_schema_pdf_renderer.dart';
+import '../domain/contrat_location_dto.dart' show ContratLocationTemplate;
+import 'widgets/contrat_location_template_picker.dart';
+import '../../auth/presentation/auth_provider.dart';
+import '../../admin/presentation/showroom_settings_provider.dart';
+import 'package:garage_auto/core/extensions/l10n_extension.dart';
 
-// ── Providers ────────────────────────────────────────────────────────────────
+// ── Providers (avec filtre showroom_id) ─────────────────────────────────────
 
 final _contratsLocationsProvider =
     FutureProvider.autoDispose<List<Map<String, dynamic>>>((ref) async {
-  final data = await ref.watch(supabaseClientProvider).from('locations').select(
-        '*, vehicules(marque, modele, immatriculation), clients(prenom, nom)',
-      ).order('created_at', ascending: false).limit(50);
+  final client     = ref.watch(supabaseClientProvider);
+  final showroomId = ref.watch(currentShowroomIdProvider);
+  if (showroomId == null) return [];
+
+  // ⚠️ FIX : ce select ne renvoyait que prenom/nom/telephone et
+  // marque/modele/immatriculation. Résultat : quand un contrat de location
+  // est régénéré depuis cet écran (Contrats → Locations), ContratLocationDto
+  // recevait client['adresse'], client['num_permis'], client['num_cni'],
+  // vehicule['couleur'], vehicule['carburant'], vehicule['boite'] et
+  // vehicule['etat_vehicule'] tous à null → champs vides sur le contrat,
+  // en français comme en arabe. On aligne le select sur tout ce que
+  // _buildLocationDto (contrat_orchestrator.dart) lit réellement.
+  final data = await client
+      .from('locations')
+      .select(
+        '*, '
+        'vehicules(marque, modele, immatriculation, couleur, carburant, boite, etat_vehicule, assurance, code_radio), '
+        'clients(prenom, nom, telephone, email, adresse, num_permis, permis_date, num_cni, date_naissance)',
+      )
+      .eq('showroom_id', showroomId)
+      .order('created_at', ascending: false)
+      .limit(50);
   return List<Map<String, dynamic>>.from(data);
 });
 
 final _contratsVentesProvider =
     FutureProvider.autoDispose<List<Map<String, dynamic>>>((ref) async {
-  final data = await ref.watch(supabaseClientProvider).from('ventes').select(
-        '*, vehicules(marque, modele, immatriculation), clients(prenom, nom)',
-      ).order('created_at', ascending: false).limit(50);
+  final client     = ref.watch(supabaseClientProvider);
+  final showroomId = ref.watch(currentShowroomIdProvider);
+  if (showroomId == null) return [];
+
+  final data = await client
+      .from('ventes')
+      .select('*, vehicules(marque, modele, immatriculation, annee, couleur, carburant, boite, kilometrage, num_chassis, etat_vehicule), clients(prenom, nom, telephone, email, adresse, num_permis, num_cni, statut, created_at)')
+      .eq('showroom_id', showroomId)
+      .order('created_at', ascending: false)
+      .limit(50);
   return List<Map<String, dynamic>>.from(data);
 });
 
 final _contratsEchangesProvider =
     FutureProvider.autoDispose<List<Map<String, dynamic>>>((ref) async {
-  final data = await ref.watch(supabaseClientProvider).from('echanges').select(
-        '*, vehicules!echanges_vehicule_cede_id_fkey(marque, modele, immatriculation), clients(prenom, nom)',
-      ).order('created_at', ascending: false).limit(50);
+  final client     = ref.watch(supabaseClientProvider);
+  final showroomId = ref.watch(currentShowroomIdProvider);
+  if (showroomId == null) return [];
+
+  final data = await client
+      .from('echanges')
+      .select(
+        '*, vehicules!echanges_vehicule_cede_id_fkey(marque, modele, annee, immatriculation, couleur, carburant, boite), '
+        'clients(prenom, nom, telephone, adresse, num_cni)',
+      )
+      .eq('showroom_id', showroomId)
+      .order('created_at', ascending: false)
+      .limit(50);
   return List<Map<String, dynamic>>.from(data);
 });
+
+// ── Helper Settings ──────────────────────────────────────────────────────────
+
+Future<Map<String, dynamic>> _fetchSettings(WidgetRef ref) async {
+  final s = await ref.read(showroomSettingsTypedProvider.future);
+  return {
+    'nom':     s.nom,
+    'adresse': s.adresse ?? '',
+    'tel':     s.tel ?? '',
+    'email':   s.email ?? '',
+    'rc':      s.rc ?? '',
+    'logo_url': s.logoUrl ?? '',
+  };
+}
+
+// ── Snackbar helpers ─────────────────────────────────────────────────────────
+
+void _showLoadingSnack(BuildContext context, String message) {
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    content: Row(children: [
+      const SizedBox(
+        width: 18, height: 18,
+        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+      ),
+      const SizedBox(width: 12),
+      Text(message),
+    ]),
+    duration: const Duration(seconds: 30),
+  ));
+}
+
+void _showSuccessSnack(BuildContext context, String message) {
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    content: Row(children: [
+      const Icon(Icons.check_circle_outline, color: Colors.white, size: 18),
+      const SizedBox(width: 12),
+      Text(message),
+    ]),
+    backgroundColor: AppColors.success,
+    duration: const Duration(seconds: 3),
+  ));
+}
+
+void _showErrorSnack(BuildContext context, String message) {
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    content: Text(message),
+    backgroundColor: AppColors.error,
+    duration: const Duration(seconds: 4),
+  ));
+}
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -43,20 +135,20 @@ enum _ContratType { location, vente, echange }
 
 extension _ContratTypeExt on _ContratType {
   String get label => switch (this) {
-        _ContratType.location => 'Locations',
-        _ContratType.vente => 'Ventes',
-        _ContratType.echange => 'Échanges',
-      };
+    _ContratType.location => 'Locations',
+    _ContratType.vente    => 'Ventes',
+    _ContratType.echange  => 'Échanges',
+  };
   IconData get icon => switch (this) {
-        _ContratType.location => Icons.key_outlined,
-        _ContratType.vente => Icons.sell_outlined,
-        _ContratType.echange => Icons.swap_horiz,
-      };
+    _ContratType.location => Icons.key_outlined,
+    _ContratType.vente    => Icons.sell_outlined,
+    _ContratType.echange  => Icons.swap_horiz,
+  };
   Color get color => switch (this) {
-        _ContratType.location => AppColors.primary,
-        _ContratType.vente => AppColors.secondary,
-        _ContratType.echange => AppColors.reserve,
-      };
+    _ContratType.location => AppColors.primary,
+    _ContratType.vente    => AppColors.secondary,
+    _ContratType.echange  => AppColors.reserve,
+  };
 }
 
 // ── Screen ───────────────────────────────────────────────────────────────────
@@ -95,16 +187,13 @@ class _ContratsScreenState extends ConsumerState<ContratsScreen>
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.pop(),
         ),
-        title: const Text(
-          'Contrats',
-          style: TextStyle(fontWeight: FontWeight.w700, fontSize: 18),
+        title: Text(context.l10n.titreContrats, style: TextStyle(fontWeight: FontWeight.w700, fontSize: 18),
         ),
         bottom: TabBar(
           controller: _tabs,
           labelColor: AppColors.primary,
           unselectedLabelColor: AppColors.textSecondary,
           indicatorColor: AppColors.primary,
-          indicatorWeight: 3,
           tabs: _ContratType.values
               .map((t) => Tab(
                     child: Row(
@@ -112,9 +201,7 @@ class _ContratsScreenState extends ConsumerState<ContratsScreen>
                       children: [
                         Icon(t.icon, size: 16),
                         const SizedBox(width: 6),
-                        Text(t.label,
-                            style: const TextStyle(
-                                fontSize: 13, fontWeight: FontWeight.w500)),
+                        Text(t.label),
                       ],
                     ),
                   ))
@@ -123,7 +210,7 @@ class _ContratsScreenState extends ConsumerState<ContratsScreen>
       ),
       body: TabBarView(
         controller: _tabs,
-        children: [
+        children: const [
           _LocationsTab(),
           _VentesTab(),
           _EchangesTab(),
@@ -133,328 +220,209 @@ class _ContratsScreenState extends ConsumerState<ContratsScreen>
   }
 }
 
-// ── Tab Locations ─────────────────────────────────────────────────────────────
+// ── Tabs ─────────────────────────────────────────────────────────────────────
 
 class _LocationsTab extends ConsumerWidget {
+  const _LocationsTab();
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final async = ref.watch(_contratsLocationsProvider);
-    return async.when(
+    return ref.watch(_contratsLocationsProvider).when(
       loading: () => const _LoadingList(),
-      error: (e, _) => _ErrorState(message: e.toString()),
-      data: (list) {
-        if (list.isEmpty) {
-          return const _EmptyState(
-              icon: Icons.key_outlined, message: 'Aucun contrat de location');
-        }
-        return RefreshIndicator(
-          onRefresh: () async =>
-              ref.invalidate(_contratsLocationsProvider),
-          child: ListView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            itemCount: list.length,
-            itemBuilder: (ctx, i) => _ContratTile(
-              type: _ContratType.location,
-              data: list[i],
-              onGeneratePdf: () => _generateLocationPdf(ctx, ref, list[i]),
+      error:   (e, _) => _ErrorState(message: e.toString()),
+      data: (list) => list.isEmpty
+          ? _EmptyState(message: context.l10n.aucuneLocationTrouvee)
+          : ListView.builder(
+              itemCount: list.length,
+              itemBuilder: (ctx, i) => _ContratTile(
+                type: _ContratType.location,
+                data: list[i],
+                onGeneratePdf: () async {
+                  final template = await showContratLocationTemplatePicker(context);
+                  if (template == null) return; // annulé par l'utilisateur
+                  if (!context.mounted) return;
+                  _showLoadingSnack(context, 'Génération en cours...');
+                  try {
+                    final orchestrator = ContratOrchestrator(
+                      () => _fetchSettings(ref),
+                      supabase:   ref.read(supabaseClientProvider),
+                      showroomId: ref.read(currentShowroomIdProvider) ?? '',
+                    );
+                    //final orchestrator = ContratOrchestrator(() => _fetchSettings(ref));
+                    // Pré-chargement blueprint pour Flutter Web
+                    Uint8List? blueprintBytes;
+                    try {
+                      blueprintBytes = await VehicleSchemaPdfRenderer.loadBlueprintBytes();
+                    } catch (_) {}
+                    final locationDataWithBlueprint = {
+                      ...list[i],
+                      if (blueprintBytes != null) 'blueprint_bytes': blueprintBytes,
+                    };
+                    await orchestrator.generateAndShareLocation(
+                      locationData: locationDataWithBlueprint,
+                      template: template,
+                    );
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                      _showSuccessSnack(context, 'Contrat généré avec succès');
+                    }
+                  } catch (e) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                      _showErrorSnack(context, 'Erreur : $e');
+                    }
+                  }
+                },
+              ),
             ),
-          ),
-        );
-      },
     );
   }
-
-  Future<void> _generateLocationPdf(
-      BuildContext context, WidgetRef ref, Map<String, dynamic> data) async {
-    final id = data['id'] as String;
-    try {
-      _showLoadingSnack(context, 'Génération du contrat…');
-      
-      // FIX : Appel corrigé avec les 3 arguments positionnels requis
-      await ContratGeneratorService.generateAndShareLocation(
-        context,
-        ref,
-        id,
-      );
-
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        _showSuccessSnack(context, 'Contrat généré avec succès');
-      }
-    } catch (e) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        _showErrorSnack(context, 'Erreur : $e');
-      }
-    }
-  }
 }
-
-// ── Tab Ventes ────────────────────────────────────────────────────────────────
 
 class _VentesTab extends ConsumerWidget {
+  const _VentesTab();
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final async = ref.watch(_contratsVentesProvider);
-    return async.when(
+    return ref.watch(_contratsVentesProvider).when(
       loading: () => const _LoadingList(),
-      error: (e, _) => _ErrorState(message: e.toString()),
-      data: (list) {
-        if (list.isEmpty) {
-          return const _EmptyState(
-              icon: Icons.sell_outlined, message: 'Aucun contrat de vente');
-        }
-        return RefreshIndicator(
-          onRefresh: () async => ref.invalidate(_contratsVentesProvider),
-          child: ListView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            itemCount: list.length,
-            itemBuilder: (ctx, i) => _ContratTile(
-              type: _ContratType.vente,
-              data: list[i],
-              onGeneratePdf: () => _generateVentePdf(ctx, ref, list[i]),
+      error:   (e, _) => _ErrorState(message: e.toString()),
+      data: (list) => list.isEmpty
+          ? _EmptyState(message: context.l10n.aucuneVenteTrouvee)
+          : ListView.builder(
+              itemCount: list.length,
+              itemBuilder: (ctx, i) => _ContratTile(
+                type: _ContratType.vente,
+                data: list[i],
+                // CORRECTION : on utilise generateAndShareVenteFromMap
+                // au lieu de passer des Maps comme objets typés.
+                onGeneratePdf: () async {
+                  _showLoadingSnack(context, 'Génération en cours...');
+                  try {
+                    final orchestrator = ContratOrchestrator(
+                      () => _fetchSettings(ref),
+                      supabase:   ref.read(supabaseClientProvider),
+                      showroomId: ref.read(currentShowroomIdProvider) ?? '',
+                    );
+                    //final orchestrator = ContratOrchestrator(() => _fetchSettings(ref));
+                    await orchestrator.generateAndShareVenteFromMap(
+                      venteMap: list[i],
+                    );
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                      _showSuccessSnack(context, 'Contrat généré avec succès');
+                    }
+                  } catch (e) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                      _showErrorSnack(context, 'Erreur : $e');
+                    }
+                  }
+                },
+              ),
             ),
-          ),
-        );
-      },
     );
   }
-
-  Future<void> _generateVentePdf(
-      BuildContext context, WidgetRef ref, Map<String, dynamic> data) async {
-    final id = data['id'] as String;
-    try {
-      _showLoadingSnack(context, 'Génération du contrat…');
-
-      // FIX : Appel corrigé avec les 3 arguments positionnels requis
-      await ContratGeneratorService.generateAndShareVente(
-        context,
-        ref,
-        id,
-      );
-
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        _showSuccessSnack(context, 'Contrat généré avec succès');
-      }
-    } catch (e) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        _showErrorSnack(context, 'Erreur : $e');
-      }
-    }
-  }
 }
-
-// ── Tab Échanges ──────────────────────────────────────────────────────────────
 
 class _EchangesTab extends ConsumerWidget {
+  const _EchangesTab();
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final async = ref.watch(_contratsEchangesProvider);
-    return async.when(
+    return ref.watch(_contratsEchangesProvider).when(
       loading: () => const _LoadingList(),
-      error: (e, _) => _ErrorState(message: e.toString()),
-      data: (list) {
-        if (list.isEmpty) {
-          return const _EmptyState(
-              icon: Icons.swap_horiz, message: 'Aucun contrat d\'échange');
-        }
-        return RefreshIndicator(
-          onRefresh: () async => ref.invalidate(_contratsEchangesProvider),
-          child: ListView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            itemCount: list.length,
-            itemBuilder: (ctx, i) => _ContratTile(
-              type: _ContratType.echange,
-              data: list[i],
-              onGeneratePdf: () => _generateEchangePdf(ctx, ref, list[i]),
+      error:   (e, _) => _ErrorState(message: e.toString()),
+      data: (list) => list.isEmpty
+          ? _EmptyState(message: context.l10n.aucunEchangeTrouve)
+          : ListView.builder(
+              itemCount: list.length,
+              itemBuilder: (ctx, i) => _ContratTile(
+                type: _ContratType.echange,
+                data: list[i],
+                onGeneratePdf: () async {
+                  _showLoadingSnack(context, 'Génération en cours...');
+                  try {
+                    final orchestrator = ContratOrchestrator(
+                      () => _fetchSettings(ref),
+                      supabase:   ref.read(supabaseClientProvider),
+                      showroomId: ref.read(currentShowroomIdProvider) ?? '',
+                    );
+                    //final orchestrator = ContratOrchestrator(() => _fetchSettings(ref));
+                    await orchestrator.generateAndShareEchange(
+                      echangeData: list[i],
+                    );
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                      _showSuccessSnack(context, 'Contrat généré avec succès');
+                    }
+                  } catch (e) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                      _showErrorSnack(context, 'Erreur : $e');
+                    }
+                  }
+                },
+              ),
             ),
-          ),
-        );
-      },
     );
-  }
-
-  Future<void> _generateEchangePdf(
-      BuildContext context, WidgetRef ref, Map<String, dynamic> data) async {
-    final id = data['id'] as String;
-    try {
-      _showLoadingSnack(context, 'Génération du contrat…');
-
-      // FIX : Appel corrigé avec les 3 arguments positionnels requis
-      await ContratGeneratorService.generateAndShareEchange(
-        context,
-        ref,
-        id,
-      );
-
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        _showSuccessSnack(context, 'Contrat généré avec succès');
-      }
-    } catch (e) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        _showErrorSnack(context, 'Erreur : $e');
-      }
-    }
   }
 }
 
-// ── Tile ──────────────────────────────────────────────────────────────────────
+// ── Composants partagés ──────────────────────────────────────────────────────
 
 class _ContratTile extends StatelessWidget {
-  final _ContratType type;
-  final Map<String, dynamic> data;
-  final VoidCallback onGeneratePdf;
-
   const _ContratTile({
     required this.type,
     required this.data,
     required this.onGeneratePdf,
   });
 
-  String get _clientNom {
-    final c = data['clients'];
-    if (c == null) return 'Client inconnu';
-    return '${c['prenom'] ?? ''} ${c['nom'] ?? ''}'.trim();
-  }
-
-  String get _vehiculeNom {
-    final v = data['vehicules'];
-    if (v == null) {
-      return '${data['vehicule_reprise_marque'] ?? ''} ${data['vehicule_reprise_modele'] ?? ''}'.trim();
-    }
-    final immat = v['immatriculation'];
-    return '${v['marque'] ?? ''} ${v['modele'] ?? ''}${immat != null ? ' • $immat' : ''}';
-  }
-
-  String get _date {
-    final raw = data['created_at'] ?? data['date_echange'] ?? data['date_vente'];
-    if (raw == null) return '';
-    return DateFormat('dd/MM/yyyy', 'fr').format(DateTime.parse(raw));
-  }
-
-  String get _montant {
-    final fmt = NumberFormat('#,###', 'fr');
-    final m = (data['prix_jour'] ?? data['prix_vente'] ?? data['valeur_reprise'] as num?)?.toDouble() ?? 0;
-    final suffix = type == _ContratType.location ? '/jour' : '';
-    return '${fmt.format(m)} DA$suffix';
-  }
-
-  bool get _hasPdf => (data['contrat_pdf_url'] as String?)?.isNotEmpty == true;
+  final _ContratType            type;
+  final Map<String, dynamic>    data;
+  final Future<void> Function() onGeneratePdf;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.border),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(14),
-        child: Row(
+    final client   = data['clients']   as Map<String, dynamic>?;
+    final vehicule = data['vehicules'] as Map<String, dynamic>?;
+
+    final clientNom = client != null
+        ? '${client['prenom'] ?? ''} ${client['nom'] ?? ''}'.trim()
+        : 'Client inconnu';
+
+    final vehiculeInfos = vehicule != null
+        ? '${vehicule['marque'] ?? ''} ${vehicule['modele'] ?? ''}'.trim()
+        : 'Véhicule inconnu';
+
+    final dateStr = data['created_at'] != null
+        ? DateFormat('dd/MM/yyyy').format(DateTime.parse(data['created_at']))
+        : '';
+
+    final hasPdf = (data['contrat_pdf_url'] as String?)?.isNotEmpty == true;
+
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundColor: type.color.withOpacity(0.1),
+          child: Icon(type.icon, color: type.color, size: 20),
+        ),
+        title: Text(
+          clientNom,
+          style: const TextStyle(fontWeight: FontWeight.w600),
+        ),
+        subtitle: Text('$vehiculeInfos • $dateStr'),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                color: type.color.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(type.icon, color: type.color, size: 22),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    _clientNom,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    _vehiculeNom,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: AppColors.textSecondary,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      Text(
-                        _montant,
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: type.color,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        _date,
-                        style: const TextStyle(
-                          fontSize: 11,
-                          color: AppColors.textHint,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            Column(
-              children: [
-                if (_hasPdf)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 4),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: AppColors.successLight,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: const Text(
-                        'PDF',
-                        style: TextStyle(
-                          fontSize: 9,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.successDark,
-                        ),
-                      ),
-                    ),
-                  ),
-                IconButton(
-                  icon: Icon(
-                    _hasPdf
-                        ? Icons.picture_as_pdf
-                        : Icons.picture_as_pdf_outlined,
-                    color: _hasPdf ? AppColors.success : AppColors.textHint,
-                    size: 22,
-                  ),
-                  tooltip: _hasPdf ? 'Re-générer le PDF' : 'Générer le PDF',
-                  onPressed: onGeneratePdf,
-                ),
-              ],
+            if (hasPdf)
+              const Icon(Icons.check_circle_outline,
+                  color: AppColors.success, size: 16),
+            IconButton(
+              icon: const Icon(Icons.picture_as_pdf_outlined),
+              tooltip: context.l10n.genererLeContratPdf,
+              onPressed: onGeneratePdf,
             ),
           ],
         ),
@@ -463,85 +431,57 @@ class _ContratTile extends StatelessWidget {
   }
 }
 
-// ── Widgets helpers ───────────────────────────────────────────────────────────
-
 class _LoadingList extends StatelessWidget {
   const _LoadingList();
-  @override
-  Widget build(BuildContext context) => const Center(
-        child: CircularProgressIndicator(color: AppColors.primary),
-      );
-}
 
-class _EmptyState extends StatelessWidget {
-  final IconData icon;
-  final String message;
-  const _EmptyState({required this.icon, required this.message});
   @override
-  Widget build(BuildContext context) => Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, size: 52, color: AppColors.textHint),
-            const SizedBox(height: 12),
-            Text(message,
-                style: const TextStyle(
-                    color: AppColors.textSecondary, fontSize: 14)),
-          ],
+  Widget build(BuildContext context) => ListView.builder(
+        itemCount: 6,
+        itemBuilder: (_, __) => Card(
+          margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+          child: ListTile(
+            leading: const CircleAvatar(backgroundColor: Colors.black12),
+            title: Container(height: 14, color: Colors.black12),
+            subtitle: Container(height: 11, color: Colors.black12),
+          ),
         ),
       );
 }
 
 class _ErrorState extends StatelessWidget {
-  final String message;
   const _ErrorState({required this.message});
+  final String message;
+
   @override
   Widget build(BuildContext context) => Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Text('Erreur : $message',
-              style: const TextStyle(color: AppColors.error),
-              textAlign: TextAlign.center),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.error_outline, size: 48, color: AppColors.error),
+            const SizedBox(height: 12),
+            Text(message,
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: AppColors.error)),
+          ],
         ),
       );
 }
 
-// ── Snackbars ─────────────────────────────────────────────────────────────────
+class _EmptyState extends StatelessWidget {
+  const _EmptyState({required this.message});
+  final String message;
 
-void _showLoadingSnack(BuildContext context, String msg) {
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Row(children: [
-        const SizedBox(
-          width: 16,
-          height: 16,
-          child: CircularProgressIndicator(
-              strokeWidth: 2, color: Colors.white),
+  @override
+  Widget build(BuildContext context) => Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.description_outlined,
+                size: 48, color: AppColors.textSecondary),
+            const SizedBox(height: 12),
+            Text(message,
+                style: TextStyle(color: AppColors.textSecondary)),
+          ],
         ),
-        const SizedBox(width: 12),
-        Text(msg),
-      ]),
-      duration: const Duration(seconds: 30),
-      backgroundColor: AppColors.primary,
-    ),
-  );
-}
-
-void _showSuccessSnack(BuildContext context, String msg) {
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text(msg),
-      backgroundColor: AppColors.success,
-      duration: const Duration(seconds: 3),
-    ),
-  );
-}
-
-void _showErrorSnack(BuildContext context, String msg) {
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text(msg),
-      backgroundColor: AppColors.error,
-    ),
-  );
+      );
 }

@@ -1,6 +1,8 @@
+//lib/shared/widgets/custom_app_bar.dart
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/extensions/l10n_extension.dart';
 
 /// Widget AppBar personnalisé avec bouton retour et bouton accueil
 /// - Si [showBackButton] est true, affiche une flèche retour
@@ -31,9 +33,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         if (showHomeButton)
           IconButton(
             icon: const Icon(Icons.home_outlined),
-            tooltip: 'Retour à l\'accueil',
+            tooltip: context.l10n.retourALAccueil,
             onPressed: () => context.go('/dashboard'),
-            color: AppColors.textSecondary,
+            color: AppColors.textInverse,
           ),
         if (actions != null) ...actions!,
       ],

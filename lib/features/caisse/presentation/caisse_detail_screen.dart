@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:garage_auto/core/extensions/l10n_extension.dart';
 // Importez votre modèle d'opération ici (ex: caisse_operation.dart)
 
 class CaisseDetailScreen extends StatelessWidget {
@@ -12,13 +13,13 @@ class CaisseDetailScreen extends StatelessWidget {
     final isEntree = operation.type == 'entree';
     
     return Scaffold(
-      appBar: AppBar(title: const Text('Détails de l\'opération')),
+      appBar: AppBar(title: Text(context.l10n.detailsDeLOperation)),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
           Card(
             child: ListTile(
-              title: const Text('Montant'),
+              title: Text(context.l10n.champMontant),
               subtitle: Text(
                 '${operation.montant} DZD',
                 style: TextStyle(
@@ -43,7 +44,7 @@ class CaisseDetailScreen extends StatelessWidget {
             ElevatedButton.icon(
               onPressed: () { /* Logique pour voir la facture */ },
               icon: const Icon(Icons.receipt_long),
-              label: const Text('Voir la facture'),
+              label: Text(context.l10n.voirLaFacture),
             ),
         ],
       ),

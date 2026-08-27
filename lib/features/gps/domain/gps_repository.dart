@@ -33,11 +33,15 @@ abstract interface class GpsRepository {
   // ── Historique ───────────────────────────────────────────
 
   /// Historique depuis Supabase (rapide, offline-friendly).
+  /// ⚠️ [limit] est un plafond de sécurité, pas une "vraie" limite métier :
+  /// la pagination interne (voir GpsLocalSource.getHistory) va chercher
+  /// TOUTES les lignes de la période jusqu'à ce plafond, pour ne pas biaiser
+  /// le calcul de km/vitesse vers la partie la plus ancienne de la période.
   Future<List<GpsPosition>> getHistoryFromSupabase({
     required String vehiculeId,
     required DateTime from,
     required DateTime to,
-    int limit = 500,
+    int limit = 20000,
   });
 
   /// Synchronise l'historique Flespi → Supabase et retourne le nombre de points.
@@ -54,5 +58,32 @@ abstract interface class GpsRepository {
     required String vehiculeId,
     required DateTime from,
     required DateTime to,
+  });
+  Future<List<GpsPosition>> getFleetHistoryForPeriod({
+    required DateTime from,
+    required DateTime to,
+    int limitPerVehicle = 1000,
+  });
+
+  // ── Nettoyage / rétention ─────────────────────────────────
+
+  /// Supprime définitivement TOUTES les positions d'un véhicule (ou de toute
+  /// la flotte du showroom si [vehiculeId] est null) comprises dans
+  /// [from]..[to]. Retourne le nombre de lignes supprimées.
+  Future<int> deletePositionsInRange({
+    String? vehiculeId,
+    required DateTime from,
+    required DateTime to,
+  });
+
+  /// Réduit la densité des enregistrements sur [from]..[to] en ne conservant
+  /// qu'un seul point toutes les [intervalMinutes] minutes (le plus ancien de
+  /// chaque tranche). Si [vehiculeId] est null, s'applique à toute la flotte
+  /// du showroom. Retourne le nombre de lignes supprimées.
+  Future<int> decimatePositions({
+    String? vehiculeId,
+    required DateTime from,
+    required DateTime to,
+    required int intervalMinutes,
   });
 }

@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import 'package:garage_auto/core/extensions/l10n_extension.dart';
 
 class PaiementEntry {
   double montant = 0;
@@ -62,7 +63,7 @@ class _PaiementEntryRowState extends State<PaiementEntryRow> {
                 child: TextFormField(
                   controller: _montantCtrl,
                   keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(labelText: 'Montant', suffixText: 'DA', isDense: true),
+                  decoration: InputDecoration(labelText: context.l10n.champMontant, suffixText: 'DA', isDense: true),
                   onChanged: (v) {
                     widget.entry.montant = double.tryParse(v) ?? 0;
                     widget.onChanged();
@@ -74,7 +75,7 @@ class _PaiementEntryRowState extends State<PaiementEntryRow> {
                 child: DropdownButtonFormField<String>(
                   value: widget.entry.mode,
                   isDense: true,
-                  decoration: const InputDecoration(labelText: 'Mode', isDense: true),
+                  decoration: InputDecoration(labelText: context.l10n.champMode, isDense: true),
                   items: List.generate(_modes.length, (i) =>
                       DropdownMenuItem(value: _modes[i], child: Text(_modesLabels[i]))),
                   onChanged: (v) {

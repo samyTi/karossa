@@ -1,15 +1,15 @@
 // lib/features/ventes/data/ventes_repository.dart
-//
-// CHANGEMENT : SupabaseClient injecté en constructeur — plus d'import main.dart.
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../domain/vente_model.dart';
 import '../../../core/utils/app_logger.dart';
 
 class VentesRepository {
-  VentesRepository(this._client);
+  // 🚀 Le constructeur exige le showroomId pour le cloisonnement SaaS
+  VentesRepository(this._client, {required this.showroomId});
 
   final SupabaseClient _client;
+  final String showroomId; // 🔥 Identifiant du showroom actif
 
   static const _ventesSelect =
       '*, vehicules(marque, modele, annee, immatriculation),'
@@ -21,6 +21,7 @@ class VentesRepository {
       final data = await _client
           .from('ventes')
           .select(_ventesSelect)
+          .eq('showroom_id', showroomId) // 🚀 Isolation explicite des ventes
           .order('created_at', ascending: false);
       return data.map((j) => Vente.fromJson(j)).toList();
     } catch (e, st) {
@@ -38,6 +39,7 @@ class VentesRepository {
             'clients(prenom, nom),'
             'vente_paiements(id, montant, date_paiement, mode, notes)',
           )
+          .eq('showroom_id', showroomId) // 🚀 Protection de l'acte de vente
           .eq('id', id)
           .single();
       return Vente.fromJson(data);
@@ -52,10 +54,17 @@ class VentesRepository {
       payload
         ..remove('acompte')
         ..remove('solde_restant')
-        ..remove('commission_gerant_mnt'); // colonne inexistante en base
+        ..remove('commission_gerant_mnt'); // colonne calculée ou absente du schéma
+      
+      // 🚀 Injection automatique du showroom_id dans l'acte de vente
+      final fullPayload = {
+        ...payload,
+        'showroom_id': showroomId,
+      };
+
       final data = await _client
           .from('ventes')
-          .insert(payload)
+          .insert(fullPayload)
           .select()
           .single();
       return Vente.fromJson(data);
@@ -70,8 +79,19 @@ class VentesRepository {
       payload
         ..remove('acompte')
         ..remove('solde_restant')
-        ..remove('commission_gerant_mnt'); // colonne inexistante en base
-      await _client.from('ventes').update(payload).eq('id', id);
+        ..remove('commission_gerant_mnt');
+      
+      // On conserve l'intégrité du verrou de cloisonnement
+      final fullPayload = {
+        ...payload,
+        'showroom_id': showroomId,
+      };
+
+      await _client
+          .from('ventes')
+          .update(fullPayload)
+          .eq('showroom_id', showroomId) // 🚀 Sécurité anti cross-tenant sur l'update
+          .eq('id', id);
     } catch (e, st) {
       AppLogger.e('VentesRepository.update', error: e, stackTrace: st);
       rethrow;
@@ -85,6 +105,7 @@ class VentesRepository {
       final data = await _client
           .from('vente_paiements')
           .select()
+          .eq('showroom_id', showroomId) // 🚀 Isolation des flux de caisse
           .eq('vente_id', venteId)
           .order('date_paiement', ascending: false);
       return data.map((j) => VentePaiement.fromJson(j)).toList();
@@ -96,9 +117,13 @@ class VentesRepository {
 
   Future<VentePaiement?> addPaiement(VentePaiement paiement) async {
     try {
+      // 🚀 Injection automatique du showroom_id dans le reçu de paiement de vente
+      final payload = paiement.toJson()
+        ..['showroom_id'] = showroomId;
+
       final data = await _client
           .from('vente_paiements')
-          .insert(paiement.toJson())
+          .insert(payload)
           .select()
           .single();
       return VentePaiement.fromJson(data);
@@ -109,16 +134,23 @@ class VentesRepository {
   }
 
   Future<void> deletePaiement(String id) async {
-    await _client.from('vente_paiements').delete().eq('id', id);
+    await _client
+        .from('vente_paiements')
+        .delete()
+        .eq('showroom_id', showroomId) // 🚀 Protection à la suppression
+        .eq('id', id);
   }
 
   // ── Stats ──────────────────────────────────────────────────────────────────
 
   Future<Map<String, dynamic>> getStats() async {
     try {
+      // Filtrage explicite pour garantir des statistiques étanches
       final data = await _client
           .from('ventes')
-          .select('id, prix_vente, statut_paiement, vente_paiements(montant)');
+          .select('id, prix_vente, statut_paiement, vente_paiements(montant)')
+          .eq('showroom_id', showroomId); // 🚀 Chiffre d'affaires scopé au tenant
+          
       final total = data.length;
       final revenu = data.fold<double>(
           0, (s, v) => s + ((v['prix_vente'] as num?)?.toDouble() ?? 0));

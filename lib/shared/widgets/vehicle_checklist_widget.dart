@@ -4,6 +4,7 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
+import 'package:garage_auto/core/extensions/l10n_extension.dart';
 
 class VehicleChecklistWidget extends StatefulWidget {
   final ValueChanged<Map<String, bool>> onChanged;
@@ -29,7 +30,7 @@ class _VehicleChecklistWidgetState extends State<VehicleChecklistWidget> {
   Widget build(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Text('État du véhicule', style: AppTextStyles.heading3),
+      Text(context.l10n.etatDuVehicule, style: AppTextStyles.heading3),
       const SizedBox(height: 8),
       Container(
         decoration: BoxDecoration(

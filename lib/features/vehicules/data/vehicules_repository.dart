@@ -1,14 +1,15 @@
 // lib/features/vehicules/data/vehicules_repository.dart
-//
-// CHANGEMENT : SupabaseClient injecté en constructeur — plus d'import main.dart.
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../domain/vehicule_model.dart';
 
 class VehiculesRepository {
-  VehiculesRepository(this._client);
+  // 🚀 NOUVEAU : On exige le showroomId à la création du Repository.
+  // Grâce au RLS, getAll() et getById() n'ont pas besoin de filtre manuel, Supabase s'en occupe !
+  VehiculesRepository(this._client, {required this.showroomId});
 
   final SupabaseClient _client;
+  final String showroomId; // 🔥 L'identifiant de la concession active
 
   static const _proprieteSelect =
       '*, vehicule_proprietes(*, profiles(prenom, nom))';
@@ -40,14 +41,23 @@ class VehiculesRepository {
     Map<String, dynamic> vehiculeData,
     List<Map<String, dynamic>> proprietes,
   ) async {
+    // 🚀 Injection automatique du showroom_id dans les données du véhicule
+    final fullVehiculeData = {
+      ...vehiculeData,
+      'showroom_id': showroomId,
+    };
+
     final result = await _client
         .from('vehicules')
-        .insert(vehiculeData)
+        .insert(fullVehiculeData)
         .select()
         .single();
+
     for (final prop in proprietes) {
+      // 🚀 Injection automatique du showroom_id dans les lignes de co-propriété
       await _client.from('vehicule_proprietes').insert({
         'vehicule_id': result['id'],
+        'showroom_id': showroomId, // 🔥 Sécurise l'accès investisseur par showroom
         ...prop,
       });
     }

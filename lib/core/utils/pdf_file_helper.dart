@@ -64,7 +64,7 @@ void _downloadOnWeb(Uint8List bytes, String filename) {
   // l'implémentation réelle via dart:html.
   //
   // Si vous compilez pour le Web, créez :
-  //   lib/core/utils/web_download_real.dart
+  //   lib/core/services/pdf/web_download_helper.dart
   // avec une implémentation dart:html.
   //
   // Pour l'instant, no-op (évite l'erreur de compilation).

@@ -1,3 +1,4 @@
+//lib/features/clients/domain/client_model.dart
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 
@@ -26,7 +27,9 @@ class Client {
   final String? email;
   final String? adresse;
   final String? numPermis;
+  final String? permisDate;
   final String? numCni;
+  final String? dateNaissance;
   final ClientStatut statut;
   final String? noteInterne;
   final DateTime createdAt;
@@ -34,8 +37,8 @@ class Client {
   const Client({
     required this.id, required this.nom, required this.prenom,
     required this.telephone, this.email, this.adresse,
-    this.numPermis, this.numCni, required this.statut,
-    this.noteInterne, required this.createdAt,
+    this.numPermis, this.permisDate, this.numCni, this.dateNaissance,
+    required this.statut, this.noteInterne, required this.createdAt,
   });
 
   String get fullName => '$prenom $nom';
@@ -50,7 +53,9 @@ class Client {
     email:       json['email'],
     adresse:     json['adresse'],
     numPermis:   json['num_permis'],
+    permisDate:  json['permis_date'],
     numCni:      json['num_cni'],
+    dateNaissance: json['date_naissance'],
     statut:      ClientStatut.values.firstWhere(
                    (s) => s.name == json['statut'],
                    orElse: () => ClientStatut.normal),

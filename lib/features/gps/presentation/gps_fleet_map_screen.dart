@@ -16,6 +16,8 @@ import '../../../core/theme/app_colors.dart';
 import '../../../shared/widgets/custom_app_bar.dart';
 import '../domain/gps_position.dart';
 import 'gps_provider.dart';
+import 'gps_animated_fleet_markers.dart';
+import 'package:garage_auto/core/extensions/l10n_extension.dart';
 
 class GpsFleetMapScreen extends ConsumerStatefulWidget {
   const GpsFleetMapScreen({super.key});
@@ -160,7 +162,7 @@ class _GpsFleetMapScreenState extends ConsumerState<GpsFleetMapScreen> {
 
     if (deviceId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Device ID Flespi manquant pour ce véhicule.')),
+        SnackBar(content: Text(context.l10n.deviceIdFlespiManquantPourCe)),
       );
       return;
     }
@@ -203,7 +205,7 @@ class _GpsFleetMapScreenState extends ConsumerState<GpsFleetMapScreen> {
 
     return Scaffold(
       appBar: CustomAppBar(
-        title: 'Carte GPS — Flotte',
+        title: context.l10n.carteGpsFlotte,
         showHomeButton: true,
         actions: [
           Padding(
@@ -217,7 +219,7 @@ class _GpsFleetMapScreenState extends ConsumerState<GpsFleetMapScreen> {
           ),
           IconButton(
             icon:    const Icon(Icons.refresh),
-            tooltip: 'Rafraîchir maintenant',
+            tooltip: context.l10n.rafraichirMaintenant,
             onPressed: _manualRefresh,
           ),
         ],
@@ -276,58 +278,45 @@ class _GpsFleetMapScreenState extends ConsumerState<GpsFleetMapScreen> {
                           historyPoints.first,
                           color: Colors.green,
                           icon:  Icons.play_arrow,
-                          label: 'Départ',
+                          label: context.l10n.depart,
                         ),
                         _buildEndpointMarker(
                           historyPoints.last,
                           color: AppColors.primary,
                           icon:  Icons.flag,
-                          label: 'Arrivée',
+                          label: context.l10n.arrivee,
                         ),
                       ],
                     ),
 
-                  // Marqueurs position actuelle
-                  MarkerLayer(
-                    markers: fleet.map((item) {
-                      final lat        = item['lat']      as double;
-                      final lon        = item['lon']      as double;
-                      final speed      = item['speed']    as double? ?? 0;
-                      final isOnline   = item['isOnline'] as bool?   ?? false;
+                  // Marqueurs position actuelle — glissent en douceur d'un
+                  // rafraîchissement à l'autre, et se regroupent (cluster)
+                  // quand plusieurs véhicules sont proches sur la carte.
+                  AnimatedClusteredFleetMarkers(
+                    fleet: fleet,
+                    selectedItem: _selectedItem,
+                    mapController: _mapController,
+                    onTapVehicule: (item) {
+                      final lat        = item['lat'] as double;
+                      final lon        = item['lon'] as double;
                       final isSelected = _selectedItem == item;
-
-                      return Marker(
-                        point:  LatLng(lat, lon),
-                        width:  isSelected ? 56 : 48,
-                        height: isSelected ? 56 : 48,
-                        child:  GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              if (isSelected) {
-                                _selectedItem    = null;
-                                _showTrajet      = false;
-                                _trajetPositions = [];
-                                _trajetError     = null;
-                              } else {
-                                _selectedItem    = item;
-                                _showTrajet      = false;
-                                _trajetPositions = [];
-                                _trajetError     = null;
-                              }
-                            });
-                            if (!isSelected) {
-                              _mapController.move(LatLng(lat, lon), 14);
-                            }
-                          },
-                          child: _VehiculeMarker(
-                            isMoving:   speed > 0,
-                            isOnline:   isOnline,
-                            isSelected: isSelected,
-                            heading:    item['heading'] as double?,
-                          ),
-                        ),
-                      );
-                    }).toList(),
+                      setState(() {
+                        if (isSelected) {
+                          _selectedItem    = null;
+                          _showTrajet      = false;
+                          _trajetPositions = [];
+                          _trajetError     = null;
+                        } else {
+                          _selectedItem    = item;
+                          _showTrajet      = false;
+                          _trajetPositions = [];
+                          _trajetError     = null;
+                        }
+                      });
+                      if (!isSelected) {
+                        _mapController.move(LatLng(lat, lon), 14);
+                      }
+                    },
                   ),
                 ],
               ),
@@ -344,9 +333,9 @@ class _GpsFleetMapScreenState extends ConsumerState<GpsFleetMapScreen> {
 
               // ── Indicateur chargement historique ─────────
               if (_isLoadingTrajet)
-                const Positioned(
+                Positioned(
                   top: 60, left: 0, right: 0,
-                  child: Center(child: _LoadingPill(label: 'Chargement du trajet…')),
+                  child: Center(child: _LoadingPill(label: context.l10n.chargementDuTrajet)),
                 ),
 
               // ── Erreur trajet ─────────────────────────────
@@ -649,16 +638,12 @@ class _TrajetPickerSheetState extends State<_TrajetPickerSheet> {
                 child: const Icon(Icons.route, color: AppColors.primary, size: 22),
               ),
               const SizedBox(width: 12),
-              const Column(
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Trajet parcouru',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  Text(context.l10n.trajetParcouru, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  Text(
-                    'Choisissez un intervalle de dates',
-                    style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                  Text(context.l10n.choisissezUnIntervalleDeDates, style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
                   ),
                 ],
               ),
@@ -677,7 +662,7 @@ class _TrajetPickerSheetState extends State<_TrajetPickerSheet> {
               ),
               const SizedBox(width: 8),
               _TabButton(
-                label:    'Personnalisé',
+                label:    context.l10n.personnalise,
                 icon:     Icons.tune,
                 selected: _tabIndex == 1,
                 onTap:    () => setState(() => _tabIndex = 1),
@@ -738,9 +723,7 @@ class _TrajetPickerSheetState extends State<_TrajetPickerSheet> {
                 children: [
                   const Icon(Icons.error_outline, color: Colors.red, size: 16),
                   const SizedBox(width: 6),
-                  const Text(
-                    'La date de début doit être avant la date de fin.',
-                    style: TextStyle(color: Colors.red, fontSize: 12),
+                  Text(context.l10n.laDateDeDebutDoitEtre, style: TextStyle(color: Colors.red, fontSize: 12),
                   ),
                 ],
               ),
@@ -755,7 +738,7 @@ class _TrajetPickerSheetState extends State<_TrajetPickerSheet> {
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape:   RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
-                  child: const Text('Annuler'),
+                  child: Text(context.l10n.btnAnnuler),
                 ),
               ),
               const SizedBox(width: 12),
@@ -769,7 +752,7 @@ class _TrajetPickerSheetState extends State<_TrajetPickerSheet> {
                         )
                       : null,
                   icon:  const Icon(Icons.route, size: 18),
-                  label: const Text('Afficher le trajet'),
+                  label: Text(context.l10n.afficherLeTrajet),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,
@@ -986,8 +969,8 @@ class _IntervalPreview extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Du ${fmt.format(from)}', style: const TextStyle(fontSize: 12)),
-                Text('Au ${fmt.format(to)}',   style: const TextStyle(fontSize: 12)),
+                Text(context.l10n.duDate(fmt.format(from)), style: const TextStyle(fontSize: 12)),
+                Text(context.l10n.auDate(fmt.format(to)),   style: const TextStyle(fontSize: 12)),
               ],
             ),
           ),
@@ -1093,9 +1076,7 @@ class _TrajetSummaryBadge extends StatelessWidget {
               const Spacer(),
               GestureDetector(
                 onTap: onEdit,
-                child: Text(
-                  'Modifier',
-                  style: TextStyle(
+                child: Text(context.l10n.btnModifier, style: TextStyle(
                     fontSize:        11,
                     fontWeight:      FontWeight.w600,
                     color:           AppColors.primary,
@@ -1443,7 +1424,7 @@ class _ErrorView extends StatelessWidget {
           const SizedBox(height: 16),
           ElevatedButton.icon(
             icon:      const Icon(Icons.refresh),
-            label:     const Text('Réessayer'),
+            label:     Text(context.l10n.reessayer),
             onPressed: onRetry,
           ),
         ],

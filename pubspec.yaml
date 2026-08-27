@@ -9,7 +9,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
+  flutter_localizations:
+    sdk: flutter
   bidi: 2.0.13
   
   # HTTP client
@@ -33,7 +34,7 @@ dependencies:
   flutter_svg: ^2.0.9
   cached_network_image: ^3.4.1
   shimmer: ^3.0.0
-  fl_chart: ^0.67.0
+  fl_chart: ^0.68.0
 
   # ── Formulaires & Inputs ───────────────────────────────────
   reactive_forms: ^17.0.1
@@ -70,6 +71,7 @@ dependencies:
   permission_handler: ^11.3.0
   connectivity_plus: ^6.0.2
   url_launcher: ^6.2.4       # Ouvrir liens externes
+  flutter_markdown: ^0.7.7+1
 
 dev_dependencies:
   flutter_test:
@@ -79,9 +81,35 @@ dev_dependencies:
   freezed: ^2.4.7
   json_serializable: ^6.7.1
   riverpod_generator: ^2.3.9
+  flutter_launcher_icons: ^0.14.3
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon/app_icon.png"
+  min_sdk_android: 21
+  remove_alpha_ios: true
 
+  # Android adaptive icon (Android 8+) : fond navy uni + logo N par-dessus
+  adaptive_icon_background: "#0B132B"
+  adaptive_icon_foreground: "assets/icon/app_icon_foreground.png"
+
+  # Web (favicon + icônes PWA), si ton app cible aussi le web
+  web:
+    generate: true
+    image_path: "assets/icon/app_icon.png"
+    background_color: "#0B132B"
+    theme_color: "#2563EB"
+
+  # Windows / macOS, si concernés
+  windows:
+    generate: true
+    image_path: "assets/icon/app_icon.png"
+  macos:
+    generate: true
+    image_path: "assets/icon/app_icon.png"
 flutter:
   uses-material-design: true
+  generate: true
   fonts:
     - family: Cairo
       fonts:
@@ -95,8 +123,15 @@ flutter:
           weight: 700
   assets:
     - assets/images/
+    - assets/images/car_blueprint.jpg
     - assets/icons/
     - assets/fonts/
     - assets/fonts/Amiri-Regular.ttf
     - assets/fonts/Amiri-Bold.ttf
+    - assets/fonts/NotoNaskhArabic-Regular.ttf
+    - assets/fonts/NotoNaskhArabic-Bold.ttf
+    - assets/fonts/Cairo-Regular.ttf
+    - assets/fonts/Cairo-Bold.ttf
+    - assets/fonts/Roboto-Regular.ttf
+    - assets/fonts/Roboto-Bold.ttf
   

@@ -1,3 +1,4 @@
+//lib/shared/widgets/modern_button.dart
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/constants/app_spacing.dart';
@@ -154,6 +155,13 @@ class _ModernButtonState extends State<ModernButton> with SingleTickerProviderSt
         widget.type == ModernButtonType.secondary ||
         widget.type == ModernButtonType.danger ||
         widget.type == ModernButtonType.success;
+    final isDisabled = widget.isLoading || widget.onPressed == null;
+    final useGradient = widget.type == ModernButtonType.primary && !isDisabled;
+    final gradient = useGradient
+        ? (Theme.of(context).brightness == Brightness.dark
+            ? ThemeTokens.brandGradientDark
+            : ThemeTokens.brandGradient)
+        : null;
 
     return GestureDetector(
       onTapDown: _onTapDown,
@@ -170,13 +178,15 @@ class _ModernButtonState extends State<ModernButton> with SingleTickerProviderSt
             vertical: AppSpacing.sm,
           ),
           decoration: BoxDecoration(
-            color: isFilled ? backgroundColor : Colors.transparent,
+            color: gradient != null ? null : (isFilled ? backgroundColor : Colors.transparent),
+            gradient: gradient,
             borderRadius: AppSpacing.buttonRadius,
             border: border,
             boxShadow: isFilled && !_isPressed
                 ? [
                     BoxShadow(
-                      color: backgroundColor.withValues(alpha: 0.3),
+                      color: (gradient != null ? AppColors.primary : backgroundColor)
+                          .withValues(alpha: 0.3),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
@@ -277,6 +287,12 @@ class _ModernIconButtonState extends State<ModernIconButton>
 
   @override
   Widget build(BuildContext context) {
+    final useGradient = widget.backgroundColor == null;
+    final gradient = useGradient
+        ? (Theme.of(context).brightness == Brightness.dark
+            ? ThemeTokens.brandGradientDark
+            : ThemeTokens.brandGradient)
+        : null;
     final bgColor = widget.backgroundColor ?? AppColors.primary;
     final iconClr = widget.iconColor ?? Colors.white;
     final buttonSize = widget.size ?? AppSpacing.md * 2.5;
@@ -296,11 +312,12 @@ class _ModernIconButtonState extends State<ModernIconButton>
             width: buttonSize,
             height: buttonSize,
             decoration: BoxDecoration(
-              color: _isHovered ? bgColor.withValues(alpha: 0.9) : bgColor,
+              color: gradient != null ? null : (_isHovered ? bgColor.withValues(alpha: 0.9) : bgColor),
+              gradient: gradient,
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: bgColor.withValues(alpha: 0.3),
+                  color: (gradient != null ? AppColors.primary : bgColor).withValues(alpha: 0.3),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),

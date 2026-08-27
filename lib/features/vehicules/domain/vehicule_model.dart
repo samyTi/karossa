@@ -1,3 +1,4 @@
+//lib/features/vehicules/domain/vehicule_model.dart
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 
@@ -24,18 +25,24 @@ class VehiculePropriete {
   final String proprietaireId;
   final String proprietaireNom;
   final double partPct;
+  /// 'proprietaire' ou 'associe' — statut porté par véhicule, pas par le profil.
+  final String typeParticipation;
 
   const VehiculePropriete({
     required this.proprietaireId,
     required this.proprietaireNom,
     required this.partPct,
+    this.typeParticipation = 'proprietaire',
   });
+
+  bool get isAssocie => typeParticipation == 'associe';
 
   factory VehiculePropriete.fromJson(Map<String, dynamic> json) =>
     VehiculePropriete(
       proprietaireId:  json['proprietaire_id'],
       proprietaireNom: json['profiles']?['prenom'] ?? '',
       partPct:         (json['part_pct'] as num).toDouble(),
+      typeParticipation: (json['type_participation'] as String?) ?? 'proprietaire',
     );
 }
 
@@ -46,6 +53,9 @@ class Vehicule {
   final int annee;
   final String? couleur;
   final String? immatriculation;
+  final String? numChassis;
+  final String? assurance;
+  final String? codeRadio;
   final String? carburant;
   final String? boite;
   final int kilometrage;
@@ -55,24 +65,36 @@ class Vehicule {
   final VehiculeStatut statut;
   final List<String> photos;
   final String? notes;
-  /// Décrit les dommages, rayures, pannes et tout ce qui ne fonctionne pas
-  /// sur le véhicule. Affiché dans le contrat de location/vente.
   final String? etatVehicule;
   final List<VehiculePropriete> proprietes;
   final DateTime createdAt;
-  // GPS — Device ID du tracker sur la plateforme Flespi
   final int? flespiDeviceId;
   final int? kmAlerteSeuil;
 
   const Vehicule({
-    required this.id, required this.marque, required this.modele,
-    required this.annee, this.couleur, this.immatriculation,
-    this.carburant, this.boite, required this.kilometrage,
-    this.prixAchat, this.prixVente, this.prixLocationJour,
-    required this.statut, this.photos = const [], this.notes,
+    required this.id, 
+    required this.marque, 
+    required this.modele,
+    required this.annee, 
+    this.couleur, 
+    this.immatriculation,
+    this.numChassis,
+    this.assurance,
+    this.codeRadio,
+    this.carburant, 
+    this.boite, 
+    required this.kilometrage,
+    this.prixAchat, 
+    this.prixVente, 
+    this.prixLocationJour,
+    required this.statut, 
+    this.photos = const [], 
+    this.notes,
     this.etatVehicule,
-    this.proprietes = const [], required this.createdAt,
-    this.flespiDeviceId, this.kmAlerteSeuil,
+    this.proprietes = const [], 
+    required this.createdAt,
+    this.flespiDeviceId, 
+    this.kmAlerteSeuil,
   });
 
   @override
@@ -99,15 +121,15 @@ class Vehicule {
     annee:           json['annee'],
     couleur:         json['couleur'],
     immatriculation: json['immatriculation'],
+    numChassis:      json['num_chassis'],
+    assurance:       json['assurance'],
+    codeRadio:       json['code_radio'],
     carburant:       json['carburant'],
     boite:           json['boite'],
-    kilometrage:     json['kilometrage'] ?? 0,
-    prixAchat:       json['prix_achat'] != null
-                       ? (json['prix_achat'] as num).toDouble() : null,
-    prixVente:       json['prix_vente'] != null
-                       ? (json['prix_vente'] as num).toDouble() : null,
-    prixLocationJour: json['prix_location_jour'] != null
-                       ? (json['prix_location_jour'] as num).toDouble() : null,
+    kilometrage:     (json['kilometrage'] as num?)?.toInt() ?? 0,
+    prixAchat:       (json['prix_achat'] as num?)?.toDouble(),
+    prixVente:       (json['prix_vente'] as num?)?.toDouble(),
+    prixLocationJour: (json['prix_location_jour'] as num?)?.toDouble(),
     statut:          VehiculeStatut.values.firstWhere(
                        (s) => s.name == json['statut'],
                        orElse: () => VehiculeStatut.disponible),
@@ -117,28 +139,30 @@ class Vehicule {
     proprietes:      (json['vehicule_proprietes'] as List? ?? [])
                        .map((p) => VehiculePropriete.fromJson(p)).toList(),
     createdAt:       DateTime.parse(json['created_at']),
-    // Lit les deux colonnes pour compatibilité avec les anciennes données
-    flespiDeviceId:  json['flespi_device_id'] ?? json['flespi_device_id'],
-    kmAlerteSeuil:   json['km_alerte_seuil'],
+    flespiDeviceId:  json['flespi_device_id'] != null ? (json['flespi_device_id'] as num).toInt() : null,
+    kmAlerteSeuil:   (json['km_alerte_seuil'] as num?)?.toInt(),
   );
 
   Map<String, dynamic> toJson() => {
-    'marque':            marque,
-    'modele':            modele,
-    'annee':             annee,
-    'couleur':           couleur,
-    'immatriculation':   immatriculation,
-    'carburant':         carburant,
-    'boite':             boite,
-    'kilometrage':       kilometrage,
-    'prix_achat':        prixAchat,
-    'prix_vente':        prixVente,
+    'marque':             marque,
+    'modele':             modele,
+    'annee':              annee,
+    'couleur':            couleur,
+    'immatriculation':    immatriculation,
+    'num_chassis':        numChassis,
+    'assurance':          assurance,
+    'code_radio':         codeRadio,
+    'carburant':          carburant,
+    'boite':              boite,
+    'kilometrage':        kilometrage,
+    'prix_achat':         prixAchat,
+    'prix_vente':         prixVente,
     'prix_location_jour': prixLocationJour,
-    'statut':            statut.name,
-    'photos':            photos,
-    'notes':             notes,
-    'etat_vehicule':     etatVehicule,
-    'km_alerte_seuil':   kmAlerteSeuil,
-    'flespi_device_id':  flespiDeviceId,
+    'statut':             statut.name,
+    'photos':             photos,
+    'notes':              notes,
+    'etat_vehicule':      etatVehicule,
+    'km_alerte_seuil':    kmAlerteSeuil,
+    'flespi_device_id':   flespiDeviceId,
   };
 }

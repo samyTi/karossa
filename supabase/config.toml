@@ -1,0 +1,5 @@
+[functions.flespi-proxy]
+verify_jwt = false
+
+[functions.flespi-ingest]
+verify_jwt = false

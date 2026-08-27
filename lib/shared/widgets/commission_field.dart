@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../../features/admin/domain/showroom_settings_model.dart';
+import 'package:garage_auto/core/extensions/l10n_extension.dart';
 
 /// Résultat de la saisie de commission.
 class CommissionValue {
@@ -233,7 +234,7 @@ class _TypeToggle extends StatelessWidget {
             onTap: () => onChanged(CommissionType.pct),
           ),
           _Chip(
-            label: 'DA',
+            label: context.l10n.uniteDa,
             active: current == CommissionType.fixe,
             onTap: () => onChanged(CommissionType.fixe),
           ),

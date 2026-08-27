@@ -1,75 +1,98 @@
+// lib/features/echanges/data/echanges_repository.dart
+
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../domain/echange_model.dart';
+import '../../../core/utils/app_logger.dart';
 
 class EchangesRepository {
-  EchangesRepository(this._client);
+  EchangesRepository(this._client, {required this.showroomId});
 
   final SupabaseClient _client;
+  final String showroomId;
 
-  /// Récupère tous les échanges/contrats
+  static const _echangeSelect =
+      '*, '
+      'vehicules!echanges_vehicule_cede_id_fkey(marque, modele, annee), '
+      'clients(prenom, nom)';
+
+  /// Récupère tous les échanges du showroom actif
   Future<List<Echange>> getAll() async {
-    final data = await _client
-      .from('echanges')
-      .select(
-        '*, '
-        'vehicules!echanges_vehicule_cede_id_fkey(marque, modele, annee), '
-        'clients(prenom, nom)'
-      )
-      .order('created_at', ascending: false);
-    return data.map((j) => Echange.fromJson(j)).toList();
+    try {
+      final data = await _client
+          .from('echanges')
+          .select(_echangeSelect)
+          .eq('showroom_id', showroomId) // ✅ CORRECTION : filtre multi-tenant
+          .order('created_at', ascending: false);
+      return data.map((j) => Echange.fromJson(j)).toList();
+    } catch (e, st) {
+      AppLogger.e('EchangesRepository.getAll', error: e, stackTrace: st);
+      rethrow;
+    }
   }
 
-  /// Récupère les échanges/contrats pour un véhicule donné
-  /// Utilise explicitement la foreign key `echanges_vehicule_cede_id_fkey` 
-  /// pour éviter l'ambiguïté avec `vehicle_repris_id`
+  /// Récupère les échanges pour un véhicule donné, dans le showroom actif
   Future<List<Echange>> getByVehiculeId(String vehiculeId) async {
-    final data = await _client
-      .from('echanges')
-      .select(
-        '*, '
-        'vehicules!echanges_vehicule_cede_id_fkey(marque, modele, annee), '
-        'clients(prenom, nom)'
-      )
-      .eq('vehicule_cede_id', vehiculeId)
-      .order('created_at', ascending: false);
-    return data.map((j) => Echange.fromJson(j)).toList();
+    try {
+      final data = await _client
+          .from('echanges')
+          .select(_echangeSelect)
+          .eq('showroom_id', showroomId) // ✅ CORRECTION : filtre multi-tenant
+          .eq('vehicule_cede_id', vehiculeId)
+          .order('created_at', ascending: false);
+      return data.map((j) => Echange.fromJson(j)).toList();
+    } catch (e, st) {
+      AppLogger.e('EchangesRepository.getByVehiculeId', error: e, stackTrace: st);
+      rethrow;
+    }
   }
 
-  /// Récupère un échange/contrat par son ID
+  /// Récupère un échange par son ID, en vérifiant l'appartenance au showroom
   Future<Echange?> getById(String echangeId) async {
-    final data = await _client
-      .from('echanges')
-      .select(
-        '*, '
-        'vehicules!echanges_vehicule_cede_id_fkey(marque, modele, annee), '
-        'clients(prenom, nom)'
-      )
-      .eq('id', echangeId)
-      .maybeSingle();
-    
-    if (data == null) return null;
-    return Echange.fromJson(data);
+    try {
+      final data = await _client
+          .from('echanges')
+          .select(_echangeSelect)
+          .eq('showroom_id', showroomId) // ✅ CORRECTION : filtre multi-tenant
+          .eq('id', echangeId)
+          .maybeSingle();
+      if (data == null) return null;
+      return Echange.fromJson(data);
+    } catch (e, st) {
+      AppLogger.e('EchangesRepository.getById', error: e, stackTrace: st);
+      rethrow;
+    }
   }
 
-  /// Crée un nouvel échange/contrat
+  /// Crée un nouvel échange et met à jour le statut du véhicule cédé
   Future<Echange> create(Map<String, dynamic> data) async {
-    // commission_gerant_mnt n'existe pas en base — toujours supprimer avant insert
-    data.remove('commission_gerant_mnt');
-    final result = await _client
-      .from('echanges')
-      .insert(data)
-      .select(
-        '*, '
-        'vehicules!echanges_vehicule_cede_id_fkey(marque, modele, annee), '
-        'clients(prenom, nom)'
-      )
-      .single();
-    
-    await _client
-      .from('vehicules')
-      .update({'statut': 'vendu'})
-      .eq('id', data['vehicule_cede_id']);
-    
-    return Echange.fromJson(result);
+    try {
+      // commission_gerant_mnt est une colonne calculée — ne pas insérer
+      data.remove('commission_gerant_mnt');
+
+      final vehiculeCedeId = data['vehicule_cede_id'] as String;
+
+      final fullPayload = {
+        ...data,
+        'showroom_id': showroomId,
+      };
+
+      final result = await _client
+          .from('echanges')
+          .insert(fullPayload)
+          .select(_echangeSelect)
+          .single();
+
+      // Mise à jour du statut du véhicule cédé, avec verrou showroom
+      await _client
+          .from('vehicules')
+          .update({'statut': 'vendu'})
+          .eq('showroom_id', showroomId) // ✅ CORRECTION : sécurité cross-tenant sur l'update
+          .eq('id', vehiculeCedeId);
+
+      return Echange.fromJson(result);
+    } catch (e, st) {
+      AppLogger.e('EchangesRepository.create', error: e, stackTrace: st);
+      rethrow;
+    }
   }
 }

@@ -8,49 +8,59 @@ import '../domain/contrat_template_model.dart';
 import '../../../core/utils/app_logger.dart';
 
 class ContratsRepository {
-  ContratsRepository(this._client);
+  ContratsRepository(this._client, {required this.showroomId});
 
   final SupabaseClient _client;
+  // Nullable : tant que le profil n'est pas chargé, showroomId reste null
+  final String? showroomId;
 
-  // ── Paramètres showroom (table settings) ──────────────────
+  /// Vérifie que showroomId est valide avant toute requête UUID.
+  /// Lance une exception explicite si ce n'est pas le cas.
+  String get _safeShowroomId {
+    final id = showroomId;
+    if (id == null || id.isEmpty) {
+      throw StateError(
+        'ContratsRepository: showroomId non disponible. '
+        'Le profil utilisateur est-il chargé ?',
+      );
+    }
+    return id;
+  }
+
+  bool get isReady => showroomId != null && showroomId!.isNotEmpty;
+
+  // ── Paramètres showroom ──────────────────────────────────────────────────
+  // Cible la table `showrooms` (schéma réel — pas showroom_settings).
 
   Future<Map<String, dynamic>> getShowroomSettings() async {
     try {
       final data = await _client
-          .from('showroom_settings')
-          .select()
+          .from('showrooms')
+          .select(
+            'nom, adresse, tel, email, rc, logo_url, '
+            'commission_vente_type, commission_vente_valeur, '
+            'commission_echange_type, commission_echange_valeur, '
+            'commission_location_type, commission_location_valeur, '
+            'commission_achat_type, commission_achat_valeur',
+          )
+          .eq('id', _safeShowroomId)
           .single();
       return Map<String, dynamic>.from(data);
     } catch (e) {
-      AppLogger.w('Erreur silencieuse ignorée', error: e);
-      // Paramètres par défaut si la table est vide
-      return {
-        'nom':      'Garage Auto',
-        'adresse':  '',
-        'tel':      '',
-        'email':    '',
-        'rc':       '',
-        'logo_url': null,
-      };
+      AppLogger.w('ContratsRepository.getShowroomSettings: utilisation des defaults', error: e);
+      return _defaultSettings;
     }
   }
 
   Future<void> updateShowroomSettings(Map<String, dynamic> settings) async {
-    try {
-      final existing = await _client.from('showroom_settings').select('id');
-      if ((existing as List).isNotEmpty) {
-        await _client.from('showroom_settings')
-            .update(settings)
-            .eq('id', existing.first['id']);
-      } else {
-        await _client.from('showroom_settings').insert(settings);
-      }
-    } catch (e) {
-      AppLogger.d('ContratsRepository.updateShowroomSettings: $e');
-    }
+    await _client
+        .from('showrooms')
+        .update(settings)
+        .eq('id', _safeShowroomId);
   }
 
-  // ── Templates ──────────────────────────────────────────────
+  // ── Templates ────────────────────────────────────────────────────────────
+  // `contract_templates` n'a pas de colonne showroom_id → pas de filtre.
 
   Future<List<ContratTemplate>> getTemplates() async {
     try {
@@ -61,7 +71,7 @@ class ContratsRepository {
           .order('created_at');
       return (data as List).map((j) => ContratTemplate.fromJson(j)).toList();
     } catch (e) {
-      AppLogger.d('ContratsRepository.getTemplates: $e');
+      AppLogger.e('ContratsRepository.getTemplates', error: e);
       return [];
     }
   }
@@ -78,7 +88,7 @@ class ContratsRepository {
           .single();
       return ContratTemplate.fromJson(data);
     } catch (e) {
-      AppLogger.w('Erreur silencieuse ignorée', error: e);
+      AppLogger.w('ContratsRepository.getActiveTemplate: aucun template actif pour "$type"', error: e);
       return null;
     }
   }
@@ -92,61 +102,58 @@ class ContratsRepository {
           .single();
       return ContratTemplate.fromJson(data);
     } catch (e) {
-      AppLogger.d('ContratsRepository.createTemplate: $e');
-      return null;
+      AppLogger.e('ContratsRepository.createTemplate', error: e);
+      rethrow;
     }
   }
 
   Future<void> updateTemplate(String id, Map<String, dynamic> data) async {
     try {
-      await _client.from('contract_templates').update(data).eq('id', id);
+      await _client
+          .from('contract_templates')
+          .update(data)
+          .eq('id', id);
     } catch (e) {
-      AppLogger.d('ContratsRepository.updateTemplate: $e');
+      AppLogger.e('ContratsRepository.updateTemplate', error: e);
+      rethrow;
     }
   }
 
-  // ── Sauvegarde PDF ─────────────────────────────────────────
+  // ── Sauvegarde PDF ───────────────────────────────────────────────────────
 
-  /// Méthode requise par ContratGeneratorService pour téléverser les contrats PDF
-  Future<String> uploadContratPdf(String id, String bucketFolder, Uint8List fileBytes) async {
-    try {
-      final fileName = '$id.pdf';
-      final url = await savePdfToStorage(
-        fileName: fileName,
-        pdfBytes: fileBytes,
-        folder: bucketFolder,
-      );
-      if (url == null) {
-        throw Exception("L'URL renvoyée par le stockage Supabase est nulle.");
-      }
-      return url;
-    } catch (e) {
-      AppLogger.d('ContratsRepository.uploadContratPdf: $e');
-      rethrow;
-    }
+  Future<String> uploadContratPdf(
+      String id, String bucketFolder, Uint8List fileBytes) async {
+    final url = await savePdfToStorage(
+      fileName: '$id.pdf',
+      pdfBytes: fileBytes,
+      folder: bucketFolder,
+    );
+    if (url == null) throw Exception('URL Supabase Storage nulle.');
+    return url;
   }
 
   Future<String?> savePdfToStorage({
     required String fileName,
     required Uint8List pdfBytes,
-    required String folder, // locations | ventes | echanges
+    required String folder,
   }) async {
-    // ✅ FIX : on ne catch plus l'exception — elle remonte à l'appelant
-    // pour qu'un message d'erreur soit affiché dans l'UI.
-    // Causes fréquentes d'échec : bucket 'contrats' absent dans Supabase
-    // Storage, ou policy RLS manquante.
-    final path = '$folder/$fileName';
-    AppLogger.d('ContratsRepository: upload → contrats/$path (${pdfBytes.length} bytes)');
-    await _client.storage
-        .from('contrats')
-        .uploadBinary(path, pdfBytes,
-            fileOptions: const FileOptions(contentType: 'application/pdf', upsert: true));
-    final url = _client.storage.from('contrats').getPublicUrl(path);
-    AppLogger.d('ContratsRepository: PDF URL = $url');
-    return url;
+    try {
+      final path = '${_safeShowroomId}/$folder/$fileName';
+      await _client.storage.from('contrats').uploadBinary(
+            path,
+            pdfBytes,
+            fileOptions: const FileOptions(
+              contentType: 'application/pdf',
+              upsert: true,
+            ),
+          );
+      return _client.storage.from('contrats').getPublicUrl(path);
+    } catch (e) {
+      AppLogger.e('ContratsRepository.savePdfToStorage', error: e);
+      rethrow;
+    }
   }
 
-  /// Sauvegarde locale du PDF (pour partage immédiat)
   Future<File?> savePdfLocally(Uint8List bytes, String fileName) async {
     try {
       final appDir = await getApplicationDocumentsDirectory();
@@ -154,62 +161,71 @@ class ContratsRepository {
       await file.writeAsBytes(bytes);
       return file;
     } catch (e) {
-      AppLogger.d('ContratsRepository.savePdfLocally: $e');
+      AppLogger.e('ContratsRepository.savePdfLocally', error: e);
       return null;
     }
   }
 
-  /// Met à jour l'URL du contrat sur une location
+  // ── Liens vers les entités ───────────────────────────────────────────────
+
   Future<void> linkContratToLocation(String locationId, String pdfUrl) async {
-    try {
-      await _client.from('locations')
-          .update({'contrat_pdf_url': pdfUrl})
-          .eq('id', locationId);
-    } catch (e) {
-      AppLogger.d('ContratsRepository.linkContratToLocation: $e');
-    }
+    await _client
+        .from('locations')
+        .update({'contrat_pdf_url': pdfUrl})
+        .eq('showroom_id', _safeShowroomId)
+        .eq('id', locationId);
   }
 
   Future<void> linkContratToVente(String venteId, String pdfUrl) async {
-    try {
-      await _client.from('ventes')
-          .update({'contrat_pdf_url': pdfUrl})
-          .eq('id', venteId);
-    } catch (e) {
-      AppLogger.d('ContratsRepository.linkContratToVente: $e');
-    }
+    await _client
+        .from('ventes')
+        .update({'contrat_pdf_url': pdfUrl})
+        .eq('showroom_id', _safeShowroomId)
+        .eq('id', venteId);
   }
 
-  // ✅ FIX : méthode manquante — les échanges écrivaient dans la table
-  // locations avec un ID d'échange inexistant (mauvaise table).
   Future<void> linkContratToEchange(String echangeId, String pdfUrl) async {
-    try {
-      await _client.from('echanges')
-          .update({'contrat_pdf_url': pdfUrl})
-          .eq('id', echangeId);
-      AppLogger.d('ContratsRepository: echange $echangeId → contrat_pdf_url mis à jour');
-    } catch (e) {
-      AppLogger.d('ContratsRepository.linkContratToEchange: $e');
-      rethrow;
-    }
+    await _client
+        .from('echanges')
+        .update({'contrat_pdf_url': pdfUrl})
+        .eq('showroom_id', _safeShowroomId)
+        .eq('id', echangeId);
   }
-  
-  // ── Articles dynamiques ────────────────────────────────────
 
-  /// Récupère les articles actifs d'un type de contrat, triés par ordre.
-  /// Utilisé par les générateurs PDF pour remplacer les clauses en dur.
+  // ── Articles dynamiques ──────────────────────────────────────────────────
+
   Future<List<Map<String, dynamic>>> getArticlesActifs(String contratType) async {
     try {
       final data = await _client
           .from('contract_articles')
           .select()
+          .eq('showroom_id', _safeShowroomId)
           .eq('contrat_type', contratType)
           .eq('actif', true)
           .order('ordre');
       return List<Map<String, dynamic>>.from(data);
     } catch (e) {
-      AppLogger.d('ContratsRepository.getArticlesActifs: $e');
+      AppLogger.e('ContratsRepository.getArticlesActifs', error: e);
       return [];
     }
   }
+
+  // ── Defaults ─────────────────────────────────────────────────────────────
+
+  static const _defaultSettings = <String, dynamic>{
+    'nom':                         'Garage Auto',
+    'adresse':                     '',
+    'tel':                         '',
+    'email':                       '',
+    'rc':                          '',
+    'logo_url':                    null,
+    'commission_vente_type':       'pct',
+    'commission_vente_valeur':     5,
+    'commission_echange_type':     'pct',
+    'commission_echange_valeur':   5,
+    'commission_location_type':    'pct',
+    'commission_location_valeur':  10,
+    'commission_achat_type':       'pct',
+    'commission_achat_valeur':     5,
+  };
 }

@@ -5,6 +5,7 @@ import '../../../core/theme/app_text_styles.dart';
 import '../../../shared/widgets/custom_app_bar.dart';
 import '../domain/achat_model.dart';
 import 'achats_provider.dart';
+import 'package:garage_auto/core/extensions/l10n_extension.dart';
 
 class AchatDetailScreen extends ConsumerStatefulWidget {
   final String achatId;
@@ -28,23 +29,23 @@ class _AchatDetailScreenState extends ConsumerState<AchatDetailScreen> {
       loading: () => const Scaffold(
         body: Center(child: CircularProgressIndicator())),
       error: (e, _) => Scaffold(
-        body: Center(child: Text('Erreur: $e'))),
+        body: Center(child: Text(context.l10n.erreurAvecDetail(e.toString())))),
       data: (achats) {
         final achat = achats.where((a) => a.id == widget.achatId).firstOrNull;
         if (achat == null) {
-          return const Scaffold(
-            body: Center(child: Text('Achat introuvable')));
+          return Scaffold(
+            body: Center(child: Text(context.l10n.achatIntrouvable)));
         }
 
         final color = _colorFromStatut(achat.statut);
 
         return Scaffold(
           appBar: CustomAppBar(
-            title: 'Détail achat',
+            title: context.l10n.detailAchat,
             showHomeButton: true,
             actions: [
               PopupMenuButton<AchatStatut>(
-                tooltip: 'Changer le statut',
+                tooltip: context.l10n.changerLeStatut,
                 icon: const Icon(Icons.more_vert),
                 onSelected: (s) => _changerStatut(achat, s),
                 itemBuilder: (_) => AchatStatut.values
@@ -81,7 +82,7 @@ class _AchatDetailScreenState extends ConsumerState<AchatDetailScreen> {
 
               // Véhicule
               _Section(
-                title: 'Véhicule',
+                title: context.l10n.vehicule,
                 icon: Icons.directions_car_outlined,
                 children: [
                   _Row('Véhicule', achat.vehiculeNom ?? 'ID: ${achat.vehiculeId.substring(0, 8)}...'),
@@ -90,7 +91,7 @@ class _AchatDetailScreenState extends ConsumerState<AchatDetailScreen> {
 
               // Vendeur
               _Section(
-                title: 'Vendeur',
+                title: context.l10n.vendeur,
                 icon: Icons.person_outline,
                 children: [
                   _Row('Nom',       achat.vendeurNom),
@@ -102,7 +103,7 @@ class _AchatDetailScreenState extends ConsumerState<AchatDetailScreen> {
 
               // Prix
               _Section(
-                title: 'Négociation',
+                title: context.l10n.negociation,
                 icon: Icons.attach_money,
                 children: [
                   _Row('Prix demandé',
@@ -125,7 +126,7 @@ class _AchatDetailScreenState extends ConsumerState<AchatDetailScreen> {
               // Remarques
               if (achat.remarques != null && achat.remarques!.isNotEmpty)
                 _Section(
-                  title: 'Remarques',
+                  title: context.l10n.remarques,
                   icon: Icons.notes_outlined,
                   children: [
                     Text(achat.remarques!, style: AppTextStyles.body),
@@ -135,7 +136,7 @@ class _AchatDetailScreenState extends ConsumerState<AchatDetailScreen> {
               const SizedBox(height: 16),
 
               // Changer le statut
-              Text('Changer le statut', style: AppTextStyles.heading3),
+              Text(context.l10n.changerLeStatut, style: AppTextStyles.heading3),
               const SizedBox(height: 8),
               Wrap(
                 spacing: 8,
@@ -168,7 +169,7 @@ class _AchatDetailScreenState extends ConsumerState<AchatDetailScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Statut mis à jour : ${newStatut.label}'),
+            content: Text(context.l10n.statutMisAJour(newStatut.label)),
             backgroundColor: AppColors.secondary,
           ),
         );
@@ -176,7 +177,7 @@ class _AchatDetailScreenState extends ConsumerState<AchatDetailScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Erreur: $e'), backgroundColor: AppColors.retard));
+        SnackBar(content: Text(context.l10n.erreurAvecDetail(e.toString())), backgroundColor: AppColors.retard));
       }
     } finally {
       if (mounted) setState(() => _loading = false);

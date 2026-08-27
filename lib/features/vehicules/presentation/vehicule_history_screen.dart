@@ -6,6 +6,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../domain/vehicule_model.dart';
+import 'package:garage_auto/core/extensions/l10n_extension.dart';
 
 /// Provider pour récupérer l'historique complet d'un véhicule
 final vehiculeHistoryProvider =
@@ -303,12 +304,12 @@ class VehiculeHistoryScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Historique du véhicule'),
+        title: Text(context.l10n.historiqueDuVehicule),
       ),
       body: history.when(
         loading: () =>
             const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('Erreur: $e')),
+        error: (e, _) => Center(child: Text(context.l10n.erreurAvecDetail(e.toString()))),
         data: (h) => _HistoryBody(history: h),
       ),
     );
@@ -339,7 +340,7 @@ class _HistoryBody extends StatelessWidget {
         // Locations
         if (history.locations.isNotEmpty) ...[
           _SectionHeader(
-            title: 'Locations',
+            title: context.l10n.titreLocations,
             count: history.locations.length,
             icon: Icons.car_rental,
             color: AppColors.secondary,
@@ -355,7 +356,7 @@ class _HistoryBody extends StatelessWidget {
         // Réparations
         if (history.reparations.isNotEmpty) ...[
           _SectionHeader(
-            title: 'Réparations',
+            title: context.l10n.reparations,
             count: history.reparations.length,
             icon: Icons.build,
             color: AppColors.reparation,
@@ -371,7 +372,7 @@ class _HistoryBody extends StatelessWidget {
         // Entretien
         if (history.entretiens.isNotEmpty) ...[
           _SectionHeader(
-            title: 'Entretien',
+            title: context.l10n.entretien,
             count: history.entretiens.length,
             icon: Icons.notifications_outlined,
             color: AppColors.accent,
@@ -387,7 +388,7 @@ class _HistoryBody extends StatelessWidget {
         // Ventes
         if (history.ventes.isNotEmpty) ...[
           _SectionHeader(
-            title: 'Ventes',
+            title: context.l10n.titreVentes,
             count: history.ventes.length,
             icon: Icons.sell,
             color: AppColors.primary,
@@ -403,7 +404,7 @@ class _HistoryBody extends StatelessWidget {
         // Échanges
         if (history.echanges.isNotEmpty) ...[
           _SectionHeader(
-            title: 'Échanges',
+            title: context.l10n.titreEchanges,
             count: history.echanges.length,
             icon: Icons.swap_horiz,
             color: AppColors.accent,
@@ -422,9 +423,9 @@ class _HistoryBody extends StatelessWidget {
             history.entretiens.isEmpty &&
             history.ventes.isEmpty &&
             history.echanges.isEmpty)
-          const EmptyState(
+          EmptyState(
             icon: Icons.history,
-            message: 'Aucun historique pour ce véhicule',
+            message: context.l10n.aucunHistoriquePourCeVehicule,
           ),
       ],
     );
@@ -474,7 +475,7 @@ class _SummaryCard extends StatelessWidget {
             children: [
               Expanded(
                 child: _SummaryItem(
-                  label: 'Revenus locations',
+                  label: context.l10n.revenusLocations,
                   value: '${totalRevenusLocations.toInt()} DA',
                   color: AppColors.secondary,
                 ),
@@ -482,7 +483,7 @@ class _SummaryCard extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: _SummaryItem(
-                  label: 'Dépenses réparations',
+                  label: context.l10n.depensesReparations,
                   value: '${totalDepensesReparations.toInt()} DA',
                   color: AppColors.reparation,
                 ),
@@ -494,7 +495,7 @@ class _SummaryCard extends StatelessWidget {
             children: [
               Expanded(
                 child: _SummaryItem(
-                  label: 'Locations',
+                  label: context.l10n.titreLocations,
                   value: '$nbLocations',
                   color: AppColors.textPrimary,
                 ),
@@ -502,7 +503,7 @@ class _SummaryCard extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: _SummaryItem(
-                  label: 'Réparations',
+                  label: context.l10n.reparations,
                   value: '$nbReparations',
                   color: AppColors.textPrimary,
                 ),
@@ -511,7 +512,7 @@ class _SummaryCard extends StatelessWidget {
           ),
           const Divider(height: 24),
           _SummaryItem(
-            label: 'Solde estimé',
+            label: context.l10n.soldeEstime,
             value: '${solde.toInt()} DA',
             color: solde >= 0 ? AppColors.secondary : AppColors.retard,
             isBold: true,

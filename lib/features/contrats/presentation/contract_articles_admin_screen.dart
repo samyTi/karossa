@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import './contract_articles_provider.dart';
 import '../domain/contract_article_model.dart';
+import 'package:garage_auto/core/extensions/l10n_extension.dart';
 
 class ContractArticlesAdminScreen extends ConsumerStatefulWidget {
   const ContractArticlesAdminScreen({super.key});
@@ -37,7 +38,7 @@ class _ContractArticlesAdminScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Articles des contrats'),
+        title: Text(context.l10n.articlesDesContrats),
         bottom: TabBar(
           controller: _tabController,
           tabs: _typesLabels.map((l) => Tab(text: l)).toList(),
@@ -62,8 +63,8 @@ class _ArticlesTab extends ConsumerWidget {
     final asyncArticles = ref.watch(contractArticlesNotifierProvider(contratType));
 
     return asyncArticles.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (e, _) => Center(child: Text('Erreur : $e')),
+      loading: () => Center(child: CircularProgressIndicator()),
+      error: (e, _) => Center(child: Text(context.l10n.erreurAvecDetail(e.toString()))),
       data: (articles) => _ArticlesList(
         contratType: contratType,
         articles: articles,
@@ -84,35 +85,45 @@ class _ArticlesList extends ConsumerStatefulWidget {
 }
 
 class _ArticlesListState extends ConsumerState<_ArticlesList> {
-  void _onReorder(int oldIndex, int newIndex) {
-    final list = List<ContractArticle>.from(widget.articles);
-    if (newIndex > oldIndex) newIndex--;
-    final item = list.removeAt(oldIndex);
-    list.insert(newIndex, item);
-    ref
-        .read(contractArticlesNotifierProvider(widget.contratType).notifier)
-        .reordonner(list);
-  }
-
   @override
   Widget build(BuildContext context) {
+    final articlesFr =
+        widget.articles.where((a) => a.langue == ArticleLangue.fr).toList();
+    final articlesAr =
+        widget.articles.where((a) => a.langue == ArticleLangue.ar).toList();
+
     return Scaffold(
       body: widget.articles.isEmpty
           ? _EmptyState(contratType: widget.contratType)
-          : ReorderableListView.builder(
+          : ListView(
               padding: const EdgeInsets.only(bottom: 80, top: 8),
-              itemCount: widget.articles.length,
-              onReorder: _onReorder,
-              itemBuilder: (_, i) => _ArticleCard(
-                key: ValueKey(widget.articles[i].id),
-                article: widget.articles[i],
-                contratType: widget.contratType,
-              ),
+              children: [
+                if (articlesFr.isNotEmpty) ...[
+                  _LangueSectionHeader(langue: ArticleLangue.fr, count: articlesFr.length),
+                  ...List.generate(articlesFr.length, (i) => _ArticleCard(
+                        key: ValueKey(articlesFr[i].id),
+                        article: articlesFr[i],
+                        contratType: widget.contratType,
+                        position: i + 1,
+                        total: articlesFr.length,
+                      )),
+                ],
+                if (articlesAr.isNotEmpty) ...[
+                  _LangueSectionHeader(langue: ArticleLangue.ar, count: articlesAr.length),
+                  ...List.generate(articlesAr.length, (i) => _ArticleCard(
+                        key: ValueKey(articlesAr[i].id),
+                        article: articlesAr[i],
+                        contratType: widget.contratType,
+                        position: i + 1,
+                        total: articlesAr.length,
+                      )),
+                ],
+              ],
             ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showForm(context, null),
-        icon: const Icon(Icons.add),
-        label: const Text('Nouvel article'),
+        icon: Icon(Icons.add),
+        label: Text(context.l10n.nouvelArticle),
       ),
     );
   }
@@ -131,11 +142,48 @@ class _ArticlesListState extends ConsumerState<_ArticlesList> {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+//  En-tête de section séparant les clauses FR des clauses AR
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _LangueSectionHeader extends StatelessWidget {
+  const _LangueSectionHeader({required this.langue, required this.count});
+  final ArticleLangue langue;
+  final int count;
+
+  @override
+  Widget build(BuildContext context) {
+    final isFr = langue == ArticleLangue.fr;
+    final color = isFr ? Colors.blue : Colors.green;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+      child: Row(
+        children: [
+          Icon(isFr ? Icons.translate : Icons.language, size: 16, color: color.shade700),
+          const SizedBox(width: 6),
+          Text(
+            '${langue.label} ($count)',
+            style: TextStyle(fontWeight: FontWeight.bold, color: color.shade700),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 
 class _ArticleCard extends ConsumerWidget {
-  const _ArticleCard({super.key, required this.article, required this.contratType});
+  const _ArticleCard({
+    super.key,
+    required this.article,
+    required this.contratType,
+    required this.position,
+    required this.total,
+  });
   final ContractArticle article;
   final String contratType;
+  final int position;
+  final int total;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -145,7 +193,13 @@ class _ArticleCard extends ConsumerWidget {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       child: ListTile(
-        leading: const Icon(Icons.drag_handle),
+        // 🔢 La position n'est plus modifiable ici : elle se règle dans le
+        // formulaire de modification de la clause (bouton crayon), là où
+        // l'utilisateur peut saisir directement le numéro d'ordre voulu.
+        leading: CircleAvatar(
+          radius: 16,
+          child: Text('$position', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+        ),
         title: Row(
           children: [
             Expanded(
@@ -154,7 +208,7 @@ class _ArticleCard extends ConsumerWidget {
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
-            const SizedBox(width: 8),
+            SizedBox(width: 8),
             // Badge langue
             _LangueBadge(langue: article.langue),
           ],
@@ -164,6 +218,7 @@ class _ArticleCard extends ConsumerWidget {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
+        onTap: () => _openForm(context),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -172,17 +227,11 @@ class _ArticleCard extends ConsumerWidget {
               onChanged: (v) => notifier.toggleActif(article.id, v),
             ),
             IconButton(
-              icon: const Icon(Icons.edit_outlined),
-              onPressed: () => showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                useSafeArea: true,
-                builder: (_) =>
-                    _ArticleForm(contratType: contratType, existing: article),
-              ),
+              icon: Icon(Icons.edit_outlined),
+              onPressed: () => _openForm(context),
             ),
             IconButton(
-              icon: const Icon(Icons.delete_outline, color: Colors.red),
+              icon: Icon(Icons.delete_outline, color: Colors.red),
               onPressed: () => _confirmDelete(context, notifier),
             ),
           ],
@@ -191,18 +240,30 @@ class _ArticleCard extends ConsumerWidget {
     );
   }
 
+  void _openForm(BuildContext context) => showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        useSafeArea: true,
+        builder: (_) => _ArticleForm(
+          contratType: contratType,
+          existing: article,
+          currentPosition: position,
+          currentTotal: total,
+        ),
+      );
+
   Future<void> _confirmDelete(BuildContext context, dynamic notifier) async {
     final ok = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('Supprimer ?'),
+        title: Text(context.l10n.supprimer),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Non')),
+              child: Text(context.l10n.non)),
           TextButton(
               onPressed: () => Navigator.pop(context, true),
-              child: const Text('Oui')),
+              child: Text(context.l10n.oui)),
         ],
       ),
     );
@@ -247,9 +308,19 @@ class _LangueBadge extends StatelessWidget {
 // ─────────────────────────────────────────────────────────────────────────────
 
 class _ArticleForm extends ConsumerStatefulWidget {
-  const _ArticleForm({required this.contratType, this.existing});
+  const _ArticleForm({
+    required this.contratType,
+    this.existing,
+    this.currentPosition,
+    this.currentTotal,
+  });
   final String contratType;
   final ContractArticle? existing;
+  /// Position actuelle (1-based) de la clause dans SA langue, et nombre total
+  /// de clauses de cette langue — utilisés pour pré-remplir et borner le
+  /// champ « Position ». Non fournis lors d'une création.
+  final int? currentPosition;
+  final int? currentTotal;
 
   @override
   ConsumerState<_ArticleForm> createState() => _ArticleFormState();
@@ -259,6 +330,7 @@ class _ArticleFormState extends ConsumerState<_ArticleForm> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _titreCtrl;
   late TextEditingController _corpsCtrl;
+  late TextEditingController _positionCtrl;
   late ArticleLangue _langue;
   bool _saving = false;
 
@@ -268,12 +340,28 @@ class _ArticleFormState extends ConsumerState<_ArticleForm> {
     _titreCtrl = TextEditingController(text: widget.existing?.titre ?? '');
     _corpsCtrl = TextEditingController(text: widget.existing?.corps ?? '');
     _langue = widget.existing?.langue ?? ArticleLangue.fr;
+
+    // Position par défaut : celle actuelle si on modifie une clause
+    // existante, sinon la dernière place de la langue sélectionnée
+    // (nouvelle clause ajoutée en fin de liste par défaut).
+    final defaultPosition = widget.currentPosition ?? _langueCount(_langue) + 1;
+    _positionCtrl = TextEditingController(text: '$defaultPosition');
+  }
+
+  /// Nombre de clauses déjà existantes pour une langue donnée (utilisé pour
+  /// borner et pré-remplir le champ Position).
+  int _langueCount(ArticleLangue langue) {
+    final all = ref.read(contractArticlesNotifierProvider(widget.contratType))
+            .valueOrNull ??
+        const [];
+    return all.where((a) => a.langue == langue).length;
   }
 
   @override
   void dispose() {
     _titreCtrl.dispose();
     _corpsCtrl.dispose();
+    _positionCtrl.dispose();
     super.dispose();
   }
 
@@ -282,33 +370,65 @@ class _ArticleFormState extends ConsumerState<_ArticleForm> {
     setState(() => _saving = true);
 
     try {
-      final notifier = ref.read(
-          contractArticlesNotifierProvider(widget.contratType).notifier);
+      final repo = ref.read(contractArticlesRepositoryProvider);
+      final isCreation = widget.existing == null;
 
-      if (widget.existing == null) {
-        await notifier.creer(ContractArticle(
+      String? savedId;
+
+      if (isCreation) {
+        // Créée provisoirement en fin de liste de sa langue ; la position
+        // exacte demandée est appliquée juste après via reordonner().
+        final sameLangueCount = _langueCount(_langue);
+        final created = await repo.creer(ContractArticle(
           id: '',
-          contratType: widget.contratType,
+          contratType: ContratArticleType.fromString(widget.contratType),
           titre: _titreCtrl.text.trim(),
           corps: _corpsCtrl.text.trim(),
-          ordre: 0,
+          ordre: sameLangueCount, // fin de liste, provisoire
           langue: _langue,
           createdAt: DateTime.now(),
           updatedAt: DateTime.now(),
         ));
+        savedId = created?.id;
       } else {
-        await notifier.modifier(widget.existing!.id, {
+        await repo.modifier(widget.existing!.id, {
           'titre': _titreCtrl.text.trim(),
           'corps': _corpsCtrl.text.trim(),
           'langue': _langue.value,
         });
+        savedId = widget.existing!.id;
       }
+
+      // ── Application du numéro d'ordre saisi ────────────────────────────
+      // On relit la liste fraîche depuis le serveur (plutôt que l'état du
+      // notifier, qui peut ne pas encore avoir fini de se rafraîchir à ce
+      // stade) pour être sûr de repositionner la clause par rapport à un
+      // classement à jour, notamment juste après une création.
+      final desiredPosition = int.tryParse(_positionCtrl.text.trim());
+      if (savedId != null && desiredPosition != null) {
+        final all = await repo.getTous(widget.contratType);
+        final langueList = all.where((a) => a.langue == _langue).toList();
+        final currentIndex = langueList.indexWhere((a) => a.id == savedId);
+
+        if (currentIndex != -1) {
+          final targetIndex =
+              (desiredPosition - 1).clamp(0, langueList.length - 1);
+          if (targetIndex != currentIndex) {
+            final item = langueList.removeAt(currentIndex);
+            langueList.insert(targetIndex, item);
+            await repo.reordonner(langueList);
+          }
+        }
+      }
+
+      ref.invalidate(contractArticlesNotifierProvider(widget.contratType));
+
       if (mounted) Navigator.pop(context);
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text('Erreur : $e'), backgroundColor: Colors.red),
+              content: Text(context.l10n.erreurAvecDetail(e.toString())), backgroundColor: Colors.red),
         );
       }
     } finally {
@@ -334,19 +454,17 @@ class _ArticleFormState extends ConsumerState<_ArticleForm> {
               widget.existing == null ? 'Nouvel article' : 'Modifier l\'article',
               style: Theme.of(context).textTheme.titleMedium,
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
 
             // ── Sélecteur de langue ──────────────────────────────────────
-            const Text(
-              'Langue du contrat',
-              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+            Text(context.l10n.langueDuContrat, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
             ),
-            const SizedBox(height: 6),
+            SizedBox(height: 6),
             _LangueSelector(
               value: _langue,
               onChanged: (l) => setState(() => _langue = l),
             ),
-            const SizedBox(height: 4),
+            SizedBox(height: 4),
             Text(
               _langue == ArticleLangue.fr
                   ? '→ Affiché dans la section française du PDF (gauche → droite)'
@@ -359,7 +477,30 @@ class _ArticleFormState extends ConsumerState<_ArticleForm> {
                 fontStyle: FontStyle.italic,
               ),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
+
+            // ── Position (numéro d'ordre) ──────────────────────────────────
+            Builder(builder: (context) {
+              final maxPos = widget.existing == null
+                  ? _langueCount(_langue) + 1
+                  : _langueCount(_langue);
+              return TextFormField(
+                controller: _positionCtrl,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: 'Position (ordre d\'affichage)',
+                  helperText:
+                      'Numéro de 1 à $maxPos parmi les clauses ${_langue.label.toLowerCase()}',
+                  prefixIcon: const Icon(Icons.format_list_numbered),
+                ),
+                validator: (v) {
+                  final n = int.tryParse((v ?? '').trim());
+                  if (n == null || n < 1) return 'Numéro invalide';
+                  return null;
+                },
+              );
+            }),
+            SizedBox(height: 16),
 
             // ── Titre ────────────────────────────────────────────────────
             TextFormField(
@@ -367,14 +508,14 @@ class _ArticleFormState extends ConsumerState<_ArticleForm> {
               textDirection: _langue == ArticleLangue.ar
                   ? TextDirection.rtl
                   : TextDirection.ltr,
-              decoration: const InputDecoration(
-                labelText: 'Titre',
-                helperText: 'Ex : Article 1 — Responsabilités',
+              decoration: InputDecoration(
+                labelText: context.l10n.champTitre,
+                helperText: context.l10n.exArticle1Responsabilites,
               ),
               validator: (v) =>
                   (v == null || v.trim().isEmpty) ? 'Titre requis' : null,
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
 
             // ── Corps ────────────────────────────────────────────────────
             TextFormField(
@@ -383,16 +524,16 @@ class _ArticleFormState extends ConsumerState<_ArticleForm> {
               textDirection: _langue == ArticleLangue.ar
                   ? TextDirection.rtl
                   : TextDirection.ltr,
-              decoration: const InputDecoration(
-                labelText: 'Corps',
+              decoration: InputDecoration(
+                labelText: context.l10n.champCorps,
                 helperText:
-                    'Utilisez {{variable}} pour les champs dynamiques',
+                    context.l10n.utilisezVariablePourLesChampsDynamiques('{{variable}}'),
                 alignLabelWithHint: true,
               ),
               validator: (v) =>
                   (v == null || v.trim().isEmpty) ? 'Corps requis' : null,
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 24),
 
             // ── Bouton ───────────────────────────────────────────────────
             SizedBox(
@@ -400,15 +541,15 @@ class _ArticleFormState extends ConsumerState<_ArticleForm> {
               child: FilledButton(
                 onPressed: _saving ? null : _save,
                 child: _saving
-                    ? const SizedBox(
+                    ? SizedBox(
                         height: 20,
                         width: 20,
                         child: CircularProgressIndicator(
                             color: Colors.white, strokeWidth: 2))
-                    : const Text('Enregistrer'),
+                    : Text(context.l10n.enregistrer),
               ),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
           ],
         ),
       ),
@@ -457,7 +598,7 @@ class _LangueSelector extends StatelessWidget {
                     size: 18,
                     color: selected ? color.shade700 : Colors.grey,
                   ),
-                  const SizedBox(width: 6),
+                  SizedBox(width: 6),
                   Text(
                     lang.label,
                     style: TextStyle(
@@ -485,5 +626,5 @@ class _EmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) =>
-      const Center(child: Text('Aucun article trouvé.'));
+      Center(child: Text(context.l10n.aucunArticleTrouve));
 }

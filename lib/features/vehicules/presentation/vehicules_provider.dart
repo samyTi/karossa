@@ -1,21 +1,37 @@
 // lib/features/vehicules/presentation/vehicules_provider.dart
-//
-// CHANGEMENT : le repository reçoit le client via supabaseClientProvider.
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/providers/supabase_provider.dart';
+import '../../auth/presentation/auth_provider.dart'; // 🚀 Importation nécessaire pour écouter la session
 import '../data/vehicules_repository.dart';
 import '../domain/vehicule_model.dart';
 
 // ── Repository ────────────────────────────────────────────────────────────────
 
 final vehiculesRepositoryProvider = Provider<VehiculesRepository>((ref) {
-  return VehiculesRepository(ref.watch(supabaseClientProvider));
+  final client = ref.watch(supabaseClientProvider);
+  // 🚀 On récupère de façon réactive le showroom de l'utilisateur connecté
+  final showroomId = ref.watch(currentShowroomIdProvider);
+  
+  if (showroomId == null) {
+    // Si la session n'est pas encore chargée, on passe une chaîne vide ou on lève une erreur.
+    // L'infrastructure RLS bloquera de toute façon l'accès par sécurité.
+    return VehiculesRepository(client, showroomId: '');
+  }
+  
+  return VehiculesRepository(client, showroomId: showroomId);
 });
 
 // ── Providers de liste ────────────────────────────────────────────────────────
 
 final vehiculesProvider = FutureProvider.autoDispose<List<Vehicule>>((ref) {
+  final showroomId = ref.watch(currentShowroomIdProvider);
+  // Si le profil utilisateur (et donc son showroom) est toujours en cours de chargement,
+  // on évite de requêter inutilement en retournant une liste vide.
+  if (showroomId == null || showroomId.isEmpty) {
+    return <Vehicule>[];
+  }
+  
   return ref.watch(vehiculesRepositoryProvider).getAll();
 });
 

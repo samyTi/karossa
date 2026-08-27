@@ -14,6 +14,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_colors.dart';
 
 import '../../../core/extensions/money_extensions.dart';
+import 'package:garage_auto/core/extensions/l10n_extension.dart';
 
 
 
@@ -140,9 +141,7 @@ class VehiculeQuickFinancial extends ConsumerWidget {
 
               children: [
 
-                const Text('Bilan financier',
-
-                  style: TextStyle(
+                Text(context.l10n.bilanFinancier, style: TextStyle(
 
                     fontWeight: FontWeight.bold, fontSize: 14)),
 
@@ -154,7 +153,7 @@ class VehiculeQuickFinancial extends ConsumerWidget {
 
                   icon: const Icon(Icons.open_in_new, size: 14),
 
-                  label: const Text('Détail', style: TextStyle(fontSize: 12)),
+                  label: Text(context.l10n.detail, style: TextStyle(fontSize: 12)),
 
                   style: TextButton.styleFrom(
 
@@ -198,7 +197,7 @@ class VehiculeQuickFinancial extends ConsumerWidget {
 
             const SizedBox(height: 6),
 
-            Text("${fin['nb_locations']!.toInt()} location(s) effectuée(s)",
+            Text(context.l10n.locationsEffectuees(fin['nb_locations']!.toInt().toString()),
 
               style: const TextStyle(
 

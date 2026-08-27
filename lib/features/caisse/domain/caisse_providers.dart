@@ -1,13 +1,25 @@
+// lib/features/caisse/domain/caisse_providers.dart
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/providers/supabase_provider.dart';
 import '../../auth/presentation/auth_provider.dart';
-import '../data/caisse_operation.dart';
+import 'caisse_operation.dart';
 import '../data/caisse_repository.dart';
+import '../../../core/utils/app_logger.dart';
+
 
 // ─── Repository ──────────────────────────────────────────────────────────────
 
 final caisseRepositoryProvider = Provider<CaisseRepository>((ref) {
-  return CaisseRepository(ref.read(supabaseClientProvider));
+  final showroomId = ref.watch(currentShowroomIdProvider);
+  
+  if (showroomId == null) {
+    throw Exception("CaisseRepository: Aucun showroomId trouvé.");
+  }
+
+  return CaisseRepository(
+    ref.read(supabaseClientProvider),
+    showroomId: showroomId,
+  );
 });
 
 // ─── Filtre (state notifier) ─────────────────────────────────────────────────
@@ -112,6 +124,7 @@ class CaisseActions {
   }
 
   Future<void> update(String id, CaisseOperation op) async {
+    AppLogger.d('update location repo');
     await _repo.update(id, op);
     _ref.invalidate(caisseOperationsProvider);
     _ref.invalidate(caisseOperationDetailProvider(id));

@@ -1,0 +1,1354 @@
+{
+  "@@locale": "fr",
+  "@@last_modified": "2025-01-01",
+  "@_navigation": "Navigation & Menus",
+  "navAccueil": "Accueil",
+  "navClients": "Clients",
+  "navLocations": "Locations",
+  "navPlus": "Plus",
+  "navVehicules": "Véhicules",
+  "tabActifs": "Actifs",
+  "tabEnCours": "En cours",
+  "tabHistorique": "Historique",
+  "tabStatistiques": "Statistiques",
+  "tabTermines": "Terminés",
+  "titreAchats": "Achats",
+  "titreCaisse": "Caisse",
+  "titreClients": "Clients",
+  "titreContrats": "Contrats",
+  "titreDashboard": "Tableau de bord",
+  "titreEchanges": "Échanges",
+  "titreEntretien": "Entretien & Alertes",
+  "titreFinance": "Finance Propriétaires",
+  "titreGps": "GPS & Tracking",
+  "titreLocations": "Locations",
+  "titreNotifications": "Notifications",
+  "titreParametres": "Paramètres",
+  "titreReparations": "Réparations",
+  "titreUtilisateurs": "Utilisateurs",
+  "titreVehicules": "Véhicules",
+  "titreVentes": "Ventes",
+  "@_statuts": "Statuts",
+  "aRisque": "A risque",
+  "accesAuxPerformances": "Accès aux performances et suivi des véhicules associés",
+  "alerteControleTechnique": "Contrôle technique",
+  "analyseDesRendementsEtStatutsDe": "Analyse des rendements et statuts de contrats",
+  "annule": "Annulé",
+  "annulee": "Annulée",
+  "annulees": "Annulées",
+  "associe": "Associé",
+  "aucunAchatEnCours": "Aucun achat en cours",
+  "aucunVehiculeAssocieACetteReservation": "Aucun véhicule associé à cette réservation.",
+  "aucunVehiculeAssocieLaLocationNe": "⚠️ Aucun véhicule associé — la location ne peut pas être créée.",
+  "boiteAutomatique": "Automatique",
+  "boiteManuelle": "Manuelle",
+  "btnAnnuler": "Annuler",
+  "carburantDiesel": "Diesel",
+  "carburantElectrique": "Électrique",
+  "carburantEssence": "Essence",
+  "carburantHybride": "Hybride",
+  "carburantPropreteDegradationsConstatees": "Carburant, propreté, dégradations constatées…",
+  "champStatut": "Statut",
+  "changerLeStatut": "Changer le statut",
+  "cheque": "Chèque",
+  "clientBlacklist": "Liste noire",
+  "clientFiable": "Client fiable",
+  "clientRisque": "Risqué",
+  "commissionGerant": "Commission gérant",
+  "commissionsDuGerant": "Commissions du gérant",
+  "comptesGerantsAssociesEtProprietaires": "Comptes gérants, associés et propriétaires",
+  "disponibles": "Disponibles",
+  "enCours": "En cours",
+  "enRetard": "En retard",
+  "especes": "Espèces",
+  "gerant": "Gérant",
+  "gestionCompleteDuShowroom": "Gestion complète du showroom au quotidien",
+  "indisponibleALaLocationPendantLes": "Indisponible a la location pendant les travaux",
+  "interruptionControleTechnique": "Contrôle technique",
+  "leGerant": "Le Gérant",
+  "locationAnnule": "Annulé",
+  "locationEnCours": "En cours",
+  "locationRetard": "En retard",
+  "locationTermine": "Terminé",
+  "locationsEnCours": "Locations en cours",
+  "marquerDisponible": "Marquer disponible",
+  "modeCheque": "Chèque",
+  "modeEspeces": "Espèces",
+  "modeVirement": "Virement",
+  "paiementComplet": "Paiement complet",
+  "paiementPartiel": "Paiement partiel",
+  "partProprietaireS": "Part propriétaire(s)",
+  "proprietaire": "Propriétaire",
+  "proprietaireDuShowroom": "Propriétaire du showroom et de la flotte de véhicules",
+  "repElectrique": "Électrique",
+  "retardDeRetour": "Retard de retour",
+  "roleAssocie": "Associé",
+  "roleGerant": "Gérant",
+  "roleProprietaire": "Propriétaire",
+  "statutClient": "Statut client",
+  "statutDeLaFlotteAuto": "Statut de la Flotte Auto",
+  "statutDeLaLocation": "Statut de la location",
+  "statutDisponible": "Disponible",
+  "statutFinal": "Statut final",
+  "statutLoue": "Loué",
+  "statutReparation": "En réparation",
+  "statutReserve": "Réservé",
+  "statutVendu": "Vendu",
+  "termine": "Terminé",
+  "terminee": "Terminée",
+  "terminees": "Terminées",
+  "vehiculeVendu": "Véhicule vendu",
+  "votreRole": "Votre rôle",
+  "@_vehicules": "Véhicules",
+  "achatsDeVehicules": "Achats de véhicules",
+  "annee": "Année",
+  "anneeInvalide": "Année invalide",
+  "anneeMax": "Année max",
+  "anneeMin": "Année min",
+  "aucunContratTrouvePourCeVehicule": "Aucun contrat trouvé pour ce véhicule",
+  "aucunHistoriquePourCeVehicule": "Aucun historique pour ce véhicule",
+  "carrosserieVehiculeCede": "Carrosserie — Véhicule cédé",
+  "carrosserieVehiculeRepris": "Carrosserie — Véhicule repris",
+  "champKilometrage": "Kilométrage",
+  "champPrixAchat": "Prix d'achat",
+  "champPrixVente": "Prix de vente",
+  "checkInVehicule": "Check-in Véhicule",
+  "choisirUnVehicule": "Choisir un véhicule",
+  "contratsDuVehicule": "Contrats du véhicule",
+  "detailParCategorie": "Détail par catégorie",
+  "deviceIdFlespiManquantPourCe": "Device ID Flespi manquant pour ce véhicule.",
+  "etatDuVehicule": "État du véhicule",
+  "etatDuVehiculeAuRetourOptionnel": "État du véhicule au retour (optionnel)",
+  "etatDuVehiculeDommagesAvantLocation": "ÉTAT DU VÉHICULE — DOMMAGES AVANT LOCATION",
+  "historiqueDuVehicule": "Historique du véhicule",
+  "immatriculation": "Immatriculation",
+  "kilometrage": "Kilométrage",
+  "kilometrageEcheanceOptionnel": "Kilometrage echeance (optionnel)",
+  "laDureeSeraCalculeeAuRetour": "La durée sera calculée au retour du véhicule",
+  "laDureeSeraCalculeeLorsDu": "La durée sera calculée lors du retour du véhicule",
+  "leMontantTotalSeraCalculeAu": "Le montant total sera calculé au moment du retour du véhicule.",
+  "marque": "Marque *",
+  "marquerCommeSoldee": "Marquer comme soldée",
+  "marquerGpsCommeLues": "Marquer GPS comme lues",
+  "marquezLesDommagesConstatesAuRetour": "Marquez les dommages constatés au retour",
+  "modele": "Modèle",
+  "modeleGemini": "Modèle Gemini",
+  "nChassis": "N° Chassis",
+  "notesEtatDuVehiculeAuDepart": "Notes état du véhicule au départ",
+  "notesEtatDuVehiculeAuRetour": "Notes état du véhicule au retour",
+  "nouveauVehicule": "Nouveau véhicule",
+  "parcAutomobilesVehicules": "Parc Automobiles (Véhicules)",
+  "passerLeVehiculeEnReparation": "Passer le vehicule en Reparation",
+  "prixCatalogue": "Prix catalogue",
+  "prixLocationJour": "Prix location / jour",
+  "rechercherClientTelephoneVehicule": "Rechercher (client, téléphone, véhicule…)",
+  "rechercherUnVehiculeMarqueModeleImmatriculation": "Rechercher un véhicule (marque, modèle, immatriculation...)",
+  "rechercherVehiculeOuClient": "Rechercher véhicule ou client…",
+  "recupererLeVehicule": "Récupérer le véhicule",
+  "remarquesObservations": "Remarques / observations",
+  "repartitionDuParc": "Répartition du parc",
+  "retourVehicule": "Retour véhicule",
+  "selectionnerLeCatalogueDeVehicules": "Sélectionner le catalogue de véhicules",
+  "selectionnerLeVehicule": "Sélectionner le véhicule",
+  "selectionnezLeTypeCorrespondantAuDommage": "Sélectionnez le type correspondant au dommage marqué",
+  "seraDeduitDesRevenusDuVehicule": "Sera deduit des revenus du vehicule",
+  "toucherPourMarquer": "Toucher pour marquer",
+  "trajetParcouru": "Trajet parcouru",
+  "vehicule": "Véhicule",
+  "vehiculeAjouteAuStock": "✅ Véhicule ajouté au stock !",
+  "vehiculeCedeDuMagasin": "Véhicule cédé (du magasin)",
+  "vehiculeCible": "Véhicule ciblé",
+  "vehiculeExistant": "Véhicule existant",
+  "vehiculeId": "Véhicule ID",
+  "vehiculePropose": "Véhicule proposé",
+  "vehiculeReprisDuClient": "Véhicule repris (du client)",
+  "vehicules": "Véhicules",
+  "@_locations": "Locations",
+  "aucuneInterruptionEnregistree": "Aucune interruption enregistrée",
+  "aucuneLocationActive": "Aucune location active",
+  "aucuneLocationTrouvee": "Aucune location trouvée.",
+  "aucuneRepartitionEnregistreePourCetteLocation": "Aucune répartition enregistrée pour cette location.",
+  "cetteActionVaCreerUneLocation": "Cette action va créer une location depuis cette réservation web.",
+  "champCaution": "Caution",
+  "champPrixJour": "Prix / jour",
+  "conditionsGeneralesDeLocation": "CONDITIONS GENERALES DE LOCATION",
+  "configurerLesMentionsLegalesLocationVente": "Configurer les mentions légales (location, vente, échange)",
+  "contratDeLocation": "CONTRAT DE LOCATION",
+  "convertirEnLocation": "Convertir en Location",
+  "creerLaLocation": "Créer la location",
+  "detailsDeLaLocation": "Détails de la location",
+  "enLocation": "En Location",
+  "erreurCreationLocationHistoriqueReponseInattendue": "Erreur création location historique : réponse inattendue",
+  "erreurCreationLocationReponseInattendue": "Erreur création location : réponse inattendue",
+  "gererLesInterruptions": "Gérer les interruptions",
+  "interruptionAssurance": "Assurance",
+  "interruptionAutre": "Autre",
+  "interruptionReparation": "Réparation",
+  "interruptionVidange": "Vidange",
+  "interruptions": "Interruptions",
+  "interruptionsDeContrat": "Interruptions de contrat",
+  "journalDeBord": "Journal de bord",
+  "journalDesReparations": "Journal des réparations",
+  "joursFacturables": "Jours facturables",
+  "kmDepart": "Km départ",
+  "kmRetour": "Km retour",
+  "laLocationSeDerouleSansInterruption": "La location se déroule sans interruption.",
+  "locationCreeeAvecSucces": "✅ Location créée avec succès !",
+  "locationIntrouvable": "Location introuvable",
+  "locationSigneeBmwSerie3": "Location signée - BMW Série 3",
+  "modifierLaLocation": "Modifier la location",
+  "moyenneLocation": "Moyenne / location",
+  "nouvelleLocation": "Nouvelle location",
+  "prixJour": "Prix / jour",
+  "recapitulatifInterne": "RÉCAPITULATIF INTERNE",
+  "retenueCaution": "Retenue caution",
+  "revenusLocatifs": "Revenus locatifs",
+  "revenusLocations": "Revenus locations",
+  "selectionnerLes50DernieresLocations": "Sélectionner les 50 dernières locations",
+  "selectionnezLeMemeClientPourDupliquer": "Sélectionnez le même client pour dupliquer la location",
+  "supprimerLaLocation": "Supprimer la location",
+  "totalLocations": "Total locations",
+  "uniteJour": "jour",
+  "uniteJours": "jours",
+  "urgentMoinsDe7Jours": "URGENT - moins de 7 jours",
+  "@_clients": "Clients",
+  "adresseOptionnel": "Adresse (optionnel)",
+  "aucunClientEnregistre": "Aucun client enregistré",
+  "champAdresse": "Adresse",
+  "champEmail": "Email",
+  "champTelephone": "Téléphone",
+  "clientEnregistre": "Client enregistre",
+  "clientIntrouvable": "Client introuvable",
+  "clientNormal": "Normal",
+  "clientsrepositoryAucunShowroomSelectionne": "ClientsRepository: Aucun showroom sélectionné.",
+  "complementClient": "Complément client",
+  "dateDeRestitutionAuClient": "Date de restitution au client",
+  "documentInterneConfidentielNePasRemettre": "DOCUMENT INTERNE — CONFIDENTIEL — Ne pas remettre au client",
+  "emailOptionnel": "Email (optionnel)",
+  "gestionDesClients": "Gestion des Clients",
+  "leClient": "Le Client",
+  "nCni": "N° CNI",
+  "nPermis": "N° Permis",
+  "noteInterne": "Note interne",
+  "nouveauClient": "Nouveau client",
+  "portefeuilleClients": "Portefeuille Clients",
+  "rechercherUnClient": "Rechercher un client...",
+  "restituerAuClient": "Restituer au client",
+  "selectionnerLeClient": "Sélectionner le client",
+  "telephone": "Téléphone",
+  "telephoneCopie": "Téléphone copié",
+  "vosPermissionsAcces": "Vos permissions accès",
+  "@_ventes": "Ventes",
+  "achatsVentes": "Achats / Ventes",
+  "aucuneVenteEnregistree": "Aucune vente enregistrée",
+  "aucuneVenteTrouvee": "Aucune vente trouvée.",
+  "contratDeVente": "CONTRAT DE VENTE",
+  "erreurLorsDeLaCreationDe": "Erreur lors de la création de la vente",
+  "nouveauBonDeVente": "Nouveau bon de vente",
+  "nouvelleVente": "Nouvelle vente",
+  "prixDeVente": "Prix de vente *",
+  "venteIntrouvable": "Vente introuvable",
+  "@_echanges": "Échanges",
+  "achatsReprises": "Achats & Reprises",
+  "aucunEchangeEnregistre": "Aucun échange enregistré",
+  "aucunEchangeTrouve": "Aucun échange trouvé.",
+  "changerLeType": "Changer le type :",
+  "dossierEchangeReprise": "Dossier échange / reprise",
+  "echangeReprise": "Échange / Reprise",
+  "echangesReprises": "Échanges / Reprises",
+  "echangesrepositoryAucunShowroomSelectionne": "EchangesRepository: Aucun showroom sélectionné.",
+  "nouvelAchatReprise": "Nouvel achat / reprise",
+  "nouvelEchange": "Nouvel échange",
+  "observationsComplementaires": "Observations complémentaires",
+  "propositionDeReprise": "Proposition de reprise",
+  "reservationsAchatsEtEchangesDuSite": "Réservations, achats et échanges du site",
+  "valeurReprise": "Valeur reprise",
+  "@_achats": "Achats",
+  "achatIntrouvable": "Achat introuvable",
+  "aucunAchat": "Aucun achat",
+  "aucunAchatEnregistre": "Aucun achat enregistré",
+  "aucunAchatValide": "Aucun achat validé",
+  "dateAchat": "Date achat",
+  "detailAchat": "Détail achat",
+  "informationsVendeur": "Informations vendeur",
+  "negociation": "Négociation",
+  "nomDuVendeur": "Nom du vendeur *",
+  "nouvelAchat": "Nouvel achat",
+  "prixAccorde": "Prix accordé *",
+  "totalAchats": "Total achats",
+  "@_caisse": "Caisse & Finance",
+  "aucuneOperationEnregistree": "Aucune opération enregistrée",
+  "caisserepositoryAucunShowroomidTrouve": "CaisseRepository: Aucun showroomId trouvé.",
+  "dateDuVersement": "Date du versement",
+  "encaisse": "Encaissé",
+  "entree": "Entrée (+)",
+  "entrees": "Entrées",
+  "garageAutoReleveMensuel": "Garage Auto - Releve mensuel",
+  "gestionDeCaisse": "Gestion de Caisse",
+  "gestionDeLaCaisse": "Gestion de la Caisse",
+  "msgSucces": "Opération réussie",
+  "nouveauVersement": "Nouveau versement",
+  "nouvelleOperation": "Nouvelle opération",
+  "rapportsReleves": "Rapports & Relevés",
+  "soldeEstime": "Solde estimé",
+  "sortie": "Sortie (-)",
+  "supprimerCeVersement": "Supprimer ce versement ?",
+  "totalEncaisse": "Total encaissé",
+  "caisseOperationSubtitle": "Entrée ou sortie de la caisse du showroom",
+  "transfertEntreUtilisateurs": "Transfert entre utilisateurs",
+  "transfertSubtitle": "Un utilisateur donne de l'argent à un autre",
+  "payePar": "Payé par",
+  "showroomCaisse": "Showroom (caisse)",
+  "aRembourser": "(à rembourser)",
+  "quiDonne": "Qui donne",
+  "quiRecoit": "Qui reçoit",
+  "remboursable": "Remboursable",
+  "transfertRemboursableSubtitle": "Le bénéficiaire devra rendre cet argent",
+  "transfertDonSubtitle": "Don définitif, aucun remboursement prévu",
+  "@_reparations": "Réparations & Entretien",
+  "alerteAssurance": "Assurance",
+  "alerteCreee": "Alerte creee",
+  "alertePneus": "Pneus",
+  "alerteVidange": "Vidange",
+  "alerteVignette": "Vignette",
+  "alertesGps": "Alertes GPS",
+  "aucuneAlerteD": "Aucune alerte d",
+  "aucuneAlerteGpsToutesLesAlertes": "Aucune alerte GPS — toutes les alertes apparaîtront ici",
+  "aucuneReparationEnregistree": "Aucune réparation enregistrée",
+  "carrosserieDepart": "Carrosserie départ",
+  "carrosserieRetour": "Carrosserie retour",
+  "depensesReparations": "Dépenses réparations",
+  "entretienPeriodique": "Entretien periodique",
+  "entretienRevisions": "Entretien & Révisions",
+  "etatCarrosserie": "État carrosserie",
+  "etatCarrosserieAuDepart": "État carrosserie au départ",
+  "etatCarrosserieAuRetour": "État carrosserie au retour",
+  "etatCarrosserieDepart": "État carrosserie — Départ",
+  "etatCarrosserieRetour": "État carrosserie — Retour",
+  "etatDeLaCarrosserie": "ÉTAT DE LA CARROSSERIE",
+  "exPneuAvantUseJanteRayee": "Ex: pneu avant usé, jante rayée…",
+  "exPneuUseJanteRayee": "Ex: pneu usé, jante rayée…",
+  "notificationsAlertes": "Notifications & Alertes",
+  "nouvelleAlerte": "Nouvelle alerte",
+  "nouvelleReparation": "Nouvelle reparation",
+  "prestataire": "Prestataire",
+  "repCarrosserie": "Carrosserie",
+  "repMecanique": "Mécanique",
+  "repPneus": "Pneus",
+  "reparationEnregistree": "Reparation enregistree",
+  "reparations": "Réparations",
+  "reparationsrepositoryAucunShowroomSelectionne": "ReparationsRepository: Aucun showroom sélectionné.",
+  "totalDepensesReparations": "Total dépenses réparations",
+  "modifierReparation": "Modifier la réparation",
+  "requis": "Requis",
+  "reste": "Reste",
+  "depasse": "Dépasse de",
+  "enregistrementEnCours": "Enregistrement...",
+  "enregistrerModifications": "Enregistrer les modifications",
+  "enregistrerReparation": "Enregistrer la réparation",
+  "payeePar": "Payée par",
+  "payeur": "Payeur",
+  "doitSupporterMontant": "Doit réellement supporter ce montant",
+  "helperDebiteur": "Si différent des copropriétaires, ce montant sera déduit de cette personne et remboursé au payeur.",
+  "coProprietairesParDefaut": "Copropriétaires du véhicule (par défaut)",
+  "ajouterPayeur": "Ajouter un payeur",
+  "choisirProprietairePaiement": "Choisissez le propriétaire pour chaque ligne de paiement.",
+  "erreurSommePaiements": "La somme des paiements ({somme} DA) doit être égale au coût total ({cout} DA).",
+  "@erreurSommePaiements": {
+    "placeholders": {
+      "somme": {
+        "type": "String"
+      },
+      "cout": {
+        "type": "String"
+      }
+    }
+  },
+  "reparationModifiee": "Réparation modifiée",
+  "@_contrats": "Contrats & PDF",
+  "apercuDuContrat": "Aperçu du contrat",
+  "apercuDuPdf": "Aperçu du PDF",
+  "articlesDesContrats": "Articles des contrats",
+  "aucunArticleTrouve": "Aucun article trouvé.",
+  "btnGenererPdf": "Générer PDF",
+  "btnNouveauContrat": "Nouveau contrat",
+  "clausesArticlesDesContrats": "Clauses & Articles des contrats",
+  "contratOuvertSansDateDeFin": "Contrat ouvert (sans date de fin prévue)",
+  "contratsPdf": "Contrats PDF",
+  "dateDeSignature": "Date de signature",
+  "documentCertifieKarossa": "Document certifié - Karossa",
+  "documentGenereParKarossa": "Document généré par Karossa",
+  "erreurLorsDuChargementDesContrats": "Erreur lors du chargement des contrats",
+  "exArticle1Responsabilites": "Ex : Article 1 — Responsabilités",
+  "exporterPdf": "Exporter PDF",
+  "garageAutoDocumentOfficiel": "Garage Auto - Document officiel",
+  "genererContrat": "Générer contrat",
+  "genererEtPartagerLeContratPdf": "Générer et partager le contrat PDF",
+  "genererLeContratPdf": "Générer le contrat PDF",
+  "gestionDesClausesArticles": "Gestion des clauses (Articles)",
+  "gestionDesDocuments": "Gestion des Documents",
+  "informationsInternesNonAfficheesDansLe": "Informations internes non affichées dans le contrat",
+  "langueDuContrat": "Langue du contrat",
+  "nouveauContrat": "Nouveau contrat",
+  "nouvelArticle": "Nouvel article",
+  "numeroDeContrat": "Numéro de contrat",
+  "optionsDuContrat": "Options du contrat",
+  "partagerLePdf": "Partager le PDF",
+  "telechargerLePdf": "Télécharger le PDF",
+  "@_gps": "GPS & Tracking",
+  "afficherLeTrajet": "Afficher le trajet",
+  "analyseDeLaCarteGrise": "Analyse de la carte grise...",
+  "appuyezSurRafraichirPourChargerLa": "Appuyez sur rafraîchir pour charger la position.",
+  "carteFlotte": "Carte flotte",
+  "carteGpsFlotte": "Carte GPS — Flotte",
+  "chargementDuTrajet": "Chargement du trajet…",
+  "choisirUnePhotoDeLaCarte": "Choisir une photo de la carte grise",
+  "clesApiGeminiFlespiEtCoordonnees": "Clés API Gemini, Flespi et coordonnées",
+  "dernierePosition": "Dernière position",
+  "flespiDeviceIdGps": "Flespi Device ID (GPS)",
+  "gpsFlotte": "GPS — Flotte",
+  "gpsPasserelleFlespi": "GPS & Passerelle Flespi",
+  "motDePasseFlespi": "Mot de passe Flespi",
+  "positionGps": "Position GPS",
+  "prendreEnPhotoLaCarteGrise": "Prendre en photo la carte grise",
+  "scannerCarteGrise": "Scanner carte grise",
+  "suiviGpsBalises": "Suivi GPS & Balises",
+  "tokenFlespi": "Token Flespi",
+  "urlFlespi": "URL Flespi",
+  "utilisateurFlespi": "Utilisateur Flespi",
+  "supprimerDefinitivement": "Supprimer définitivement ?",
+  "confirmerDecimation": "Confirmer la décimation ?",
+  "tousPointsGpsEntre": "Tous les points GPS entre le",
+  "etLe": "et le",
+  "serontSupprimesDefinitivement": "seront supprimés définitivement",
+  "pourTouteLaFlotte": "pour TOUTE la flotte",
+  "actionIrreversible": "Cette action est irréversible.",
+  "surCetIntervalle": "Sur cet intervalle, un seul point sera conservé toutes les",
+  "autresPointsSupprimes": "Les autres points seront supprimés définitivement.",
+  "decimer": "Décimer",
+  "enregistrementsSupprimes": "{count} enregistrement(s) supprimé(s).",
+  "@enregistrementsSupprimes": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "nettoyageHistoriqueGps": "Nettoyage historique GPS",
+  "touteLaFlotte": "Toute la flotte",
+  "intervalleDates": "Intervalle de dates",
+  "action": "Action",
+  "decimerGarder1Point": "Décimer (garder 1 point tous les X)",
+  "decimerRecommandation": "Recommandé — conserve la tendance des trajets",
+  "supprimerToutIntervalle": "Supprimer tout sur l'intervalle",
+  "effaceCompletementPeriode": "Efface complètement la période choisie",
+  "lancerDecimation": "Lancer la décimation",
+  "gpsAccessDenied": "Cette action est réservée au gérant ou au propriétaire du showroom.",
+  "gpsCleanupInfo": "La table gps_positions peut grossir très vite (1 point / quelques secondes par véhicule). Utilise cette page pour libérer de l'espace sans perdre la tendance générale des trajets (décimation), ou pour supprimer une plage précise.",
+  "@_admin": "Administration",
+  "administrateurPrincipal": "Administrateur principal - Gère les configurations globales",
+  "administrationShowroom": "Administration Showroom",
+  "ajouterUnUtilisateur": "Ajouter un utilisateur...",
+  "aucunUtilisateurTrouve": "Aucun utilisateur trouvé",
+  "bienvenueDansVotreGestionnaireDeShowroom": "Bienvenue dans votre gestionnaire de showroom",
+  "cleApiGemini": "Clé API Gemini",
+  "configurationDuShowroom": "Configuration du Showroom",
+  "editionUtilisateur": "Édition utilisateur...",
+  "geminiReponseVideCandidatesAbsent": "Gemini: réponse vide (candidates absent)",
+  "gererLesUtilisateurs": "Gérer les utilisateurs",
+  "gestionDesUtilisateurs": "Gestion des Utilisateurs",
+  "impossibleDeSauvegarderAucunShowroomActif": "Impossible de sauvegarder : aucun showroom actif détecté.",
+  "karossaShowroom": "Karossa Showroom",
+  "modeSombre": "Mode sombre",
+  "nomDuShowroom": "Nom du showroom",
+  "parametresDuShowroom": "Paramètres du showroom",
+  "parametresSauvegardes": "Paramètres sauvegardés",
+  "parametresSysteme": "Paramètres système",
+  "showroomRattache": "Showroom rattaché",
+  "typeDeCommission": "Type de commission",
+  "@_actions": "Actions communes",
+  "ajouterAuStock": "Ajouter au Stock",
+  "ajouterPaiement": "Ajouter paiement",
+  "ajouterUnPaiement": "Ajouter un paiement",
+  "btnAjouter": "Ajouter",
+  "btnConfirmer": "Confirmer",
+  "btnCreer": "Créer",
+  "btnEditer": "Éditer",
+  "btnEnregistrer": "Enregistrer",
+  "btnExporter": "Exporter",
+  "btnFermer": "Fermer",
+  "btnModifier": "Modifier",
+  "btnNouveau": "Nouveau",
+  "btnPartager": "Partager",
+  "btnRechercher": "Rechercher",
+  "btnReinitialiser": "Réinitialiser",
+  "btnRetour": "Retour",
+  "btnSauvegarder": "Sauvegarder",
+  "btnSupprimer": "Supprimer",
+  "btnTelecharger": "Télécharger",
+  "btnValider": "Valider",
+  "btnVoir": "Voir",
+  "cetteActionEstIrreversibleConfirmer": "Cette action est irréversible. Confirmer ?",
+  "confirmerL": "Confirmer l",
+  "confirmerLeRejetDeCetteDemande": "Confirmer le rejet de cette demande ?",
+  "dateRetourReelle": "Date retour réelle",
+  "dateRetourReelleOptionnel": "Date retour réelle (optionnel)",
+  "detailsDuRetour": "Détails du retour",
+  "enregistrer": "Enregistrer",
+  "enregistrerLeRetour": "Enregistrer le retour",
+  "essayezDeModifierLesFiltres": "Essayez de modifier les filtres",
+  "exporterCsv": "Exporter CSV",
+  "informationsDeRetour": "Informations de retour",
+  "kmAuRetour": "Km au retour",
+  "observationsAuRetour": "Observations au retour",
+  "reinitialiser": "Réinitialiser",
+  "resteAPercevoir": "Reste à percevoir",
+  "retourConformeDeLaGolf8": "Retour conforme de la Golf 8",
+  "retourEnregistreAvecSucces": "Retour enregistré avec succès.",
+  "retourPrevu": "Retour prévu",
+  "retourReel": "Retour réel",
+  "sauvegarder": "Sauvegarder",
+  "supprimer": "Supprimer ?",
+  "supprimerCeDommage": "Supprimer ce dommage",
+  "supprimerCePaiement": "Supprimer ce paiement",
+  "supprimerLaDemande": "Supprimer la demande",
+  "voirLaFacture": "Voir la facture",
+  "voirTout": "Voir tout",
+  "voulezVousVraimentFermerVotreSession": "Voulez-vous vraiment fermer votre session Karossa ?",
+  "@_champs": "Champs & Labels",
+  "champDate": "Date",
+  "champDescription": "Description",
+  "champMontant": "Montant",
+  "champNom": "Nom",
+  "champNotes": "Notes",
+  "champPrenom": "Prénom",
+  "msgChampsObligatoires": "Veuillez remplir tous les champs obligatoires",
+  "uniteDa": "DA",
+  "uniteDzd": "DZD",
+  "uniteKm": "km",
+  "utilisezVariablePourLesChampsDynamiques": "Utilisez {variable} pour les champs dynamiques",
+  "@_messages": "Messages & Erreurs",
+  "aucunFiltre": "Aucun filtre",
+  "aucunImpactConstate": "Aucun impact constaté",
+  "aucunPaiementEnregistre": "Aucun paiement enregistré",
+  "aucuneDemandeTrouvee": "Aucune demande trouvée",
+  "aucuneTransactionCeMoisCi": "Aucune transaction ce mois-ci",
+  "deconnexion": "Déconnexion",
+  "demandeSupprimee": "Demande supprimée.",
+  "erreurDeSynchronisation": "Erreur de synchronisation",
+  "fonctionnaliteDeTelechargementAImplementer": "Fonctionnalité de téléchargement à implémenter",
+  "idInvalide": "ID invalide",
+  "impossibleDeChargerLesNotifications": "Impossible de charger les notifications",
+  "impossibleDeContacterLia": "Impossible de contacter le serveur IA",
+  "impossibleDeRecupererLesDonneesFinancieres": "Impossible de récupérer les données financières du backend",
+  "msgAucunResultat": "Aucun résultat trouvé",
+  "msgChargement": "Chargement...",
+  "msgConfirmationSuppression": "Confirmer la suppression",
+  "msgConnexionRequise": "Connexion requise",
+  "msgErreurGenerale": "Une erreur est survenue",
+  "msgSuppressionIrreversible": "Cette action est irréversible.",
+  "photoAjouteeAvecSucces": "Photo ajoutée avec succès",
+  "profilIntrouvable": "Profil introuvable",
+  "@_autres": "Divers",
+  "accepte": "Accepté",
+  "activiteRecente": "Activité récente",
+  "actualiserLesFiches": "Actualiser les fiches",
+  "analyseFinanciere": "Analyse financière",
+  "approuve": "Approuvé",
+  "approuvees": "Approuvées",
+  "arrivee": "Arrivée",
+  "assistantVirtuelIa": "Assistant Virtuel IA",
+  "bilanFinancier": "Bilan financier",
+  "budgetMax": "Budget max",
+  "categorie": "Catégorie",
+  "ceMois": "Ce mois",
+  "choisissezUnIntervalleDeDates": "Choisissez un intervalle de dates",
+  "comparatifAnnuelDa": "Comparatif Annuel (DA)",
+  "conditionsGenerale": "- Conditions Générale :",
+  "connectezVousAVotreCompte": "Connectez-vous à votre compte",
+  "coordonnees": "Coordonnées",
+  "coutTotal": "Cout total",
+  "date": "Date : _______________",
+  "dateDeRecuperation": "Date de récupération",
+  "dateDepart": "Date départ",
+  "datesDeReservationManquantes": "Dates de réservation manquantes.",
+  "deduireDuProfitAvantRepartition": "Deduire du profit avant repartition",
+  "definissezLeTauxParDefautPre": "Définissez le taux par défaut pré-rempli dans chaque formulaire.",
+  "dejaVerse": "Déjà versé",
+  "demandeDeDevis": "Demande de devis",
+  "demanderAKarossaai": "Demander à KarossaAI...",
+  "demandesWebLeads": "Demandes Web & Leads",
+  "depart": "Départ",
+  "depenseTotale": "Dépense totale",
+  "depenses": "Dépenses",
+  "description": "Description",
+  "detacherLeContexteActuel": "Détacher le contexte actuel",
+  "detail": "Détail",
+  "detailsFinanciers": "DETAILS FINANCIERS",
+  "devisePrincipale": "Devise principale",
+  "diagnosticRlsConsole": "Diagnostic RLS (console)",
+  "dinarAlgerienFixeDzd": "Dinar algérien fixe (DZD)",
+  "dommagesPannesAnomaliesOptionnel": "Dommages / pannes / anomalies (optionnel)",
+  "duree": "Durée",
+  "dzdDa": "DZD (DA)",
+  "economieNegociee": "Économie négociée",
+  "enAtelier": "En Atelier",
+  "enAttente": "En attente",
+  "enEvaluation": "En évaluation",
+  "etesVousSurDeVouloirVous": "Êtes-vous sûr de vouloir vous déconnecter ?",
+  "exRayureSurAileAvantGauche": "Ex : Rayure sur aile avant gauche, climatisation en panne, rétroviseur droit fissuré…",
+  "exRevision60000KmChez": "Ex: Révision 60 000 km chez garage Dupont",
+  "filtresActifs": "Filtres actifs",
+  "filtresAvances": "Filtres avancés",
+  "fonctionnaliteDePartageAImplementer": "Fonctionnalité de partage à implémenter",
+  "garageAuto": "Garage Auto",
+  "generationDesMetriquesKarossa": "Génération des métriques Karossa...",
+  "impactFinancier": "Impact financier",
+  "informationsDeContact": "Informations de contact",
+  "informationsGenerales": "Informations générales",
+  "injecterDesDonneesDeGestion": "Injecter des données de gestion",
+  "intelligenceArtificielle": "Intelligence Artificielle",
+  "kmAuDepart": "Km au départ",
+  "kmAuMoment": "Km au moment",
+  "laDateDeDebutDoitEtre": "La date de début doit être avant la date de fin.",
+  "laSommeDesPartsDoitEtre": "La somme des parts doit etre egale a 100%",
+  "listeNoire": "Liste noire",
+  "logsDeDiagnosticEcritsDansLa": "🔍 Logs de diagnostic écrits dans la console Flutter",
+  "modeDePaiement": "Mode de paiement",
+  "modeMixte": "Mixte",
+  "monProfil": "Mon Profil",
+  "montantBrut": "Montant brut",
+  "montantDa": "Montant (DA)",
+  "montantDeduit": "Montant déduit",
+  "montantFacturable": "Montant facturable",
+  "montantFixeDa": "Montant fixe (DA)",
+  "motDePasse": "Mot de passe",
+  "noteOptionnel": "Note (optionnel)",
+  "notesInternesOptionnel": "Notes internes (optionnel)",
+  "notesOptionnel": "Notes (optionnel)",
+  "notifications": "Notifications",
+  "observations": "Observations",
+  "offreFaite": "Offre faite",
+  "paiementsRecus": "Paiements reçus",
+  "pasDeDateDeFin": "Pas de date de fin",
+  "periode": "Période",
+  "personnalise": "Personnalisé",
+  "pourcentage": "Pourcentage (%)",
+  "preferencesSysteme": "Préférences & Système",
+  "prixDemande": "Prix demandé",
+  "prixMaxDa": "Prix max (DA)",
+  "prixPaiement": "Prix & paiement",
+  "prixSouhaite": "Prix souhaité",
+  "rafraichir": "Rafraîchir",
+  "rafraichirMaintenant": "Rafraîchir maintenant",
+  "reessayer": "Réessayer",
+  "registreDuCommerceRc": "Registre du commerce (RC)",
+  "rejetees": "Rejetées",
+  "repAutre": "Autre",
+  "repartitionDesGains": "Répartition des gains",
+  "resume": "Résumé",
+  "resumeFinancier": "Résumé financier",
+  "revenuTotal": "Revenu total",
+  "revenusVsDepenses": "Revenus vs Dépenses",
+  "seConnecter": "Se connecter",
+  "seDeconnecter": "Se déconnecter",
+  "statistiques": "Statistiques",
+  "tauxOccupation": "Taux Occupation",
+  "totalBrut": "Total brut",
+  "totalGenere": "Total généré",
+  "totalReparti": "TOTAL réparti",
+  "tousLesTypes": "Tous les types",
+  "toutEffacer": "Tout effacer",
+  "toutEstEnOrdre": "Tout est en ordre 👍",
+  "toutRafraichir": "Tout rafraîchir",
+  "toutesLesCategories": "Toutes les catégories",
+  "toutesLesFiches": "Toutes les fiches",
+  "typeD": "Type d",
+  "typeDeDommage": "Type de dommage",
+  "urlDuLogo": "URL du Logo",
+  "urlSupabaseStorageNulle": "URL Supabase Storage nulle.",
+  "valeursFinancieres": "Valeurs financières",
+  "valides": "Validés",
+  "@_nouvelles_cles": "Nouvelles clés v2",
+  "aiEffacerHistorique": "Effacer l'historique",
+  "aiContextualiserAssistant": "Contextualiser l'assistant avec la BDD",
+  "aiAnalyseEtatGlobalParc": "Analyse de l'état global du parc automobile",
+  "aiNLocationsRecentes": "{count} locations récentes",
+  "@aiNLocationsRecentes": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "aiCatalogueNVehicules": "Catalogue ({count} véhicules)",
+  "@aiCatalogueNVehicules": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "aiContratsChargesContexte": "✅ {count} contrats chargés dans le contexte.",
+  "@aiContratsChargesContexte": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "aiVehiculesSynchronisesKarossa": "✅ {count} véhicules synchronisés avec KarossaAI.",
+  "@aiVehiculesSynchronisesKarossa": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "erreurAvecDetail": "Erreur : {error}",
+  "@erreurAvecDetail": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "erreurChargementMessage": "Erreur de chargement : {message}",
+  "@erreurChargementMessage": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "erreurSuppression": "Erreur suppression : {error}",
+  "@erreurSuppression": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "erreurConversion": "Erreur conversion : {error}",
+  "@erreurConversion": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "contratGenereAvecSucces": "Contrat généré avec succès",
+  "clientInconnu": "Client inconnu",
+  "vehiculeInconnu": "Véhicule inconnu",
+  "oui": "Oui",
+  "non": "Non",
+  "champTitre": "Titre",
+  "champCorps": "Corps",
+  "modifierArticle": "Modifier l'article",
+  "modifierChamp": "Modifier — {label}",
+  "@modifierChamp": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "langue": "Langue",
+  "champValeur": "Valeur",
+  "modeleIaLabel": "Modèle IA (gemini_model)",
+  "commissionPourLabel": "Commission — {label}",
+  "@commissionPourLabel": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "commissionVente": "Vente",
+  "commissionLocation": "Location",
+  "commissionAchat": "Achat",
+  "commissionEchange": "Échange",
+  "gererLequipe": "Gérer l'équipe",
+  "clesApiGeminiEtFlespi": "Clés API Gemini, Flespi et coordonnées",
+  "voulezVousVraimentFermerSession": "Voulez-vous vraiment fermer votre session Karossa ?",
+  "contratOuvert": "Contrat ouvert",
+  "suppressionInterruption": "Supprimer l'interruption ?",
+  "joursSerontRecalculesAuto": "Cette action est irréversible. Les jours seront recalculés automatiquement.",
+  "champMotif": "Motif",
+  "nJoursRetard": "{count}j retard",
+  "@nJoursRetard": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "nJoursRetardBullet": "• {count}j de retard",
+  "@nJoursRetardBullet": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "nJoursInterruptionDeduits": "{count} j interruption déduits",
+  "@nJoursInterruptionDeduits": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "dupliquer": "Dupliquer",
+  "filterTous": "Tous",
+  "enCoursEnPause": "⏸ En cours",
+  "enRetardAvecCount": "⚠️ En retard ({count})",
+  "@enRetardAvecCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "historiqueAvecCount": "Historique ({count})",
+  "@historiqueAvecCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "nZones": "{count} zone(s)",
+  "@nZones": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "labelNotesDepart": "Départ : {notes}",
+  "@labelNotesDepart": {
+    "placeholders": {
+      "notes": {
+        "type": "String"
+      }
+    }
+  },
+  "labelNotesRetour": "Retour : {notes}",
+  "@labelNotesRetour": {
+    "placeholders": {
+      "notes": {
+        "type": "String"
+      }
+    }
+  },
+  "champDistance": "Distance",
+  "kmDepartHelper": "Départ : {km} km",
+  "@kmDepartHelper": {
+    "placeholders": {
+      "km": {
+        "type": "String"
+      }
+    }
+  },
+  "traitementEnCours": "Traitement…",
+  "interruptionDemarre": "Interruption démarrée — véhicule récupéré le {date}",
+  "@interruptionDemarre": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "vehiculeRestitue": "Véhicule restitué le {date} — {count} jour(s) déduit(s)",
+  "@vehiculeRestitue": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "interruptionSupprimee": "Interruption supprimée",
+  "depuisLeDateCount": "Depuis le {date} · {count} j",
+  "@depuisLeDateCount": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "indiquerRaisonDateRecuperation": "Indiquez la raison et la date à laquelle vous récupérez le véhicule. Ces jours seront déduits de la facturation.",
+  "dateRecuperationVehicule": "Date de récupération du véhicule",
+  "titreDetailsMontants": "Montants",
+  "paiementsRecusCount": "Paiements reçus ({count})",
+  "@paiementsRecusCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "champFinancier": "Financier",
+  "totalLabel": "Total",
+  "detailsOperation": "Détails de l'opération",
+  "filterSorties": "Sorties",
+  "filterSolde": "Solde",
+  "acompte": "Acompte",
+  "champMois": "Mois",
+  "champAnneeLabel": "Année",
+  "champType": "Type",
+  "totalCommissions": "Total commissions",
+  "champCommission": "Commission",
+  "anonyme": "Anonyme",
+  "demandeSucces": "Demande traitée avec succès.",
+  "photosCount": "Photos ({count})",
+  "@photosCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "champPhoto": "Photo",
+  "btnRejeter": "Rejeter",
+  "btnApprouver": "Approuver",
+  "champMessage": "Message",
+  "gpsDepuis": "Du {date}",
+  "@gpsDepuis": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "gpsAu": "Au {date}",
+  "@gpsAu": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "preset1Heure": "1 heure",
+  "preset3Heures": "3 heures",
+  "preset8Heures": "8 heures",
+  "presetHier": "Hier",
+  "preset24Heures": "24 heures",
+  "preset3Jours": "3 jours",
+  "preset7Jours": "7 jours",
+  "sectionClient": "Client",
+  "vehiculeCede": "Véhicule cédé",
+  "vehiculeRepris": "Véhicule repris",
+  "modeleChamp": "Modèle *",
+  "telephoneObligatoire": "Téléphone *",
+  "achatEnregistreAvecSucces": "Achat enregistré avec succès",
+  "prixAccordeLabel": "Prix accordé",
+  "modeleIaGemini": "Modèle IA (gemini_model)",
+  "echangeEnregistreAvecSucces": "Échange enregistré avec succès",
+  "kmDepartInferieur": "< km départ",
+  "dateRetourAvantDebut": "La date de retour réelle ne peut pas être avant la date de début",
+  "locationMiseAJour": "Location mise à jour avec succès !",
+  "contratOuvertSansDateFin": "Contrat ouvert (sans date de fin)",
+  "clientListeNoire": "⚠️ Ce client est en liste noire ! Soyez prudent.",
+  "notesEtatVehiculeDepart": "Notes état du véhicule au départ (optionnel)",
+  "pdfGenereAvecSucces": "PDF généré avec succès",
+  "locationSupprimee": "Location supprimée.",
+  "exMarqueVehicule": "ex: Renault, Peugeot...",
+  "sommePartsDoit100": "La somme des parts doit etre 100%",
+  "anneeInvalideSimple": "Annee invalide",
+  "cleApiGeminiNonConfiguree": "Clé API Gemini non configurée. Allez dans Paramètres > Showroom.",
+  "carteGriseAnalysee": "Carte grise analysée avec succès !",
+  "analyseTermineeDonneesManquantes": "Analyse terminée mais certaines données sont manquantes. Veuillez compléter manuellement.",
+  "venteEnregistreeAvecSucces": "Vente enregistrée avec succès",
+  "ajouterAuStockBtn": "Ajouter au stock",
+  "tooltipPlanning": "Planning",
+  "tooltipRetourAccueil": "Retour à l'accueil",
+  "tooltipPlusOptions": "Plus d'options",
+  "titrePaiements": "Paiements",
+  "confirmerSuppressionLocationMessage": "Supprimer la location de {vehicule} pour {client} ?\nCette action est irréversible.",
+  "@confirmerSuppressionLocationMessage": {
+    "placeholders": {
+      "vehicule": {
+        "type": "String"
+      },
+      "client": {
+        "type": "String"
+      }
+    }
+  },
+  "cautionMontantDa": "Caution : {montant} DA",
+  "@cautionMontantDa": {
+    "placeholders": {
+      "montant": {
+        "type": "String"
+      }
+    }
+  },
+  "karossaAi": "KarossaAI",
+  "prendrePhoto": "Prendre une photo",
+  "choisirGalerie": "Choisir dans la galerie",
+  "erreurGenerationRapport": "Erreur génération du rapport : {erreur}",
+  "@erreurGenerationRapport": {
+    "placeholders": {
+      "erreur": {
+        "type": "String"
+      }
+    }
+  },
+  "genererRapportPdfMois": "Générer le rapport PDF du mois",
+  "effacerHistorique": "Effacer l'historique",
+  "contextualiserAssistant": "Contextualiser l'assistant avec la BDD",
+  "joindrePhoto": "Joindre une photo (dommage, facture, carte grise...)",
+  "actualiser": "Actualiser",
+  "rejete": "Rejeté",
+  "confirmerApprobationDemande": "Confirmer l'approbation de cette demande ?",
+  "bonjourPrenom": "Bonjour, {prenom} 👋",
+  "@bonjourPrenom": {
+    "placeholders": {
+      "prenom": {
+        "type": "String"
+      }
+    }
+  },
+  "actionRequiseRetards": "Action requise : {count} véhicule(s) en retard de restitution !",
+  "@actionRequiseRetards": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "fin": "Fin",
+  "aucunContratLocationActif": "Aucun contrat de location actif aujourd'hui",
+  "copier": "Copier",
+  "marquerRembourse": "Marquer remboursé",
+  "supprimerCeTransfert": "Supprimer ce transfert ?",
+  "transfertSeraSupprimeDefinitivement": "Le transfert de {montant} sera définitivement supprimé.",
+  "@transfertSeraSupprimeDefinitivement": {
+    "placeholders": {
+      "montant": {
+        "type": "String"
+      }
+    }
+  },
+  "soldeRestantTooltip": "Solde restant à verser en tenant compte des transferts d'argent avec d'autres utilisateurs",
+  "zoneCreeeSucces": "Zone \"{nom}\" créée",
+  "@zoneCreeeSucces": {
+    "placeholders": {
+      "nom": {
+        "type": "String"
+      }
+    }
+  },
+  "btnContinuer": "Continuer",
+  "champNomZone": "Nom de la zone",
+  "exempleNomZone": "Ex. Showroom Alger, Atelier...",
+  "champCouleur": "Couleur",
+  "alerterALEntree": "Alerter à l'entrée",
+  "alerterALaSortie": "Alerter à la sortie",
+  "aucunContratTrouvePourVehicule": "Aucun contrat trouvé pour ce véhicule",
+  "fonctionnaliteTelechargementAImplementer": "Fonctionnalité de téléchargement à implémenter",
+  "fonctionnalitePartageAImplementer": "Fonctionnalité de partage à implémenter",
+  "aucuneDonneePourCetteDate": "Aucune donnée pour cette date",
+  "lectureDeTrajet": "Lecture de trajet",
+  "reconstitutionDuTrajet": "Reconstitution du trajet…",
+  "pointsReconstituesTooltip": "{count} point(s) reconstitué(s) le long de la route la plus probable, là où le signal GPS a été perdu quelques instants.",
+  "@pointsReconstituesTooltip": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "countReconstitues": "{count} reconstitué{plural}",
+  "@countReconstitues": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      },
+      "plural": {
+        "type": "String"
+      }
+    }
+  },
+  "intervalleDeLecture": "Intervalle de lecture",
+  "btnAppliquer": "Appliquer",
+  "vitesseDeLecture": "Vitesse de lecture",
+  "syncDansSecondes": "Sync dans {countdown}s",
+  "@syncDansSecondes": {
+    "placeholders": {
+      "countdown": {
+        "type": "String"
+      }
+    }
+  },
+  "aucunVehiculeGps": "Aucun véhicule GPS",
+  "planningLocations": "Planning locations",
+  "aujourdhui": "Aujourd'hui",
+  "aucunVehiculeAAfficher": "Aucun véhicule à afficher.",
+  "msgMarqueModeleTypeAlerte": "{marque} {modele} — {typeAlerte}",
+  "@msgMarqueModeleTypeAlerte": {
+    "placeholders": {
+      "marque": {
+        "type": "String"
+      },
+      "modele": {
+        "type": "String"
+      },
+      "typeAlerte": {
+        "type": "String"
+      }
+    }
+  },
+  "alerteGpsVehicule": "Alerte GPS — {vehicule}",
+  "@alerteGpsVehicule": {
+    "placeholders": {
+      "vehicule": {
+        "type": "String"
+      }
+    }
+  },
+  "nouvelleReservationWeb": "Nouvelle réservation web",
+  "msgReservationWeb": "{marque} {modele} — du {debut} au {fin}",
+  "@msgReservationWeb": {
+    "placeholders": {
+      "marque": {
+        "type": "String"
+      },
+      "modele": {
+        "type": "String"
+      },
+      "debut": {
+        "type": "String"
+      },
+      "fin": {
+        "type": "String"
+      }
+    }
+  },
+  "nouvelleDemandeDevis": "Nouvelle demande de devis",
+  "propositionRepriseClient": "Proposition de reprise client",
+  "alaChargeDe": "À la charge de : {resume}",
+  "@alaChargeDe": {
+    "placeholders": {
+      "resume": {
+        "type": "String"
+      }
+    }
+  },
+  "documents": "Documents",
+  "centreAlertes": "Centre d'alertes",
+  "toutLu": "Tout lu",
+  "aucuneAlerteIci": "Aucune alerte ici",
+  "lu": "Lu",
+  "vitessePeriode": "Vitesse — {periode}",
+  "@vitessePeriode": {
+    "placeholders": {
+      "periode": {
+        "type": "String"
+      }
+    }
+  },
+  "repartitionDuTemps": "Répartition du temps",
+  "retourPrevuValeur": "Retour prévu : {retour}",
+  "@retourPrevuValeur": {
+    "placeholders": {
+      "retour": {
+        "type": "String"
+      }
+    }
+  },
+  "kmh": "km/h",
+  "erreurDeChargement": "Erreur de chargement : {error}",
+  "@erreurDeChargement": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "aucuneDonneeGpsSurPeriode": "Aucune donnée GPS sur cette période",
+  "zonesDeCirculation": "Zones de circulation",
+  "pointsGpsAnalyses": "{count} points GPS analysés",
+  "@pointsGpsAnalyses": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "faible": "Faible",
+  "eleve": "Élevé",
+  "vendeur": "Vendeur",
+  "remarques": "Remarques",
+  "statutMisAJour": "Statut mis à jour : {statut}",
+  "@statutMisAJour": {
+    "placeholders": {
+      "statut": {
+        "type": "String"
+      }
+    }
+  },
+  "modifierLabel": "Modifier — {label}",
+  "@modifierLabel": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "commissionLabel": "Commission — {label}",
+  "@commissionLabel": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "identite": "Identité",
+  "aucuneAlerteEntretienActive": "Aucune alerte d'entretien active",
+  "kmEcheance": "À {km} km",
+  "@kmEcheance": {
+    "placeholders": {
+      "km": {
+        "type": "String"
+      }
+    }
+  },
+  "expire": "EXPIRÉ",
+  "btnFait": "Fait",
+  "catalogue": "Catalogue",
+  "filtres": "Filtres",
+  "journalAudit": "Journal d'audit",
+  "aucuneActiviteEnregistreePourCesFiltres": "Aucune activité enregistrée pour ces filtres.",
+  "gererLEquipe": "Gérer l'équipe",
+  "nouvelleAlerteEntretien": "Nouvelle alerte d'entretien",
+  "typeEntretien": "Type d'entretien",
+  "depensesUpper": "DÉPENSES",
+  "revenusUpper": "REVENUS",
+  "locationsUpper": "LOCATIONS",
+  "constatIA": "Constat IA",
+  "insightDuJour": "· insight du jour",
+  "autresPointsAConsulter": "+ {autres} autre{plural} point{plural} à consulter",
+  "@autresPointsAConsulter": {
+    "placeholders": {
+      "autres": {
+        "type": "String"
+      },
+      "plural": {
+        "type": "String"
+      }
+    }
+  },
+  "vueDEnsemble": "Vue d'ensemble",
+  "donneesNonDisponibles": "Données non disponibles",
+  "aucunTrajetAujourdhui": "Aucun trajet aujourd'hui",
+  "vsMoisDernier": "vs mois dernier",
+  "supprimerLInterruption": "Supprimer l'interruption ?",
+  "montants": "Montants",
+  "departKm": "Départ : {km} km",
+  "@departKm": {
+    "placeholders": {
+      "km": {
+        "type": "String"
+      }
+    }
+  },
+  "joursRetard": "{jours}j retard",
+  "@joursRetard": {
+    "placeholders": {
+      "jours": {
+        "type": "String"
+      }
+    }
+  },
+  "totalPourcent": "Total : {pct}%",
+  "@totalPourcent": {
+    "placeholders": {
+      "pct": {
+        "type": "String"
+      }
+    }
+  },
+  "erreurUploadPhoto": "Erreur lors de l'upload de la photo : {error}",
+  "@erreurUploadPhoto": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "detailDeLErreur": "Détail de l'erreur",
+  "entretien": "Entretien",
+  "dateDAchat": "Date d'achat",
+  "scoreIndisponiblePourPeriode": "Score indisponible pour cette période",
+  "scoreDeConduite": "Score de conduite",
+  "duDate": "Du {date}",
+  "@duDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "auDate": "Au {date}",
+  "@auDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "enMouvement": "En mouvement",
+  "horsLigne": "Hors ligne",
+  "entreeDansLaZone": "Entrée dans la zone \"{zone}\"",
+  "@entreeDansLaZone": {
+    "placeholders": {
+      "zone": {
+        "type": "String"
+      }
+    }
+  },
+  "sortieDeLaZone": "Sortie de la zone \"{zone}\"",
+  "@sortieDeLaZone": {
+    "placeholders": {
+      "zone": {
+        "type": "String"
+      }
+    }
+  },
+  "champMode": "Mode",
+  "contratOuvertPrixJour": "Contrat ouvert — {prix} DA/jour",
+  "@contratOuvertPrixJour": {
+    "placeholders": {
+      "prix": {
+        "type": "String"
+      }
+    }
+  },
+  "detailsDeLOperation": "Détails de l'opération",
+  "effacer": "Effacer",
+  "retourALAccueil": "Retour à l'accueil",
+  "locationsEffectuees": "{count} location(s) effectuée(s)",
+  "@locationsEffectuees": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "erreurCritiqueSynchronisation": "Erreur critique de synchronisation : {error}",
+  "@erreurCritiqueSynchronisation": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  }
+}

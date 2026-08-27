@@ -1,3 +1,4 @@
+//lib/features/vehicules/presentation/vehicule_form_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/providers/supabase_provider.dart';
@@ -14,6 +15,7 @@ import '../../auth/domain/profile_model.dart';
 import 'vehicules_provider.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'dart:typed_data';
+import 'package:garage_auto/core/extensions/l10n_extension.dart';
 
 class VehiculeFormScreen extends ConsumerStatefulWidget {
   final String? vehiculeId;
@@ -33,6 +35,8 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
   final _couleurCtrl = TextEditingController();
   final _immatCtrl   = TextEditingController();
   final _chassisCtrl = TextEditingController();
+  final _assuranceCtrl = TextEditingController();
+  final _codeRadioCtrl = TextEditingController();
   final _kmCtrl      = TextEditingController(text: '0');
   final _prixVenteCtrl  = TextEditingController();
   final _prixLocCtrl    = TextEditingController();
@@ -49,6 +53,7 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
 
   // Propriétaires : {profileId -> pourcentage}
   final Map<String, double> _proprietes = {};
+  final Map<String, String> _typeParticipation = {}; // 'proprietaire' | 'associe'
   List<Profile> _allProfiles = [];
 
   @override
@@ -68,6 +73,8 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
     _couleurCtrl.dispose();
     _immatCtrl.dispose();
     _chassisCtrl.dispose();
+    _assuranceCtrl.dispose();
+    _codeRadioCtrl.dispose();
     _kmCtrl.dispose();
     _prixVenteCtrl.dispose();
     _prixLocCtrl.dispose();
@@ -100,6 +107,8 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
       _couleurCtrl.text = data['couleur'] ?? '';
       _immatCtrl.text = data['immatriculation'] ?? '';
       _chassisCtrl.text = data['num_chassis'] ?? '';
+      _assuranceCtrl.text = data['assurance'] ?? '';
+      _codeRadioCtrl.text = data['code_radio'] ?? '';
       _kmCtrl.text = (data['kilometrage'] ?? 0).toString();
       _prixVenteCtrl.text = (data['prix_vente'] ?? '').toString();
       _prixLocCtrl.text = (data['prix_location_jour'] ?? '').toString();
@@ -126,6 +135,8 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
     setState(() {
       for (final prop in proprietesData) {
         _proprietes[prop['proprietaire_id']] = (prop['part_pct'] as num).toDouble();
+        _typeParticipation[prop['proprietaire_id']] =
+            (prop['type_participation'] as String?) ?? 'proprietaire';
       }
     });
   }
@@ -156,8 +167,8 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
                     child: CachedNetworkImage(
                       imageUrl: u,
                       fit: BoxFit.cover,
-                      placeholder: (context, url) => const Center(child: CircularProgressIndicator(strokeWidth: 2)),
-                      errorWidget: (context, url, error) => const Icon(Icons.broken_image, color: Colors.red),
+                      placeholder: (context, url) => Center(child: CircularProgressIndicator(strokeWidth: 2)),
+                      errorWidget: (context, url, error) => Icon(Icons.broken_image, color: Colors.red),
                     ),
                     onDelete: () => setState(() => _photosUrls.remove(u)),
                   )),
@@ -168,7 +179,7 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: 20),
 
             // ── Infos générales ───────────────────────────────
             Row(
@@ -176,8 +187,8 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
               children: [
                 const _SectionTitle('Informations generales'),
                 TextButton.icon(
-                  icon: const Icon(Icons.document_scanner, size: 18),
-                  label: const Text('Scanner carte grise'),
+                  icon: Icon(Icons.document_scanner, size: 18),
+                  label: Text(context.l10n.scannerCarteGrise),
                   onPressed: _scanCarteGrise,
                 ),
               ],
@@ -186,12 +197,12 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
               Expanded(child: _Field(
                 ctrl: _marqueCtrl, label: 'Marque',
                 required: true)),
-              const SizedBox(width: 10),
+              SizedBox(width: 10),
               Expanded(child: _Field(
                 ctrl: _modeleCtrl, label: 'Modele',
                 required: true)),
             ]),
-            const SizedBox(height: 10),
+            SizedBox(height: 10),
             Row(children: [
               Expanded(child: _Field(
                 ctrl: _anneeCtrl, label: 'Annee',
@@ -200,50 +211,69 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
                   if (v == null || v.isEmpty) return 'Requis';
                   final y = int.tryParse(v);
                   if (y == null || y < 1950 || y > 2030) {
-                    return 'Annee invalide';
+                    return context.l10n.anneeInvalideSimple;
                   }
                   return null;
                 })),
-              const SizedBox(width: 10),
+              SizedBox(width: 10),
               Expanded(child: _Field(
                 ctrl: _couleurCtrl, label: 'Couleur')),
             ]),
-            const SizedBox(height: 10),
+            SizedBox(height: 10),
             Row(
               children: [
                 Expanded(
                   child: _Field(
                     ctrl: _immatCtrl,
-                    label: 'Immatriculation',
+                    label: context.l10n.immatriculation,
                   ),
                 ),
-                const SizedBox(width: 10),
+                SizedBox(width: 10),
                 Expanded(
                   child: _Field(
                     ctrl: _chassisCtrl,
-                    label: 'N° Chassis',
+                    label: context.l10n.nChassis,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 10),
+            SizedBox(height: 10),
+            // ── Assurance / Code radio — utilisés sur le contrat de location ──
+            Row(
+              children: [
+                Expanded(
+                  child: _Field(
+                    ctrl: _assuranceCtrl,
+                    label: 'Assurance',
+                  ),
+                ),
+                SizedBox(width: 10),
+                Expanded(
+                  child: _Field(
+                    ctrl: _codeRadioCtrl,
+                    label: 'Code radio',
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 10),
             _Field(
               ctrl: _flespiDeviceIdCtrl,
-              label: 'Flespi Device ID (GPS)',
+              label: context.l10n.flespiDeviceIdGps,
               type: TextInputType.number,
               validator: (v) {
                 if (v != null && v.isNotEmpty && int.tryParse(v) == null) {
-                  return 'ID invalide';
+                  return context.l10n.idInvalide;
                 }
                 return null;
               },
             ),
-            const SizedBox(height: 10),
+            SizedBox(height: 10),
             _Field(
               ctrl: _kmCtrl, label: 'Kilometrage',
               type: TextInputType.number,
               suffix: 'km', required: true),
-            const SizedBox(height: 10),
+            SizedBox(height: 10),
             Row(children: [
               Expanded(child: _Dropdown(
                 label: 'Carburant',
@@ -256,7 +286,7 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
                 },
                 onChanged: (v) => setState(() => _carburant = v!),
               )),
-              const SizedBox(width: 10),
+              SizedBox(width: 10),
               Expanded(child: _Dropdown(
                 label: 'Boite',
                 value: _boite,
@@ -267,29 +297,29 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
                 onChanged: (v) => setState(() => _boite = v!),
               )),
             ]),
-            const SizedBox(height: 20),
+            SizedBox(height: 20),
 
             // ── Prix ─────────────────────────────────────────
             const _SectionTitle('Prix'),
             Row(children: [
               Expanded(child: _Field(
                 ctrl: _prixLocCtrl,
-                label: 'Prix location / jour',
+                label: context.l10n.prixLocationJour,
                 type: TextInputType.number,
                 suffix: 'DA')),
-              const SizedBox(width: 10),
+              SizedBox(width: 10),
               Expanded(child: _Field(
                 ctrl: _prixVenteCtrl,
-                label: 'Prix de vente',
+                label: context.l10n.champPrixVente,
                 type: TextInputType.number,
                 suffix: 'DA')),
             ]),
-            const SizedBox(height: 20),
+            SizedBox(height: 20),
 
             // ── Statut ────────────────────────────────────────
             const _SectionTitle('Statut initial'),
             _Dropdown(
-              label: 'Statut',
+              label: context.l10n.champStatut,
               value: _statut,
               items: const {
                 'disponible':   'Disponible',
@@ -301,31 +331,37 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
               },
               onChanged: (v) => setState(() => _statut = v!),
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: 20),
 
             // ── Propriétaires ────────────────────────────────
             const _SectionTitle('Proprietaire(s) et parts (%)'),
             if (_allProfiles.isEmpty)
-              const Center(child: CircularProgressIndicator())
+              Center(child: CircularProgressIndicator())
             else
               ..._allProfiles
                 .where((p) => p.role != UserRole.gerant)
                 .map((p) => _ProprieteRow(
                   profile: p,
                   value: _proprietes[p.id],
+                  typeParticipation: _typeParticipation[p.id] ?? 'proprietaire',
                   onChanged: (v) => setState(() {
                     if (v == null || v == 0) {
                       _proprietes.remove(p.id);
+                      _typeParticipation.remove(p.id);
                     } else {
                       _proprietes[p.id] = v;
+                      _typeParticipation.putIfAbsent(p.id, () => 'proprietaire');
                     }
                   }),
+                  onTypeChanged: (t) => setState(() {
+                    _typeParticipation[p.id] = t;
+                  }),
                 )),
-            const SizedBox(height: 4),
+            SizedBox(height: 4),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Text('Total : ${_totalParts.toInt()}%',
+                Text(context.l10n.totalPourcent(_totalParts.toInt().toString()),
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
@@ -336,46 +372,44 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
               ],
             ),
             if (_totalParts > 0 && _totalParts.round() != 100)
-              const Padding(
+              Padding(
                 padding: EdgeInsets.only(top: 4),
-                child: Text(
-                  'La somme des parts doit etre egale a 100%',
-                  style: TextStyle(
+                child: Text(context.l10n.laSommeDesPartsDoitEtre, style: TextStyle(
                     color: AppColors.retard, fontSize: 12)),
               ),
-            const SizedBox(height: 20),
+            SizedBox(height: 20),
 
             // ── État du véhicule ────────────────────────────────
             const _SectionTitle('État du véhicule'),
-            const Text(
+            Text(
               'Décrivez tout ce qui ne fonctionne pas ou est endommagé (pannes, rayures, bosses…). '
               'Ces informations seront intégrées au contrat de location.',
               style: TextStyle(fontSize: 12, color: Colors.grey),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8),
             TextFormField(
               controller: _etatVehiculeCtrl,
               maxLines: 5,
-              decoration: const InputDecoration(
-                labelText: 'Dommages / pannes / anomalies (optionnel)',
-                hintText: 'Ex : Rayure sur aile avant gauche, climatisation en panne, rétroviseur droit fissuré…',
+              decoration: InputDecoration(
+                labelText: context.l10n.dommagesPannesAnomaliesOptionnel,
+                hintText: context.l10n.exRayureSurAileAvantGauche,
                 alignLabelWithHint: true,
                 border: OutlineInputBorder(),
               ),
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: 20),
 
             // ── Notes internes ─────────────────────────────────
             const _SectionTitle('Notes internes'),
             TextFormField(
               controller: _notesCtrl,
               maxLines: 3,
-              decoration: const InputDecoration(
-                labelText: 'Notes internes (optionnel)',
-                hintText: 'Informations internes non affichées dans le contrat',
+              decoration: InputDecoration(
+                labelText: context.l10n.notesInternesOptionnel,
+                hintText: context.l10n.informationsInternesNonAfficheesDansLe,
               ),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 24),
 
             // ── Bouton ────────────────────────────────────────
             SizedBox(
@@ -384,16 +418,16 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
               child: ElevatedButton.icon(
                 onPressed: _loading ? null : _submit,
                 icon: _loading
-                  ? const SizedBox(width: 18, height: 18,
+                  ? SizedBox(width: 18, height: 18,
                       child: CircularProgressIndicator(
                         strokeWidth: 2, color: Colors.white))
-                  : const Icon(Icons.check),
+                  : Icon(Icons.check),
                 label: Text(_loading
                   ? 'Enregistrement...'
                   : isEdit ? 'Modifier' : 'Ajouter le vehicule'),
               ),
             ),
-            const SizedBox(height: 40),
+            SizedBox(height: 40),
           ],
         ),
       ),
@@ -420,13 +454,13 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
           builder: (ctx) => SafeArea(
             child: Column(mainAxisSize: MainAxisSize.min, children: [
               ListTile(
-                leading: const Icon(Icons.camera_alt),
-                title: const Text('Prendre en photo la carte grise'),
+                leading: Icon(Icons.camera_alt),
+                title: Text(context.l10n.prendreEnPhotoLaCarteGrise),
                 onTap: () => Navigator.pop(ctx, ImageSource.camera),
               ),
               ListTile(
-                leading: const Icon(Icons.photo_library),
-                title: const Text('Choisir une photo de la carte grise'),
+                leading: Icon(Icons.photo_library),
+                title: Text(context.l10n.choisirUnePhotoDeLaCarte),
                 onTap: () => Navigator.pop(ctx, ImageSource.gallery),
               ),
             ]),
@@ -444,7 +478,7 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
       showDialog(
         context: context,
         barrierDismissible: false,
-        builder: (ctx) => const Center(
+        builder: (ctx) => Center(
           child: Card(
             child: Padding(
               padding: EdgeInsets.all(20),
@@ -453,7 +487,7 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
                 children: [
                   CircularProgressIndicator(),
                   SizedBox(height: 16),
-                  Text('Analyse de la carte grise...'),
+                  Text(context.l10n.analyseDeLaCarteGrise),
                 ],
               ),
             ),
@@ -478,7 +512,7 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
         if (mounted) Navigator.pop(context);
         if (mounted) {
           NotificationService().error(
-              'Clé API Gemini non configurée. Allez dans Paramètres > Showroom.');
+              context.l10n.cleApiGeminiNonConfiguree);
         }
         return;
       }
@@ -489,7 +523,7 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
         if (mounted) Navigator.pop(context);
         if (mounted) {
           NotificationService().error(
-              'Clé API Gemini non configurée. Allez dans Paramètres > Showroom.');
+              context.l10n.cleApiGeminiNonConfiguree);
         }
         return;
       }
@@ -527,12 +561,12 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
         });
 
         if (mounted) {
-          NotificationService().success('Carte grise analysée avec succès !');
+          NotificationService().success(context.l10n.carteGriseAnalysee);
         }
       } else {
         if (mounted) {
           NotificationService().warning(
-              'Analyse terminée mais certaines données sont manquantes. Veuillez compléter manuellement.');
+              context.l10n.analyseTermineeDonneesManquantes);
         }
       }
     } catch (e) {
@@ -582,8 +616,8 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Photo ajoutée avec succès'),
+          SnackBar(
+            content: Text(context.l10n.photoAjouteeAvecSucces),
             backgroundColor: Colors.green,
           ),
         );
@@ -592,7 +626,7 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Erreur lors de l\'upload de la photo : $e'),
+            content: Text(context.l10n.erreurUploadPhoto(e.toString())),
             backgroundColor: Colors.red,
           ),
         );
@@ -606,8 +640,8 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
     if (!_formKey.currentState!.validate()) return;
     if (_totalParts > 0 && _totalParts != 100) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('La somme des parts doit etre 100%'),
+        SnackBar(
+          content: Text(context.l10n.sommePartsDoit100),
           backgroundColor: AppColors.retard));
       return;
     }
@@ -621,6 +655,8 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
         'couleur':             _couleurCtrl.text.trim().isEmpty ? null : _couleurCtrl.text.trim(),
         'immatriculation':     _immatCtrl.text.trim().isEmpty ? null : _immatCtrl.text.trim(),
         'num_chassis':         _chassisCtrl.text.trim().isEmpty ? null : _chassisCtrl.text.trim(),
+        'assurance':           _assuranceCtrl.text.trim().isEmpty ? null : _assuranceCtrl.text.trim(),
+        'code_radio':          _codeRadioCtrl.text.trim().isEmpty ? null : _codeRadioCtrl.text.trim(),
         'carburant':           _carburant,
         'boite':               _boite,
         'kilometrage':         int.tryParse(_kmCtrl.text) ?? 0,
@@ -637,6 +673,7 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
       final proprietesList = _proprietes.entries.map((e) => {
         'proprietaire_id': e.key,
         'part_pct':        e.value,
+        'type_participation': _typeParticipation[e.key] ?? 'proprietaire',
       }).toList();
 
       if (widget.vehiculeId == null) {
@@ -671,7 +708,7 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
         showDialog(
           context: context,
           builder: (ctx) => AlertDialog(
-            title: const Text('Détail de l\'erreur'),
+            title: Text(ctx.l10n.detailDeLErreur),
             content: SelectableText(
               'Type: ${e.runtimeType}\n\nMessage: $e\n\nStack: $stackTrace',
               style: const TextStyle(fontSize: 12, fontFamily: 'monospace'),
@@ -679,7 +716,7 @@ class _VehiculeFormState extends ConsumerState<VehiculeFormScreen> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(ctx),
-                child: const Text('Fermer'),
+                child: Text(context.l10n.btnFermer),
               ),
             ],
           ),
@@ -747,14 +784,22 @@ class _Dropdown extends StatelessWidget {
 class _ProprieteRow extends StatelessWidget {
   final Profile profile;
   final double? value;
+  final String typeParticipation;
   final void Function(double?) onChanged;
+  final void Function(String) onTypeChanged;
   const _ProprieteRow({
-    required this.profile, this.value, required this.onChanged});
+    required this.profile,
+    this.value,
+    required this.typeParticipation,
+    required this.onChanged,
+    required this.onTypeChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
     final ctrl = TextEditingController(
       text: value != null ? value!.toInt().toString() : '');
+    final isActive = value != null && value! > 0;
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Row(children: [
@@ -765,16 +810,38 @@ class _ProprieteRow extends StatelessWidget {
             style: TextStyle(fontSize: 11,
               fontWeight: FontWeight.w600, color: profile.color)),
         ),
-        const SizedBox(width: 10),
+        SizedBox(width: 10),
         Expanded(child: Text(profile.fullName,
           style: AppTextStyles.body)),
+        if (isActive) ...[
+          SizedBox(
+            width: 130,
+            child: DropdownButtonFormField<String>(
+              value: typeParticipation,
+              isDense: true,
+              decoration: const InputDecoration(
+                isDense: true,
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: 8, vertical: 10),
+              ),
+              items: const [
+                DropdownMenuItem(
+                  value: 'proprietaire', child: Text('Propriétaire')),
+                DropdownMenuItem(
+                  value: 'associe', child: Text('Associé')),
+              ],
+              onChanged: (t) => onTypeChanged(t ?? 'proprietaire'),
+            ),
+          ),
+          SizedBox(width: 10),
+        ],
         SizedBox(
           width: 80,
           child: TextFormField(
             controller: ctrl,
             keyboardType: TextInputType.number,
             textAlign: TextAlign.center,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               suffixText: '%',
               isDense: true,
               contentPadding: EdgeInsets.symmetric(
@@ -807,7 +874,7 @@ class _PhotoThumb extends StatelessWidget {
             decoration: const BoxDecoration(
               color: AppColors.retard,
               shape: BoxShape.circle),
-            child: const Icon(Icons.close,
+            child: Icon(Icons.close,
               color: Colors.white, size: 16),
           ),
         )),
@@ -830,14 +897,14 @@ class _AddPhotoBtn extends StatelessWidget {
         border: Border.all(color: AppColors.border, width: 1.5),
       ),
       child: uploading
-        ? const Center(child: CircularProgressIndicator())
-        : const Column(
+        ? Center(child: CircularProgressIndicator())
+        : Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(Icons.add_a_photo_outlined,
                 color: AppColors.textSecondary, size: 28),
               SizedBox(height: 4),
-              Text('Ajouter', style: TextStyle(
+              Text(context.l10n.btnAjouter, style: TextStyle(
                 fontSize: 11, color: AppColors.textSecondary)),
             ],
           ),

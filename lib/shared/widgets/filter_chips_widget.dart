@@ -3,6 +3,7 @@
 
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/extensions/l10n_extension.dart';
 
 class FilterChipsRow extends StatelessWidget {
   final List<FilterChipData> chips;
@@ -27,7 +28,7 @@ class FilterChipsRow extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(right: 8),
           child: FilterChip(
-            label: const Text('Tous'),
+            label: Text(context.l10n.filterTous),
             selected: selected == null,
             onSelected: (_) => onSelected(null),
             backgroundColor: AppColors.inputFill,

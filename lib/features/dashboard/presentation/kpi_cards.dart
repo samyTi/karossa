@@ -11,12 +11,14 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/app_colors.dart';
 
+import 'dashboard_providers.dart'; // ✅ AJOUTE CET IMPORTimport 'dashboard_providers.dart'; // ✅ AJOUTE CET IMPORT
+import 'package:garage_auto/core/extensions/l10n_extension.dart';
 
 
 
 // Provider revenus du mois en cours
 
-final revenusKpiProvider = FutureProvider.autoDispose<Map<String, double>>((ref) async {
+/*final revenusKpiProvider = FutureProvider.autoDispose<Map<String, double>>((ref) async {
 
   final now      = DateTime.now();
 
@@ -89,7 +91,7 @@ final revenusKpiProvider = FutureProvider.autoDispose<Map<String, double>>((ref)
   };
 
 });
-
+*/
 
 
 class KpiRevenusRow extends ConsumerWidget {
@@ -126,7 +128,7 @@ class KpiRevenusRow extends ConsumerWidget {
 
             children: [
 
-              const Text('Ce mois', style: TextStyle(
+              Text(context.l10n.ceMois, style: TextStyle(
 
                 fontWeight: FontWeight.bold, fontSize: 15)),
 
@@ -136,7 +138,7 @@ class KpiRevenusRow extends ConsumerWidget {
 
                 icon: const Icon(Icons.analytics_outlined, size: 14),
 
-                label: const Text('Voir tout', style: TextStyle(fontSize: 12)),
+                label: Text(context.l10n.voirTout, style: TextStyle(fontSize: 12)),
 
                 style: TextButton.styleFrom(foregroundColor: AppColors.primary),
 
@@ -152,7 +154,7 @@ class KpiRevenusRow extends ConsumerWidget {
 
             Expanded(child: _KpiCard(
 
-              label: 'Locations',
+              label: context.l10n.titreLocations,
 
               value: "${(kpi['locations']! / 1000).toStringAsFixed(0)}k DA",
 
@@ -166,7 +168,7 @@ class KpiRevenusRow extends ConsumerWidget {
 
             Expanded(child: _KpiCard(
 
-              label: 'Ventes',
+              label: context.l10n.titreVentes,
 
               value: "${(kpi['ventes']! / 1000).toStringAsFixed(0)}k DA",
 
@@ -184,7 +186,7 @@ class KpiRevenusRow extends ConsumerWidget {
 
             Expanded(child: _KpiCard(
 
-              label: 'Dépenses',
+              label: context.l10n.depenses,
 
               value: "${(kpi['depenses']! / 1000).toStringAsFixed(0)}k DA",
 

@@ -10,8 +10,9 @@ import '../../../shared/widgets/custom_app_bar.dart';
 import '../domain/profile_model.dart';
 import 'auth_provider.dart';
 // ── Imports pour le badge des demandes web ──
-import '../../web_demandes/domain/web_demandes_providers.dart';
+import '../../web_demandes/presentation/web_demandes_providers.dart';
 import '../../web_demandes/domain/web_demande_model.dart';
+import 'package:garage_auto/core/extensions/l10n_extension.dart';
 
 /// Provider pour charger les informations du showroom depuis la base de données
 final showroomSettingsProvider = FutureProvider((ref) async {
@@ -31,11 +32,11 @@ class ProfileScreen extends ConsumerWidget {
     final webDemandesAsync = ref.watch(webDemandesListProvider);
 
     return profileAsync.when(
-      loading: () => const Scaffold(body: Center(child: CircularProgressIndicator())),
-      error: (err, stack) => Scaffold(body: Center(child: Text('Erreur : $err'))),
+      loading: () => Scaffold(body: Center(child: CircularProgressIndicator())),
+      error: (err, stack) => Scaffold(body: Center(child: Text(context.l10n.erreurAvecDetail(err.toString())))),
       data: (profile) {
         if (profile == null) {
-          return const Scaffold(body: Center(child: Text('Profil introuvable')));
+          return Scaffold(body: Center(child: Text(context.l10n.profilIntrouvable)));
         }
 
         // Récupérer le nombre de demandes en attente de traitement
@@ -45,8 +46,8 @@ class ProfileScreen extends ConsumerWidget {
         );
 
         return Scaffold(
-          appBar: const CustomAppBar(
-            title: 'Mon Profil',
+          appBar: CustomAppBar(
+            title: context.l10n.monProfil,
             showHomeButton: true,
           ),
           body: ListView(
@@ -54,48 +55,48 @@ class ProfileScreen extends ConsumerWidget {
             children: [
               // --- 1. En-tête : Avatar et Identité ---
               _buildProfileHeader(profile),
-              const SizedBox(height: 24),
+              SizedBox(height: 24),
 
               // --- 2. Carte Rôle & Description ---
               _RoleCard(
-                title: 'Votre rôle',
+                title: context.l10n.votreRole,
                 description: profile.roleDescription,
                 icon: profile.roleIcon,
                 color: profile.color,
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: 24),
 
               // --- 3. Informations de Contact (Table profiles) ---
-              const _SectionTitle(title: 'Informations de contact'),
-              const SizedBox(height: 8),
+              _SectionTitle(title: context.l10n.informationsDeContact),
+              SizedBox(height: 8),
               _buildInfoTile(Icons.phone, 'Téléphone', profile.telephone ?? 'Non renseigné'),
               _buildInfoTile(Icons.email, 'Compte', 'Connecté via Supabase'),
-              const SizedBox(height: 24),
+              SizedBox(height: 24),
 
               // --- 4. Informations Showroom (Table showroom_settings) ---
               showroomAsync.when(
-                data: (settings) => _buildShowroomSection(settings),
+                data: (settings) => _buildShowroomSection(context, settings),
                 loading: () => const LinearProgressIndicator(),
                 error: (_, __) => const SizedBox.shrink(),
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: 24),
 
               // --- 5. Permissions ---
-              const _SectionTitle(title: 'Vos permissions accès'),
-              const SizedBox(height: 8),
+              _SectionTitle(title: context.l10n.vosPermissionsAcces),
+              SizedBox(height: 8),
               ..._buildPermissionsList(profile),
-              const SizedBox(height: 24),
+              SizedBox(height: 24),
 
               // --- 6. Administration (Gérant uniquement) ---
               if (profile.isGerant) ...[
-                const _SectionTitle(title: 'Administration Showroom'),
-                const SizedBox(height: 8),
+                _SectionTitle(title: context.l10n.administrationShowroom),
+                SizedBox(height: 8),
                 
                 // ✅ Nouveau bouton d'accès au module Web branché sur votre route
                 _ActionTile(
                   icon: Icons.cloud_download_outlined,
-                  title: 'Demandes Web & Leads',
-                  subtitle: 'Réservations, achats et échanges du site',
+                  title: context.l10n.demandesWebLeads,
+                  subtitle: context.l10n.reservationsAchatsEtEchangesDuSite,
                   color: Colors.orange,
                   badgeCount: nbEnAttente > 0 ? nbEnAttente : null,
                   onTap: () => context.push('/admin/web-demandes'),
@@ -103,24 +104,24 @@ class ProfileScreen extends ConsumerWidget {
                 
                 _ActionTile(
                   icon: Icons.people_alt_outlined,
-                  title: 'Gérer l\'équipe',
-                  subtitle: 'Comptes gérants, associés et propriétaires',
+                  title: context.l10n.gererLEquipe,
+                  subtitle: context.l10n.comptesGerantsAssociesEtProprietaires,
                   color: AppColors.primary,
                   onTap: () => context.push('/admin/users'),
                 ),
                 _ActionTile(
                   icon: Icons.settings_suggest_outlined,
-                  title: 'Paramètres système',
-                  subtitle: 'Clés API Gemini, Flespi et coordonnées',
+                  title: context.l10n.parametresSysteme,
+                  subtitle: context.l10n.clesApiGeminiFlespiEtCoordonnees,
                   color: AppColors.primary,
                   onTap: () => context.push('/admin/settings'),
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: 24),
               ],
 
               // --- 7. Bouton Déconnexion ---
               _buildLogoutButton(context, ref),
-              const SizedBox(height: 32),
+              SizedBox(height: 32),
             ],
           ),
         );
@@ -140,9 +141,9 @@ class ProfileScreen extends ConsumerWidget {
               style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: profile.color),
             ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           Text(profile.fullName, style: AppTextStyles.heading2),
-          const SizedBox(height: 6),
+          SizedBox(height: 6),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
             decoration: BoxDecoration(
@@ -154,7 +155,7 @@ class ProfileScreen extends ConsumerWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(profile.roleIcon, size: 14, color: profile.color),
-                const SizedBox(width: 6),
+                SizedBox(width: 6),
                 Text(
                   profile.roleLabel.toUpperCase(),
                   style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: profile.color),
@@ -178,17 +179,17 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildShowroomSection(Map<String, dynamic>? settings) {
+  Widget _buildShowroomSection(BuildContext context, Map<String, dynamic>? settings) {
     if (settings == null) return const SizedBox.shrink();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const _SectionTitle(title: 'Showroom rattaché'),
-        const SizedBox(height: 8),
+        _SectionTitle(title: context.l10n.showroomRattache),
+        SizedBox(height: 8),
         Card(
           color: AppColors.secondary.withValues(alpha: 0.05),
           child: ListTile(
-            leading: const Icon(Icons.business, color: AppColors.secondary),
+            leading: Icon(Icons.business, color: AppColors.secondary),
             title: Text(settings['nom'] ?? 'Karossa Showroom', style: AppTextStyles.heading3),
             subtitle: Text(settings['adresse'] ?? 'Algérie', style: AppTextStyles.bodySecondary),
           ),
@@ -202,7 +203,7 @@ class ProfileScreen extends ConsumerWidget {
       _PermissionTile('Gestion du stock véhicules', profile.canManageVehicules),
       _PermissionTile('Accès aux rapports financiers', profile.canViewFullFinance || profile.isGerant),
       _PermissionTile('Gestion de la caisse showroom', profile.isGerant),
-      if (profile.isProprietaire)
+      if (profile.isExterne)
         const _PermissionTile('Suivi de mes parts et revenus', true),
     ];
   }
@@ -210,8 +211,8 @@ class ProfileScreen extends ConsumerWidget {
   Widget _buildLogoutButton(BuildContext context, WidgetRef ref) {
     return OutlinedButton.icon(
       onPressed: () => _showLogoutDialog(context, ref),
-      icon: const Icon(Icons.logout, color: AppColors.retard),
-      label: const Text('Se déconnecter', 
+      icon: Icon(Icons.logout, color: AppColors.retard),
+      label: Text(context.l10n.seDeconnecter, 
         style: TextStyle(color: AppColors.retard, fontWeight: FontWeight.bold)),
       style: OutlinedButton.styleFrom(
         side: const BorderSide(color: AppColors.retard),
@@ -225,10 +226,10 @@ class ProfileScreen extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Déconnexion'),
-        content: const Text('Voulez-vous vraiment fermer votre session Karossa ?'),
+        title: Text(context.l10n.deconnexion),
+        content: Text(context.l10n.voulezVousVraimentFermerVotreSession),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Annuler')),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(ctx.l10n.btnAnnuler)),
           ElevatedButton(
             onPressed: () async {
               await ref.read(supabaseClientProvider).auth.signOut();
@@ -238,7 +239,7 @@ class ProfileScreen extends ConsumerWidget {
               }
             },
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.retard),
-            child: const Text('Confirmer'),
+            child: Text(ctx.l10n.btnConfirmer),
           ),
         ],
       ),
@@ -250,7 +251,7 @@ class ProfileScreen extends ConsumerWidget {
 
 class _SectionTitle extends StatelessWidget {
   final String title;
-  const _SectionTitle({required this.title});
+  _SectionTitle({required this.title});
   @override
   Widget build(BuildContext context) => Text(title, 
     style: AppTextStyles.heading3.copyWith(color: AppColors.textSecondary));
@@ -273,13 +274,13 @@ class _RoleCard extends StatelessWidget {
     child: Row(
       children: [
         Icon(icon, color: color, size: 30),
-        const SizedBox(width: 16),
+        SizedBox(width: 16),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(title, style: AppTextStyles.heading3),
-              const SizedBox(height: 4),
+              SizedBox(height: 4),
               Text(description, style: AppTextStyles.bodySecondary),
             ],
           ),
@@ -301,7 +302,7 @@ class _PermissionTile extends StatelessWidget {
       children: [
         Icon(granted ? Icons.check_circle : Icons.lock_outline, 
           size: 18, color: granted ? AppColors.secondary : Colors.grey),
-        const SizedBox(width: 10),
+        SizedBox(width: 10),
         Text(label, style: TextStyle(color: granted ? AppColors.textPrimary : Colors.grey)),
       ],
     ),
@@ -348,8 +349,8 @@ class _ActionTile extends StatelessWidget {
                 style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
               ),
             ),
-          const SizedBox(width: 4),
-          const Icon(Icons.chevron_right),
+          SizedBox(width: 4),
+          Icon(Icons.chevron_right),
         ],
       ),
       onTap: onTap,

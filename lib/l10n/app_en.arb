@@ -1,0 +1,1344 @@
+{
+  "@@locale": "en",
+  "navAccueil": "Home",
+  "navClients": "Clients",
+  "navLocations": "Rentals",
+  "navPlus": "More",
+  "navVehicules": "Vehicles",
+  "tabActifs": "Active",
+  "tabEnCours": "In Progress",
+  "tabHistorique": "History",
+  "tabStatistiques": "Statistics",
+  "tabTermines": "Completed",
+  "titreAchats": "Purchases",
+  "titreCaisse": "Cash Register",
+  "titreClients": "Clients",
+  "titreContrats": "Contracts",
+  "titreDashboard": "Dashboard",
+  "titreEchanges": "Trade-ins",
+  "titreEntretien": "Maintenance & Alerts",
+  "titreFinance": "Owner Finance",
+  "titreGps": "GPS Tracking",
+  "titreLocations": "Rentals",
+  "titreNotifications": "Notifications",
+  "titreParametres": "Settings",
+  "titreReparations": "Repairs",
+  "titreUtilisateurs": "Users",
+  "titreVehicules": "Vehicles",
+  "titreVentes": "Sales",
+  "aRisque": "At risk",
+  "accesAuxPerformances": "Access to performance and vehicle tracking",
+  "alerteControleTechnique": "Technical inspection",
+  "analyseDesRendementsEtStatutsDe": "Analysis of yields and contract statuses",
+  "annule": "Cancelled",
+  "annulee": "Cancelled",
+  "annulees": "Cancelled",
+  "associe": "Partner",
+  "aucunAchatEnCours": "No purchase in progress",
+  "aucunVehiculeAssocieACetteReservation": "No vehicle associated with this booking.",
+  "aucunVehiculeAssocieLaLocationNe": "⚠️ No vehicle associated — rental cannot be created.",
+  "boiteAutomatique": "Automatic",
+  "boiteManuelle": "Manual",
+  "btnAnnuler": "Cancel",
+  "carburantDiesel": "Diesel",
+  "carburantElectrique": "Electric",
+  "carburantEssence": "Petrol",
+  "carburantHybride": "Hybrid",
+  "carburantPropreteDegradationsConstatees": "Fuel, cleanliness, damage noted...",
+  "champStatut": "Status",
+  "changerLeStatut": "Change status",
+  "cheque": "Cheque",
+  "clientBlacklist": "Blacklist",
+  "clientFiable": "Trusted client",
+  "clientRisque": "Risky",
+  "commissionGerant": "Manager commission",
+  "commissionsDuGerant": "Manager commissions",
+  "comptesGerantsAssociesEtProprietaires": "Manager, partner and owner accounts",
+  "disponibles": "Available",
+  "enCours": "In progress",
+  "enRetard": "Overdue",
+  "especes": "Cash",
+  "gerant": "Manager",
+  "gestionCompleteDuShowroom": "Full daily management of the showroom",
+  "indisponibleALaLocationPendantLes": "Unavailable for rental during works",
+  "interruptionControleTechnique": "Technical inspection",
+  "leGerant": "The Manager",
+  "locationAnnule": "Cancelled",
+  "locationEnCours": "In progress",
+  "locationRetard": "Overdue",
+  "locationTermine": "Completed",
+  "locationsEnCours": "Active rentals",
+  "marquerDisponible": "Mark as available",
+  "modeCheque": "Cheque",
+  "modeEspeces": "Cash",
+  "modeVirement": "Bank transfer",
+  "paiementComplet": "Full payment",
+  "paiementPartiel": "Partial payment",
+  "partProprietaireS": "Owner share(s)",
+  "proprietaire": "Owner",
+  "proprietaireDuShowroom": "Owner of the showroom and vehicle fleet",
+  "repElectrique": "Electrical",
+  "retardDeRetour": "Return overdue",
+  "roleAssocie": "Partner",
+  "roleGerant": "Manager",
+  "roleProprietaire": "Owner",
+  "statutClient": "Client status",
+  "statutDeLaFlotteAuto": "Statut de la Flotte Auto",
+  "statutDeLaLocation": "Statut de la location",
+  "statutDisponible": "Available",
+  "statutFinal": "Final status",
+  "statutLoue": "Rented",
+  "statutReparation": "Under repair",
+  "statutReserve": "Reserved",
+  "statutVendu": "Sold",
+  "termine": "Completed",
+  "terminee": "Completed",
+  "terminees": "Completed",
+  "vehiculeVendu": "Vehicle sold",
+  "votreRole": "Your role",
+  "achatsDeVehicules": "Vehicle purchases",
+  "annee": "Year *",
+  "anneeInvalide": "Invalid year",
+  "anneeMax": "Max year",
+  "anneeMin": "Min year",
+  "aucunContratTrouvePourCeVehicule": "No contract found for this vehicle",
+  "aucunHistoriquePourCeVehicule": "No history for this vehicle",
+  "carrosserieVehiculeCede": "Body — Vehicle given",
+  "carrosserieVehiculeRepris": "Body — Vehicle taken back",
+  "champKilometrage": "Mileage",
+  "champPrixAchat": "Purchase price",
+  "champPrixVente": "Sale price",
+  "checkInVehicule": "Vehicle check-in",
+  "choisirUnVehicule": "Choose a vehicle",
+  "contratsDuVehicule": "Vehicle contracts",
+  "detailParCategorie": "Detail by category",
+  "deviceIdFlespiManquantPourCe": "Flespi Device ID missing for this vehicle.",
+  "etatDuVehicule": "Vehicle condition",
+  "etatDuVehiculeAuRetourOptionnel": "Vehicle condition on return (optional)",
+  "etatDuVehiculeDommagesAvantLocation": "VEHICLE CONDITION — DAMAGE BEFORE RENTAL",
+  "historiqueDuVehicule": "Vehicle history",
+  "immatriculation": "Registration",
+  "kilometrage": "Mileage",
+  "kilometrageEcheanceOptionnel": "Mileage threshold (optional)",
+  "laDureeSeraCalculeeAuRetour": "Duration will be calculated on vehicle return",
+  "laDureeSeraCalculeeLorsDu": "Duration will be calculated on vehicle return",
+  "leMontantTotalSeraCalculeAu": "Total amount will be calculated on vehicle return.",
+  "marque": "Make *",
+  "marquerCommeSoldee": "Mark as settled",
+  "marquerGpsCommeLues": "Mark GPS alerts as read",
+  "marquezLesDommagesConstatesAuRetour": "Mark damages found on return",
+  "modele": "Model",
+  "modeleGemini": "Gemini model",
+  "nChassis": "Chassis No.",
+  "notesEtatDuVehiculeAuDepart": "Vehicle condition notes at departure",
+  "notesEtatDuVehiculeAuRetour": "Vehicle condition notes on return",
+  "nouveauVehicule": "New vehicle",
+  "parcAutomobilesVehicules": "Vehicle Fleet",
+  "passerLeVehiculeEnReparation": "Send vehicle to repair",
+  "prixCatalogue": "Catalogue price",
+  "prixLocationJour": "Rental price / day",
+  "rechercherClientTelephoneVehicule": "Search (client, phone, vehicle...)",
+  "rechercherUnVehiculeMarqueModeleImmatriculation": "Search vehicle (make, model, registration...)",
+  "rechercherVehiculeOuClient": "Search vehicle or client...",
+  "recupererLeVehicule": "Retrieve vehicle",
+  "remarquesObservations": "Remarks / observations",
+  "repartitionDuParc": "Fleet breakdown",
+  "retourVehicule": "Vehicle return",
+  "selectionnerLeCatalogueDeVehicules": "Select vehicle catalogue",
+  "selectionnerLeVehicule": "Select vehicle",
+  "selectionnezLeTypeCorrespondantAuDommage": "Select the type matching the marked damage",
+  "seraDeduitDesRevenusDuVehicule": "Will be deducted from vehicle revenue",
+  "toucherPourMarquer": "Tap to mark",
+  "trajetParcouru": "Distance covered",
+  "vehicule": "Vehicle",
+  "vehiculeAjouteAuStock": "✅ Vehicle added to stock!",
+  "vehiculeCedeDuMagasin": "Vehicle given (from showroom)",
+  "vehiculeCible": "Target vehicle",
+  "vehiculeExistant": "Existing vehicle",
+  "vehiculeId": "Vehicle ID",
+  "vehiculePropose": "Proposed vehicle",
+  "vehiculeReprisDuClient": "Vehicle taken back (from client)",
+  "vehicules": "Vehicles",
+  "aucuneInterruptionEnregistree": "No interruptions recorded",
+  "aucuneLocationActive": "No active rental",
+  "aucuneLocationTrouvee": "No rental found.",
+  "aucuneRepartitionEnregistreePourCetteLocation": "No distribution recorded for this rental.",
+  "cetteActionVaCreerUneLocation": "This action will create a rental from this web booking.",
+  "champCaution": "Deposit",
+  "champPrixJour": "Price / day",
+  "conditionsGeneralesDeLocation": "GENERAL RENTAL CONDITIONS",
+  "configurerLesMentionsLegalesLocationVente": "Configure legal terms (rental, sale, trade-in)",
+  "contratDeLocation": "RENTAL CONTRACT",
+  "convertirEnLocation": "Convert to rental",
+  "creerLaLocation": "Create rental",
+  "detailsDeLaLocation": "Rental details",
+  "enLocation": "Rented",
+  "erreurCreationLocationHistoriqueReponseInattendue": "Error creating rental history: unexpected response",
+  "erreurCreationLocationReponseInattendue": "Error creating rental: unexpected response",
+  "gererLesInterruptions": "Manage interruptions",
+  "interruptionAssurance": "Insurance",
+  "interruptionAutre": "Other",
+  "interruptionReparation": "Repair",
+  "interruptionVidange": "Oil change",
+  "interruptions": "Interruptions",
+  "interruptionsDeContrat": "Contract interruptions",
+  "journalDeBord": "Logbook",
+  "journalDesReparations": "Repair log",
+  "joursFacturables": "Billable days",
+  "kmDepart": "Departure km",
+  "kmRetour": "Return km",
+  "laLocationSeDerouleSansInterruption": "The rental is running without interruption.",
+  "locationCreeeAvecSucces": "✅ Rental created successfully!",
+  "locationIntrouvable": "Rental not found",
+  "locationSigneeBmwSerie3": "Signed rental - BMW Series 3",
+  "modifierLaLocation": "Edit rental",
+  "moyenneLocation": "Average / rental",
+  "nouvelleLocation": "New rental",
+  "prixJour": "Price / day",
+  "recapitulatifInterne": "INTERNAL SUMMARY",
+  "retenueCaution": "Deposit retained",
+  "revenusLocatifs": "Rental revenue",
+  "revenusLocations": "Rental revenues",
+  "selectionnerLes50DernieresLocations": "Sélectionner les 50 dernières locations",
+  "selectionnezLeMemeClientPourDupliquer": "Select the same client to duplicate the rental",
+  "supprimerLaLocation": "Delete rental",
+  "totalLocations": "Total rentals",
+  "uniteJour": "day",
+  "uniteJours": "days",
+  "urgentMoinsDe7Jours": "URGENT - less than 7 days",
+  "adresseOptionnel": "Address (optional)",
+  "aucunClientEnregistre": "No client registered",
+  "champAdresse": "Address",
+  "champEmail": "Email",
+  "champTelephone": "Phone",
+  "clientEnregistre": "Client registered",
+  "clientIntrouvable": "Client not found",
+  "clientNormal": "Normal",
+  "clientsrepositoryAucunShowroomSelectionne": "ClientsRepository: No showroom selected.",
+  "complementClient": "Additional amount from client",
+  "dateDeRestitutionAuClient": "Return date to client",
+  "documentInterneConfidentielNePasRemettre": "INTERNAL DOCUMENT — CONFIDENTIAL — Do not give to client",
+  "emailOptionnel": "Email (optional)",
+  "gestionDesClients": "Client Management",
+  "leClient": "The Client",
+  "nCni": "ID card No.",
+  "nPermis": "Licence No.",
+  "noteInterne": "Internal note",
+  "nouveauClient": "New client",
+  "portefeuilleClients": "Client portfolio",
+  "rechercherUnClient": "Search client...",
+  "restituerAuClient": "Return to client",
+  "selectionnerLeClient": "Select client",
+  "telephone": "Phone",
+  "telephoneCopie": "Phone copied",
+  "vosPermissionsAcces": "Your access permissions",
+  "achatsVentes": "Purchases / Sales",
+  "aucuneVenteEnregistree": "No sale recorded",
+  "aucuneVenteTrouvee": "No sale found.",
+  "contratDeVente": "SALE CONTRACT",
+  "erreurLorsDeLaCreationDe": "Error creating sale",
+  "nouveauBonDeVente": "New sale invoice",
+  "nouvelleVente": "New sale",
+  "prixDeVente": "Sale price *",
+  "venteIntrouvable": "Sale not found",
+  "achatsReprises": "Purchases & Trade-ins",
+  "aucunEchangeEnregistre": "No trade-in recorded",
+  "aucunEchangeTrouve": "No trade-in found.",
+  "changerLeType": "Change type:",
+  "dossierEchangeReprise": "Trade-in file",
+  "echangeReprise": "Trade-in",
+  "echangesReprises": "Trade-ins",
+  "echangesrepositoryAucunShowroomSelectionne": "EchangesRepository: No showroom selected.",
+  "nouvelAchatReprise": "New purchase / trade-in",
+  "nouvelEchange": "New trade-in",
+  "observationsComplementaires": "Additional observations",
+  "propositionDeReprise": "Trade-in offer",
+  "reservationsAchatsEtEchangesDuSite": "Website bookings, purchases and trade-ins",
+  "valeurReprise": "Trade-in value",
+  "achatIntrouvable": "Purchase not found",
+  "aucunAchat": "No purchase",
+  "aucunAchatEnregistre": "No purchase recorded",
+  "aucunAchatValide": "No validated purchase",
+  "dateAchat": "Purchase date",
+  "detailAchat": "Purchase detail",
+  "informationsVendeur": "Seller information",
+  "negociation": "Negotiation",
+  "nomDuVendeur": "Seller name *",
+  "nouvelAchat": "New purchase",
+  "prixAccorde": "Agreed price *",
+  "totalAchats": "Total purchases",
+  "@_caisse": "Cash & Finance",
+  "aucuneOperationEnregistree": "No operation recorded",
+  "caisserepositoryAucunShowroomidTrouve": "CaisseRepository: No showroomId found.",
+  "dateDuVersement": "Payment date",
+  "encaisse": "Collected",
+  "entree": "Income (+)",
+  "entrees": "Income",
+  "garageAutoReleveMensuel": "Karossa - Monthly statement",
+  "gestionDeCaisse": "Cash Management",
+  "gestionDeLaCaisse": "Cash Management",
+  "msgSucces": "Operation successful",
+  "nouveauVersement": "New payment",
+  "nouvelleOperation": "New operation",
+  "rapportsReleves": "Reports & Statements",
+  "soldeEstime": "Estimated balance",
+  "sortie": "Expense (-)",
+  "supprimerCeVersement": "Delete this payment?",
+  "totalEncaisse": "Total collected",
+  "caisseOperationSubtitle": "Income or expense from showroom cash",
+  "transfertEntreUtilisateurs": "Transfer between users",
+  "transfertSubtitle": "One user gives money to another",
+  "payePar": "Paid by",
+  "showroomCaisse": "Showroom (cash)",
+  "aRembourser": "(to be reimbursed)",
+  "quiDonne": "Who gives",
+  "quiRecoit": "Who receives",
+  "remboursable": "Refundable",
+  "transfertRemboursableSubtitle": "The beneficiary will have to return this money",
+  "transfertDonSubtitle": "Definitive gift, no refund planned",
+  "alerteAssurance": "Insurance",
+  "alerteCreee": "Alert created",
+  "alertePneus": "Tyres",
+  "alerteVidange": "Oil change",
+  "alerteVignette": "Registration sticker",
+  "alertesGps": "GPS alerts",
+  "aucuneAlerteD": "No alert",
+  "aucuneAlerteGpsToutesLesAlertes": "No GPS alerts — all alerts will appear here",
+  "aucuneReparationEnregistree": "No repair recorded",
+  "carrosserieDepart": "Body at departure",
+  "carrosserieRetour": "Body at return",
+  "depensesReparations": "Repair expenses",
+  "entretienPeriodique": "Periodic maintenance",
+  "entretienRevisions": "Maintenance & Revisions",
+  "etatCarrosserie": "Body condition",
+  "etatCarrosserieAuDepart": "Body condition at departure",
+  "etatCarrosserieAuRetour": "Body condition on return",
+  "etatCarrosserieDepart": "Body condition — Departure",
+  "etatCarrosserieRetour": "Body condition — Return",
+  "etatDeLaCarrosserie": "BODY CONDITION",
+  "exPneuAvantUseJanteRayee": "Ex: worn front tyre, scratched rim...",
+  "exPneuUseJanteRayee": "Ex: worn tyre, scratched rim...",
+  "notificationsAlertes": "Notifications & Alerts",
+  "nouvelleAlerte": "New alert",
+  "nouvelleReparation": "New repair",
+  "prestataire": "Service provider",
+  "repCarrosserie": "Body",
+  "repMecanique": "Mechanical",
+  "repPneus": "Tyres",
+  "reparationEnregistree": "Repair recorded",
+  "reparations": "Repairs",
+  "reparationsrepositoryAucunShowroomSelectionne": "ReparationsRepository: No showroom selected.",
+  "totalDepensesReparations": "Total repair expenses",
+  "modifierReparation": "Edit repair",
+  "requis": "Required",
+  "reste": "Remaining",
+  "depasse": "Exceeds by",
+  "enregistrementEnCours": "Saving...",
+  "enregistrerModifications": "Save changes",
+  "enregistrerReparation": "Save repair",
+  "payeePar": "Paid by",
+  "payeur": "Payer",
+  "doitSupporterMontant": "Who should actually bear this amount",
+  "helperDebiteur": "If different from co-owners, this amount will be deducted from this person and reimbursed to the payer.",
+  "coProprietairesParDefaut": "Co-owners of the vehicle (default)",
+  "ajouterPayeur": "Add payer",
+  "choisirProprietairePaiement": "Choose the owner for each payment line.",
+  "erreurSommePaiements": "Sum of payments ({somme} DA) must equal total cost ({cout} DA).",
+  "@erreurSommePaiements": {
+    "placeholders": {
+      "somme": {
+        "type": "String"
+      },
+      "cout": {
+        "type": "String"
+      }
+    }
+  },
+  "reparationModifiee": "Repair updated",
+  "@_contrats": "Contrats & PDF",
+  "apercuDuContrat": "Contract preview",
+  "apercuDuPdf": "PDF preview",
+  "articlesDesContrats": "Contract articles",
+  "aucunArticleTrouve": "No article found.",
+  "btnGenererPdf": "Generate PDF",
+  "btnNouveauContrat": "New contract",
+  "clausesArticlesDesContrats": "Clauses & Articles",
+  "contratOuvertSansDateDeFin": "Open contract (no end date)",
+  "contratsPdf": "PDF Contracts",
+  "dateDeSignature": "Signature date",
+  "documentCertifieKarossa": "Certified document - Karossa",
+  "documentGenereParKarossa": "Document generated by Karossa",
+  "erreurLorsDuChargementDesContrats": "Error loading contracts",
+  "exArticle1Responsabilites": "Ex: Article 1 — Responsibilities",
+  "exporterPdf": "Export PDF",
+  "garageAutoDocumentOfficiel": "Karossa - Official document",
+  "genererContrat": "Generate contract",
+  "genererEtPartagerLeContratPdf": "Generate and share PDF contract",
+  "genererLeContratPdf": "Generate PDF contract",
+  "gestionDesClausesArticles": "Clause management",
+  "gestionDesDocuments": "Document management",
+  "informationsInternesNonAfficheesDansLe": "Internal info not shown in the contract",
+  "langueDuContrat": "Contract language",
+  "nouveauContrat": "New contract",
+  "nouvelArticle": "New article",
+  "numeroDeContrat": "Contract number",
+  "optionsDuContrat": "Contract options",
+  "partagerLePdf": "Share PDF",
+  "telechargerLePdf": "Download PDF",
+  "@_gps": "GPS & Tracking",
+  "afficherLeTrajet": "Show route",
+  "analyseDeLaCarteGrise": "Analysing registration document...",
+  "appuyezSurRafraichirPourChargerLa": "Press refresh to load position.",
+  "carteFlotte": "Fleet map",
+  "carteGpsFlotte": "GPS map — Fleet",
+  "chargementDuTrajet": "Loading route...",
+  "choisirUnePhotoDeLaCarte": "Choose registration document photo",
+  "clesApiGeminiFlespiEtCoordonnees": "Gemini, Flespi API keys and coordinates",
+  "dernierePosition": "Last position",
+  "flespiDeviceIdGps": "Flespi Device ID (GPS)",
+  "gpsFlotte": "GPS — Fleet",
+  "gpsPasserelleFlespi": "GPS & Flespi Gateway",
+  "motDePasseFlespi": "Flespi password",
+  "positionGps": "GPS position",
+  "prendreEnPhotoLaCarteGrise": "Take photo of registration document",
+  "scannerCarteGrise": "Scan registration document",
+  "suiviGpsBalises": "GPS & beacon tracking",
+  "tokenFlespi": "Flespi token",
+  "urlFlespi": "Flespi URL",
+  "utilisateurFlespi": "Flespi user",
+  "supprimerDefinitivement": "Delete permanently?",
+  "confirmerDecimation": "Confirm decimation?",
+  "tousPointsGpsEntre": "All GPS points between",
+  "etLe": "and",
+  "serontSupprimesDefinitivement": "will be permanently deleted",
+  "pourTouteLaFlotte": "for the ENTIRE fleet",
+  "actionIrreversible": "This action is irreversible.",
+  "surCetIntervalle": "During this interval, only one point will be kept every",
+  "autresPointsSupprimes": "Other points will be permanently deleted.",
+  "decimer": "Decimate",
+  "enregistrementsSupprimes": "{count} record(s) deleted.",
+  "@enregistrementsSupprimes": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "nettoyageHistoriqueGps": "GPS history cleanup",
+  "touteLaFlotte": "Entire fleet",
+  "intervalleDates": "Date range",
+  "action": "Action",
+  "decimerGarder1Point": "Decimate (keep 1 point every X)",
+  "decimerRecommandation": "Recommended — preserves route trends",
+  "supprimerToutIntervalle": "Delete all on interval",
+  "effaceCompletementPeriode": "Completely erases the selected period",
+  "lancerDecimation": "Run decimation",
+  "gpsAccessDenied": "This action is restricted to the manager or owner of the showroom.",
+  "gpsCleanupInfo": "The gps_positions table can grow very quickly (1 point / few seconds per vehicle). Use this page to free up space without losing the general trend of routes (decimation), or to delete a specific range.",
+  "@_admin": "Administration",
+  "administrateurPrincipal": "Main administrator - Manages global settings",
+  "administrationShowroom": "Showroom Administration",
+  "ajouterUnUtilisateur": "Add a user...",
+  "aucunUtilisateurTrouve": "No user found",
+  "bienvenueDansVotreGestionnaireDeShowroom": "Welcome to your showroom manager",
+  "cleApiGemini": "Gemini API key",
+  "configurationDuShowroom": "Showroom configuration",
+  "editionUtilisateur": "Edit user...",
+  "geminiReponseVideCandidatesAbsent": "Gemini: empty response (candidates absent)",
+  "gererLesUtilisateurs": "Manage users",
+  "gestionDesUtilisateurs": "User management",
+  "impossibleDeSauvegarderAucunShowroomActif": "Unable to save: no active showroom detected.",
+  "karossaShowroom": "Karossa Showroom",
+  "modeSombre": "Dark mode",
+  "nomDuShowroom": "Showroom name",
+  "parametresDuShowroom": "Showroom settings",
+  "parametresSauvegardes": "Settings saved",
+  "parametresSysteme": "System settings",
+  "showroomRattache": "Linked showroom",
+  "typeDeCommission": "Commission type",
+  "@_actions": "Actions communes",
+  "ajouterAuStock": "Add to stock",
+  "ajouterPaiement": "Add payment",
+  "ajouterUnPaiement": "Add a payment",
+  "btnAjouter": "Add",
+  "btnConfirmer": "Confirm",
+  "btnCreer": "Create",
+  "btnEditer": "Edit",
+  "btnEnregistrer": "Save",
+  "btnExporter": "Export",
+  "btnFermer": "Close",
+  "btnModifier": "Edit",
+  "btnNouveau": "New",
+  "btnPartager": "Share",
+  "btnRechercher": "Search",
+  "btnReinitialiser": "Reset",
+  "btnRetour": "Back",
+  "btnSauvegarder": "Save",
+  "btnSupprimer": "Delete",
+  "btnTelecharger": "Download",
+  "btnValider": "Validate",
+  "btnVoir": "View",
+  "cetteActionEstIrreversibleConfirmer": "This action is irreversible. Confirm?",
+  "confirmerL": "Confirm",
+  "confirmerLeRejetDeCetteDemande": "Confirm rejection of this request?",
+  "dateRetourReelle": "Actual return date",
+  "dateRetourReelleOptionnel": "Actual return date (optional)",
+  "detailsDuRetour": "Return details",
+  "enregistrer": "Save",
+  "enregistrerLeRetour": "Save return",
+  "essayezDeModifierLesFiltres": "Try changing the filters",
+  "exporterCsv": "Export CSV",
+  "informationsDeRetour": "Return information",
+  "kmAuRetour": "Km at return",
+  "observationsAuRetour": "Return observations",
+  "reinitialiser": "Reset",
+  "resteAPercevoir": "Remaining to collect",
+  "retourConformeDeLaGolf8": "Clean return of Golf 8",
+  "retourEnregistreAvecSucces": "Return saved successfully.",
+  "retourPrevu": "Expected return",
+  "retourReel": "Actual return",
+  "sauvegarder": "Save",
+  "supprimer": "Delete?",
+  "supprimerCeDommage": "Delete this damage",
+  "supprimerCePaiement": "Delete this payment",
+  "supprimerLaDemande": "Delete request",
+  "voirLaFacture": "View invoice",
+  "voirTout": "View all",
+  "voulezVousVraimentFermerVotreSession": "Do you really want to log out of Karossa?",
+  "@_champs": "Champs & Labels",
+  "champDate": "Date",
+  "champDescription": "Description",
+  "champMontant": "Amount",
+  "champNom": "Last name",
+  "champNotes": "Notes",
+  "champPrenom": "First name",
+  "msgChampsObligatoires": "Please fill in all required fields",
+  "uniteDa": "DZD",
+  "uniteDzd": "DZD",
+  "uniteKm": "km",
+  "utilisezVariablePourLesChampsDynamiques": "Use {variable} for dynamic fields",
+  "@_messages": "Messages & Erreurs",
+  "aucunFiltre": "No filter",
+  "aucunImpactConstate": "No impact observed",
+  "aucunPaiementEnregistre": "No payment recorded",
+  "aucuneDemandeTrouvee": "No request found",
+  "aucuneTransactionCeMoisCi": "No transaction this month",
+  "deconnexion": "Logout",
+  "demandeSupprimee": "Request deleted.",
+  "erreurDeSynchronisation": "Synchronisation error",
+  "fonctionnaliteDeTelechargementAImplementer": "Download feature to be implemented",
+  "idInvalide": "Invalid ID",
+  "impossibleDeChargerLesNotifications": "Unable to load notifications",
+  "impossibleDeContacterLia": "Unable to contact AI server",
+  "impossibleDeRecupererLesDonneesFinancieres": "Unable to retrieve financial data",
+  "msgAucunResultat": "No results found",
+  "msgChargement": "Loading...",
+  "msgConfirmationSuppression": "Confirm deletion",
+  "msgConnexionRequise": "Login required",
+  "msgErreurGenerale": "An error occurred",
+  "msgSuppressionIrreversible": "This action is irreversible.",
+  "photoAjouteeAvecSucces": "Photo added successfully",
+  "profilIntrouvable": "Profile not found",
+  "@_autres": "Divers",
+  "accepte": "Accepted",
+  "activiteRecente": "Recent activity",
+  "actualiserLesFiches": "Refresh records",
+  "analyseFinanciere": "Financial analysis",
+  "approuve": "Approved",
+  "approuvees": "Approved",
+  "arrivee": "Arrival",
+  "assistantVirtuelIa": "AI Virtual Assistant",
+  "bilanFinancier": "Financial report",
+  "budgetMax": "Max budget",
+  "categorie": "Category",
+  "ceMois": "This month",
+  "choisissezUnIntervalleDeDates": "Choose a date range",
+  "comparatifAnnuelDa": "Annual comparison (DZD)",
+  "conditionsGenerale": "- General Conditions:",
+  "connectezVousAVotreCompte": "Log in to your account",
+  "coordonnees": "Coordinates",
+  "coutTotal": "Total cost",
+  "date": "Date: _______________",
+  "dateDeRecuperation": "Pick-up date",
+  "dateDepart": "Departure date",
+  "datesDeReservationManquantes": "Booking dates missing.",
+  "deduireDuProfitAvantRepartition": "Deduct from profit before distribution",
+  "definissezLeTauxParDefautPre": "Set the default rate pre-filled in each form.",
+  "dejaVerse": "Already paid",
+  "demandeDeDevis": "Quote request",
+  "demanderAKarossaai": "Ask KarossaAI...",
+  "demandesWebLeads": "Web requests & Leads",
+  "depart": "Departure",
+  "depenseTotale": "Total expense",
+  "depenses": "Expenses",
+  "description": "Description",
+  "detacherLeContexteActuel": "Detach current context",
+  "detail": "Detail",
+  "detailsFinanciers": "FINANCIAL DETAILS",
+  "devisePrincipale": "Main currency",
+  "diagnosticRlsConsole": "RLS Diagnostic (console)",
+  "dinarAlgerienFixeDzd": "Algerian dinar fixed (DZD)",
+  "dommagesPannesAnomaliesOptionnel": "Damage / breakdowns / anomalies (optional)",
+  "duree": "Duration",
+  "dzdDa": "DZD",
+  "economieNegociee": "Negotiated saving",
+  "enAtelier": "In workshop",
+  "enAttente": "Pending",
+  "enEvaluation": "Under evaluation",
+  "etesVousSurDeVouloirVous": "Are you sure you want to log out?",
+  "exRayureSurAileAvantGauche": "Ex: scratch on left front wing, broken AC, cracked right mirror...",
+  "exRevision60000KmChez": "Ex: 60,000 km service at garage...",
+  "filtresActifs": "Active filters",
+  "filtresAvances": "Advanced filters",
+  "fonctionnaliteDePartageAImplementer": "Share feature to be implemented",
+  "garageAuto": "Karossa",
+  "generationDesMetriquesKarossa": "Generating Karossa metrics...",
+  "impactFinancier": "Financial impact",
+  "informationsDeContact": "Contact information",
+  "informationsGenerales": "General information",
+  "injecterDesDonneesDeGestion": "Inject management data",
+  "intelligenceArtificielle": "Artificial Intelligence",
+  "kmAuDepart": "Km at departure",
+  "kmAuMoment": "Km at the time",
+  "laDateDeDebutDoitEtre": "Start date must be before end date.",
+  "laSommeDesPartsDoitEtre": "The sum of shares must equal 100%",
+  "listeNoire": "Blacklist",
+  "logsDeDiagnosticEcritsDansLa": "🔍 Diagnostic logs written to Flutter console",
+  "modeDePaiement": "Payment method",
+  "modeMixte": "Mixed",
+  "monProfil": "My profile",
+  "montantBrut": "Gross amount",
+  "montantDa": "Amount (DZD)",
+  "montantDeduit": "Deducted amount",
+  "montantFacturable": "Billable amount",
+  "montantFixeDa": "Fixed amount (DZD)",
+  "motDePasse": "Password",
+  "noteOptionnel": "Note (optional)",
+  "notesInternesOptionnel": "Internal notes (optional)",
+  "notesOptionnel": "Notes (optional)",
+  "notifications": "Notifications",
+  "observations": "Observations",
+  "offreFaite": "Offer made",
+  "paiementsRecus": "Payments received",
+  "pasDeDateDeFin": "No end date",
+  "periode": "Period",
+  "personnalise": "Custom",
+  "pourcentage": "Percentage (%)",
+  "preferencesSysteme": "Preferences & System",
+  "prixDemande": "Asking price",
+  "prixMaxDa": "Max price (DZD)",
+  "prixPaiement": "Price & payment",
+  "prixSouhaite": "Desired price",
+  "rafraichir": "Refresh",
+  "rafraichirMaintenant": "Refresh now",
+  "reessayer": "Retry",
+  "registreDuCommerceRc": "Business registration (RC)",
+  "rejetees": "Rejected",
+  "repAutre": "Other",
+  "repartitionDesGains": "Profit distribution",
+  "resume": "Summary",
+  "resumeFinancier": "Financial summary",
+  "revenuTotal": "Total revenue",
+  "revenusVsDepenses": "Revenue vs Expenses",
+  "seConnecter": "Log in",
+  "seDeconnecter": "Log out",
+  "statistiques": "Statistics",
+  "tauxOccupation": "Occupancy rate",
+  "totalBrut": "Gross total",
+  "totalGenere": "Total generated",
+  "totalReparti": "TOTAL distributed",
+  "tousLesTypes": "All types",
+  "toutEffacer": "Clear all",
+  "toutEstEnOrdre": "All good 👍",
+  "toutRafraichir": "Refresh all",
+  "toutesLesCategories": "All categories",
+  "toutesLesFiches": "All records",
+  "typeD": "Type",
+  "typeDeDommage": "Damage type",
+  "urlDuLogo": "Logo URL",
+  "urlSupabaseStorageNulle": "Supabase Storage URL is null.",
+  "valeursFinancieres": "Financial values",
+  "valides": "Validated",
+  "@_nouvelles_cles": "Nouvelles clés v2",
+  "aiEffacerHistorique": "Clear history",
+  "aiContextualiserAssistant": "Contextualize assistant with database",
+  "aiAnalyseEtatGlobalParc": "Overall fleet status analysis",
+  "aiNLocationsRecentes": "{count} recent rentals",
+  "@aiNLocationsRecentes": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "aiCatalogueNVehicules": "Catalogue ({count} vehicles)",
+  "@aiCatalogueNVehicules": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "aiContratsChargesContexte": "✅ {count} contracts loaded into context.",
+  "@aiContratsChargesContexte": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "aiVehiculesSynchronisesKarossa": "✅ {count} vehicles synced with KarossaAI.",
+  "@aiVehiculesSynchronisesKarossa": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "erreurAvecDetail": "Error: {error}",
+  "@erreurAvecDetail": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "erreurChargementMessage": "Loading error: {message}",
+  "@erreurChargementMessage": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "erreurSuppression": "Deletion error: {error}",
+  "@erreurSuppression": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "erreurConversion": "Conversion error: {error}",
+  "@erreurConversion": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "contratGenereAvecSucces": "Contract generated successfully",
+  "clientInconnu": "Unknown client",
+  "vehiculeInconnu": "Unknown vehicle",
+  "oui": "Yes",
+  "non": "No",
+  "champTitre": "Title",
+  "champCorps": "Body",
+  "modifierArticle": "Edit article",
+  "modifierChamp": "Edit — {label}",
+  "@modifierChamp": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "langue": "Language",
+  "champValeur": "Value",
+  "modeleIaLabel": "AI Model (gemini_model)",
+  "commissionPourLabel": "Commission — {label}",
+  "@commissionPourLabel": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "commissionVente": "Sale",
+  "commissionLocation": "Rental",
+  "commissionAchat": "Purchase",
+  "commissionEchange": "Trade-in",
+  "gererLequipe": "Manage team",
+  "clesApiGeminiEtFlespi": "Gemini, Flespi API keys and contact details",
+  "voulezVousVraimentFermerSession": "Are you sure you want to close your Karossa session?",
+  "contratOuvert": "Open contract",
+  "suppressionInterruption": "Delete interruption?",
+  "joursSerontRecalculesAuto": "This action is irreversible. Days will be recalculated automatically.",
+  "champMotif": "Reason",
+  "nJoursRetard": "{count}d late",
+  "@nJoursRetard": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "nJoursRetardBullet": "• {count} day(s) late",
+  "@nJoursRetardBullet": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "nJoursInterruptionDeduits": "{count} interruption days deducted",
+  "@nJoursInterruptionDeduits": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "dupliquer": "Duplicate",
+  "filterTous": "All",
+  "enCoursEnPause": "⏸ In progress",
+  "enRetardAvecCount": "⚠️ Overdue ({count})",
+  "@enRetardAvecCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "historiqueAvecCount": "History ({count})",
+  "@historiqueAvecCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "nZones": "{count} zone(s)",
+  "@nZones": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "labelNotesDepart": "Departure: {notes}",
+  "@labelNotesDepart": {
+    "placeholders": {
+      "notes": {
+        "type": "String"
+      }
+    }
+  },
+  "labelNotesRetour": "Return: {notes}",
+  "@labelNotesRetour": {
+    "placeholders": {
+      "notes": {
+        "type": "String"
+      }
+    }
+  },
+  "champDistance": "Distance",
+  "kmDepartHelper": "Departure: {km} km",
+  "@kmDepartHelper": {
+    "placeholders": {
+      "km": {
+        "type": "String"
+      }
+    }
+  },
+  "traitementEnCours": "Processing…",
+  "interruptionDemarre": "Interruption started — vehicle retrieved on {date}",
+  "@interruptionDemarre": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "vehiculeRestitue": "Vehicle returned on {date} — {count} day(s) deducted",
+  "@vehiculeRestitue": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "interruptionSupprimee": "Interruption deleted",
+  "depuisLeDateCount": "Since {date} · {count} d",
+  "@depuisLeDateCount": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "indiquerRaisonDateRecuperation": "Enter the reason and date you retrieved the vehicle. These days will be deducted from billing.",
+  "dateRecuperationVehicule": "Vehicle retrieval date",
+  "titreDetailsMontants": "Amounts",
+  "paiementsRecusCount": "Received payments ({count})",
+  "@paiementsRecusCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "champFinancier": "Financial",
+  "totalLabel": "Total",
+  "detailsOperation": "Operation details",
+  "filterSorties": "Expenses",
+  "filterSolde": "Balance",
+  "acompte": "Down payment",
+  "champMois": "Month",
+  "champAnneeLabel": "Year",
+  "champType": "Type",
+  "totalCommissions": "Total commissions",
+  "champCommission": "Commission",
+  "anonyme": "Anonymous",
+  "demandeSucces": "Request processed successfully.",
+  "photosCount": "Photos ({count})",
+  "@photosCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "champPhoto": "Photo",
+  "btnRejeter": "Reject",
+  "btnApprouver": "Approve",
+  "champMessage": "Message",
+  "gpsDepuis": "From {date}",
+  "@gpsDepuis": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "gpsAu": "To {date}",
+  "@gpsAu": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "preset1Heure": "1 hour",
+  "preset3Heures": "3 hours",
+  "preset8Heures": "8 hours",
+  "presetHier": "Yesterday",
+  "preset24Heures": "24 hours",
+  "preset3Jours": "3 days",
+  "preset7Jours": "7 days",
+  "sectionClient": "Client",
+  "vehiculeCede": "Vehicle given",
+  "vehiculeRepris": "Vehicle received",
+  "modeleChamp": "Model *",
+  "telephoneObligatoire": "Phone *",
+  "achatEnregistreAvecSucces": "Purchase saved successfully",
+  "prixAccordeLabel": "Agreed price",
+  "modeleIaGemini": "AI Model (gemini_model)",
+  "echangeEnregistreAvecSucces": "Trade-in saved successfully",
+  "kmDepartInferieur": "< departure km",
+  "dateRetourAvantDebut": "Actual return date cannot be before the start date",
+  "locationMiseAJour": "Rental updated successfully!",
+  "contratOuvertSansDateFin": "Open contract (no end date)",
+  "clientListeNoire": "⚠️ This client is blacklisted! Be careful.",
+  "notesEtatVehiculeDepart": "Vehicle condition notes at departure (optional)",
+  "pdfGenereAvecSucces": "PDF generated successfully",
+  "locationSupprimee": "Rental deleted.",
+  "exMarqueVehicule": "e.g. Renault, Peugeot...",
+  "sommePartsDoit100": "The sum of shares must equal 100%",
+  "anneeInvalideSimple": "Invalid year",
+  "cleApiGeminiNonConfiguree": "Gemini API key not configured. Go to Settings > Showroom.",
+  "carteGriseAnalysee": "Registration document analysed successfully!",
+  "analyseTermineeDonneesManquantes": "Analysis complete but some data is missing. Please complete manually.",
+  "venteEnregistreeAvecSucces": "Sale saved successfully",
+  "ajouterAuStockBtn": "Add to stock",
+  "tooltipPlanning": "Schedule",
+  "tooltipRetourAccueil": "Back to home",
+  "tooltipPlusOptions": "More options",
+  "titrePaiements": "Payments",
+  "confirmerSuppressionLocationMessage": "Delete the rental for {vehicule} by {client}?\nThis action is irreversible.",
+  "@confirmerSuppressionLocationMessage": {
+    "placeholders": {
+      "vehicule": {
+        "type": "String"
+      },
+      "client": {
+        "type": "String"
+      }
+    }
+  },
+  "cautionMontantDa": "Deposit: {montant} DA",
+  "@cautionMontantDa": {
+    "placeholders": {
+      "montant": {
+        "type": "String"
+      }
+    }
+  },
+  "karossaAi": "KarossaAI",
+  "prendrePhoto": "Take a photo",
+  "choisirGalerie": "Choose from gallery",
+  "erreurGenerationRapport": "Report generation error: {erreur}",
+  "@erreurGenerationRapport": {
+    "placeholders": {
+      "erreur": {
+        "type": "String"
+      }
+    }
+  },
+  "genererRapportPdfMois": "Generate monthly PDF report",
+  "effacerHistorique": "Clear history",
+  "contextualiserAssistant": "Contextualize assistant with database",
+  "joindrePhoto": "Attach a photo (damage, invoice, registration document...)",
+  "actualiser": "Refresh",
+  "rejete": "Rejected",
+  "confirmerApprobationDemande": "Confirm approval of this request?",
+  "bonjourPrenom": "Hello, {prenom} 👋",
+  "@bonjourPrenom": {
+    "placeholders": {
+      "prenom": {
+        "type": "String"
+      }
+    }
+  },
+  "actionRequiseRetards": "Action required: {count} vehicle(s) overdue for return!",
+  "@actionRequiseRetards": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "fin": "End",
+  "aucunContratLocationActif": "No active rental contract today",
+  "copier": "Copy",
+  "marquerRembourse": "Mark as reimbursed",
+  "supprimerCeTransfert": "Delete this transfer?",
+  "transfertSeraSupprimeDefinitivement": "The transfer of {montant} will be permanently deleted.",
+  "@transfertSeraSupprimeDefinitivement": {
+    "placeholders": {
+      "montant": {
+        "type": "String"
+      }
+    }
+  },
+  "soldeRestantTooltip": "Remaining balance to pay, taking into account money transfers with other users",
+  "zoneCreeeSucces": "Zone \"{nom}\" created",
+  "@zoneCreeeSucces": {
+    "placeholders": {
+      "nom": {
+        "type": "String"
+      }
+    }
+  },
+  "btnContinuer": "Continue",
+  "champNomZone": "Zone name",
+  "exempleNomZone": "E.g. Showroom Algiers, Workshop...",
+  "champCouleur": "Color",
+  "alerterALEntree": "Alert on entry",
+  "alerterALaSortie": "Alert on exit",
+  "aucunContratTrouvePourVehicule": "No contract found for this vehicle",
+  "fonctionnaliteTelechargementAImplementer": "Download feature to be implemented",
+  "fonctionnalitePartageAImplementer": "Sharing feature to be implemented",
+  "aucuneDonneePourCetteDate": "No data for this date",
+  "lectureDeTrajet": "Trip playback",
+  "reconstitutionDuTrajet": "Reconstructing the route…",
+  "pointsReconstituesTooltip": "{count} point(s) reconstructed along the most probable route, where the GPS signal was lost for a few moments.",
+  "@pointsReconstituesTooltip": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "countReconstitues": "{count} reconstructed{plural}",
+  "@countReconstitues": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      },
+      "plural": {
+        "type": "String"
+      }
+    }
+  },
+  "intervalleDeLecture": "Playback interval",
+  "btnAppliquer": "Apply",
+  "vitesseDeLecture": "Playback speed",
+  "syncDansSecondes": "Sync in {countdown}s",
+  "@syncDansSecondes": {
+    "placeholders": {
+      "countdown": {
+        "type": "String"
+      }
+    }
+  },
+  "aucunVehiculeGps": "No GPS vehicle",
+  "planningLocations": "Rental schedule",
+  "aujourdhui": "Today",
+  "aucunVehiculeAAfficher": "No vehicle to display.",
+  "msgMarqueModeleTypeAlerte": "{marque} {modele} — {typeAlerte}",
+  "@msgMarqueModeleTypeAlerte": {
+    "placeholders": {
+      "marque": {
+        "type": "String"
+      },
+      "modele": {
+        "type": "String"
+      },
+      "typeAlerte": {
+        "type": "String"
+      }
+    }
+  },
+  "alerteGpsVehicule": "GPS Alert — {vehicule}",
+  "@alerteGpsVehicule": {
+    "placeholders": {
+      "vehicule": {
+        "type": "String"
+      }
+    }
+  },
+  "nouvelleReservationWeb": "New online booking",
+  "msgReservationWeb": "{marque} {modele} — from {debut} to {fin}",
+  "@msgReservationWeb": {
+    "placeholders": {
+      "marque": {
+        "type": "String"
+      },
+      "modele": {
+        "type": "String"
+      },
+      "debut": {
+        "type": "String"
+      },
+      "fin": {
+        "type": "String"
+      }
+    }
+  },
+  "nouvelleDemandeDevis": "New quote request",
+  "propositionRepriseClient": "Client trade-in proposal",
+  "alaChargeDe": "Charged to: {resume}",
+  "@alaChargeDe": {
+    "placeholders": {
+      "resume": {
+        "type": "String"
+      }
+    }
+  },
+  "documents": "Documents",
+  "centreAlertes": "Alert center",
+  "toutLu": "Mark all read",
+  "aucuneAlerteIci": "No alerts here",
+  "lu": "Read",
+  "vitessePeriode": "Speed — {periode}",
+  "@vitessePeriode": {
+    "placeholders": {
+      "periode": {
+        "type": "String"
+      }
+    }
+  },
+  "repartitionDuTemps": "Time breakdown",
+  "retourPrevuValeur": "Expected return: {retour}",
+  "@retourPrevuValeur": {
+    "placeholders": {
+      "retour": {
+        "type": "String"
+      }
+    }
+  },
+  "kmh": "km/h",
+  "erreurDeChargement": "Loading error: {error}",
+  "@erreurDeChargement": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "aucuneDonneeGpsSurPeriode": "No GPS data for this period",
+  "zonesDeCirculation": "Traffic zones",
+  "pointsGpsAnalyses": "{count} GPS points analyzed",
+  "@pointsGpsAnalyses": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "faible": "Low",
+  "eleve": "High",
+  "vendeur": "Seller",
+  "remarques": "Remarks",
+  "statutMisAJour": "Status updated: {statut}",
+  "@statutMisAJour": {
+    "placeholders": {
+      "statut": {
+        "type": "String"
+      }
+    }
+  },
+  "modifierLabel": "Edit — {label}",
+  "@modifierLabel": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "commissionLabel": "Commission — {label}",
+  "@commissionLabel": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "identite": "Identity",
+  "aucuneAlerteEntretienActive": "No active maintenance alert",
+  "kmEcheance": "At {km} km",
+  "@kmEcheance": {
+    "placeholders": {
+      "km": {
+        "type": "String"
+      }
+    }
+  },
+  "expire": "EXPIRED",
+  "btnFait": "Done",
+  "catalogue": "Catalog",
+  "filtres": "Filters",
+  "journalAudit": "Audit log",
+  "aucuneActiviteEnregistreePourCesFiltres": "No activity recorded for these filters.",
+  "gererLEquipe": "Manage team",
+  "nouvelleAlerteEntretien": "New maintenance alert",
+  "typeEntretien": "Maintenance type",
+  "depensesUpper": "EXPENSES",
+  "revenusUpper": "REVENUE",
+  "locationsUpper": "RENTALS",
+  "constatIA": "AI assessment",
+  "insightDuJour": "· insight of the day",
+  "autresPointsAConsulter": "+ {autres} more point{plural} to review",
+  "@autresPointsAConsulter": {
+    "placeholders": {
+      "autres": {
+        "type": "String"
+      },
+      "plural": {
+        "type": "String"
+      }
+    }
+  },
+  "vueDEnsemble": "Overview",
+  "donneesNonDisponibles": "Data not available",
+  "aucunTrajetAujourdhui": "No trip today",
+  "vsMoisDernier": "vs last month",
+  "supprimerLInterruption": "Delete this interruption?",
+  "montants": "Amounts",
+  "departKm": "Departure: {km} km",
+  "@departKm": {
+    "placeholders": {
+      "km": {
+        "type": "String"
+      }
+    }
+  },
+  "joursRetard": "{jours}d late",
+  "@joursRetard": {
+    "placeholders": {
+      "jours": {
+        "type": "String"
+      }
+    }
+  },
+  "totalPourcent": "Total: {pct}%",
+  "@totalPourcent": {
+    "placeholders": {
+      "pct": {
+        "type": "String"
+      }
+    }
+  },
+  "erreurUploadPhoto": "Error uploading photo: {error}",
+  "@erreurUploadPhoto": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "detailDeLErreur": "Error details",
+  "entretien": "Maintenance",
+  "dateDAchat": "Purchase date",
+  "scoreIndisponiblePourPeriode": "Score unavailable for this period",
+  "scoreDeConduite": "Driving score",
+  "duDate": "From {date}",
+  "@duDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "auDate": "To {date}",
+  "@auDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "enMouvement": "Moving",
+  "horsLigne": "Offline",
+  "entreeDansLaZone": "Entered zone \"{zone}\"",
+  "@entreeDansLaZone": {
+    "placeholders": {
+      "zone": {
+        "type": "String"
+      }
+    }
+  },
+  "sortieDeLaZone": "Left zone \"{zone}\"",
+  "@sortieDeLaZone": {
+    "placeholders": {
+      "zone": {
+        "type": "String"
+      }
+    }
+  },
+  "champMode": "Mode",
+  "contratOuvertPrixJour": "Open contract — {prix} DA/day",
+  "@contratOuvertPrixJour": {
+    "placeholders": {
+      "prix": {
+        "type": "String"
+      }
+    }
+  },
+  "detailsDeLOperation": "Operation details",
+  "effacer": "Clear",
+  "retourALAccueil": "Back to home",
+  "locationsEffectuees": "{count} rental(s) completed",
+  "@locationsEffectuees": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "erreurCritiqueSynchronisation": "Critical sync error: {error}",
+  "@erreurCritiqueSynchronisation": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  }
+}

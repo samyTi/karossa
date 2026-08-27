@@ -10,6 +10,7 @@ import '../../../core/theme/app_text_styles.dart';
 import '../../../shared/widgets/custom_app_bar.dart';
 import '../../auth/presentation/auth_provider.dart';
 import '../../auth/domain/profile_model.dart';
+import 'package:garage_auto/core/extensions/l10n_extension.dart';
 
 class ReleveScreen extends ConsumerStatefulWidget {
   const ReleveScreen({super.key});
@@ -89,7 +90,7 @@ class _State extends ConsumerState<ReleveScreen> {
             ? [
                 IconButton(
                   icon: const Icon(Icons.picture_as_pdf),
-                  tooltip: 'Exporter PDF',
+                  tooltip: context.l10n.exporterPdf,
                   onPressed: _exportPdf),
               ]
             : null,
@@ -100,7 +101,7 @@ class _State extends ConsumerState<ReleveScreen> {
           child: Row(children: [
             Expanded(child: DropdownButtonFormField<int>(
               initialValue: _mois,
-              decoration: const InputDecoration(labelText: 'Mois'),
+              decoration: InputDecoration(labelText: context.l10n.champMois),
               items: List.generate(12, (i) => DropdownMenuItem<int>(
                 value: i + 1,
                 child: Text(_moisLabels[i]))).toList(),
@@ -112,7 +113,7 @@ class _State extends ConsumerState<ReleveScreen> {
             const SizedBox(width: 12),
             Expanded(child: DropdownButtonFormField<int>(
               initialValue: _annee,
-              decoration: const InputDecoration(labelText: 'Annee'),
+              decoration: InputDecoration(labelText: context.l10n.champAnneeLabel),
               items: [2024, 2025, 2026].map((y) =>
                 DropdownMenuItem<int>(
                   value: y, child: Text('$y'))).toList(),
@@ -128,9 +129,9 @@ class _State extends ConsumerState<ReleveScreen> {
           const Expanded(
             child: Center(child: CircularProgressIndicator()))
         else if (_repartitions.isEmpty)
-          const Expanded(
+          Expanded(
             child: Center(
-              child: Text('Aucune transaction ce mois-ci')))
+              child: Text(context.l10n.aucuneTransactionCeMoisCi)))
         else
           Expanded(child: Column(children: [
             Padding(
@@ -192,8 +193,7 @@ class _State extends ConsumerState<ReleveScreen> {
       build: (ctx) => pw.Column(
         crossAxisAlignment: pw.CrossAxisAlignment.start,
         children: [
-          pw.Text('Garage Auto - Releve mensuel',
-            style: pw.TextStyle(
+          pw.Text(context.l10n.garageAutoReleveMensuel, style: pw.TextStyle(
               fontSize: 20,
               fontWeight: pw.FontWeight.bold)),
           pw.Text('$moisLabel $_annee - $nomAssoc',

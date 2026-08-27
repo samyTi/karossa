@@ -7,6 +7,7 @@ import '../../../shared/widgets/custom_app_bar.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../domain/echange_model.dart';
 import 'echanges_provider.dart';
+import 'package:garage_auto/core/extensions/l10n_extension.dart';
 
 class EchangesScreen extends ConsumerWidget {
   const EchangesScreen({super.key});
@@ -14,23 +15,23 @@ class EchangesScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final echanges = ref.watch(echangesProvider);
     return Scaffold(
-      appBar: const CustomAppBar(
-        title: 'Échanges / Reprises',
+      appBar: CustomAppBar(
+        title: context.l10n.echangesReprises,
         showBackButton: false,
         showHomeButton: true,
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push('/echanges/new'),
         icon: const Icon(Icons.swap_horiz),
-        label: const Text('Nouvel échange'),
+        label: Text(context.l10n.nouvelEchange),
         backgroundColor: AppColors.accent,
         foregroundColor: Colors.white,
       ),
       body: echanges.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error:   (e, _) => Center(child: Text('Erreur: $e')),
+        error:   (e, _) => Center(child: Text(context.l10n.erreurAvecDetail(e.toString()))),
         data:    (list) => list.isEmpty
-          ? const EmptyState(icon: Icons.swap_horiz, message: 'Aucun échange enregistré')
+          ? EmptyState(icon: Icons.swap_horiz, message: context.l10n.aucunEchangeEnregistre)
           : ListView.builder(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
               itemCount: list.length,

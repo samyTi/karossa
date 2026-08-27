@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
-import '../data/caisse_operation.dart';
+import '../domain/caisse_operation.dart';
 import '../domain/caisse_providers.dart';
+import 'package:garage_auto/core/extensions/l10n_extension.dart';
 
 class CaisseStatsBar extends ConsumerStatefulWidget {
   const CaisseStatsBar({super.key});
@@ -26,7 +27,7 @@ class _CaisseStatsBarState extends ConsumerState<CaisseStatsBar> {
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
           child: Row(children: [
             Expanded(child: _SoldeCard(
-              label: 'Entrées',
+              label: context.l10n.entrees,
               value: _fmt(stats.totalEntrees),
               color: AppColors.secondary,
               icon: Icons.arrow_downward_rounded,
@@ -55,8 +56,7 @@ class _CaisseStatsBarState extends ConsumerState<CaisseStatsBar> {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Row(children: [
-                Text('Détail par catégorie',
-                  style: AppTextStyles.label.copyWith(
+                Text(context.l10n.detailParCategorie, style: AppTextStyles.label.copyWith(
                     color: AppColors.primary, fontWeight: FontWeight.w600)),
                 const SizedBox(width: 4),
                 Icon(

@@ -1,3 +1,4 @@
+//lib/core/theme/app_colors.dart
 import 'package:flutter/material.dart';
 
 /// Palette de couleurs modernisée suivant les principes Material Design 3
@@ -6,23 +7,41 @@ class AppColors {
   const AppColors._();
 
   // ═══════════════════════════════════════════════════════════════
-  // COULEURS PRIMAIRES (Modernisées - Material 3)
+  // IDENTITÉ DE MARQUE — NUMIDIA OS
   // ═══════════════════════════════════════════════════════════════
+  // Palette officielle de la charte graphique Numidia OS :
+  //   Navy   #0B132B  (fonds sombres, sidebar, splash)
+  //   Blue   #2563EB  (couleur primaire, CTA)
+  //   Cyan   #06B6D4  (accent de marque, "OS", dégradés)
+  //   Gray   #F3F4F6  (fonds clairs, cartes neutres)
 
-  /// Bleu principal - Plus vibrant et moderne (#2563EB)
+  /// Bleu principal de marque (#2563EB) — identique au logo Numidia OS
   /// Utilisé pour : actions principales, liens, éléments interactifs
   static const Color primary = Color(0xFF2563EB);
   static const Color primaryLight = Color(0xFF60A5FA);
   static const Color primaryDark = Color(0xFF1D4ED8);
   static const Color primaryOpacity = Color(0x1A2563EB); // 10% opacity
 
-  /// Vert émeraude - Secondaire moderne (#10B981)
+  /// Cyan de marque (#06B6D4) — extrémité du dégradé du logo, mot "OS"
+  /// Utilisé pour : accents de marque, dégradés, éléments premium/GPS/IA
+  static const Color brandCyan = Color(0xFF06B6D4);
+  static const Color brandCyanLight = Color(0xFF22D3EE);
+  static const Color brandCyanDark = Color(0xFF0891B2);
+
+  /// Navy de marque (#0B132B) — fond sombre du logo Numidia OS
+  static const Color brandNavy = Color(0xFF0B132B);
+  static const Color brandNavyLight = Color(0xFF16213E);
+
+  /// Gris clair de marque (#F3F4F6) — fonds neutres
+  static const Color brandGray = Color(0xFFF3F4F6);
+
+  /// Vert émeraude - Secondaire (#10B981)
   /// Utilisé pour : succès, validation, actions positives
   static const Color secondary = Color(0xFF10B981);
   static const Color secondaryLight = Color(0xFF34D399);
   static const Color secondaryDark = Color(0xFF059669);
 
-  /// Ambre/Orange - Accent moderne (#F59E0B)
+  /// Ambre/Orange - Accent (#F59E0B)
   /// Utilisé pour : mises en garde, éléments importants
   static const Color accent = Color(0xFFF59E0B);
   static const Color accentLight = Color(0xFFFBBF24);
@@ -132,20 +151,20 @@ class AppColors {
   // COULEURS NEUTRES (Thème sombre)
   // ═══════════════════════════════════════════════════════════════
 
-  /// Fond principal sombre - Gris très foncé (#0F0F1A)
-  static const Color backgroundDark = Color(0xFF0F0F1A);
+  /// Fond principal sombre - Navy de marque Numidia OS (#0B132B)
+  static const Color backgroundDark = Color(0xFF0B132B);
 
-  /// Surface sombre - Gris foncé (#1A1A2E)
-  static const Color surfaceDark = Color(0xFF1A1A2E);
+  /// Surface sombre - Navy légèrement plus clair (#111A33)
+  static const Color surfaceDark = Color(0xFF111A33);
 
-  /// Surface secondaire sombre - Gris moyen foncé (#16213E)
+  /// Surface secondaire sombre - Navy intermédiaire (#16213E)
   static const Color surfaceDarkSecondary = Color(0xFF16213E);
 
-  /// Input sombre - Gris foncé
-  static const Color inputFillDark = Color(0xFF1E1E3F);
+  /// Input sombre - Navy foncé
+  static const Color inputFillDark = Color(0xFF17203D);
 
-  /// Bordures sombres - Gris moyen (#2A2A4A)
-  static const Color borderDark = Color(0xFF2A2A4A);
+  /// Bordures sombres - Navy-gris (#243050)
+  static const Color borderDark = Color(0xFF243050);
 
   /// Texte principal sombre - Blanc cassé (#F0F0EE)
   /// Contraste suffisant pour WCAG AA sur fond sombre
@@ -166,6 +185,9 @@ class AppColors {
 
   /// Primaire sombre - Plus lumineux pour le contraste
   static const Color primaryDarkMode = Color(0xFF60A5FA);
+
+  /// Cyan de marque sombre - Plus lumineux pour le contraste
+  static const Color brandCyanDarkMode = Color(0xFF22D3EE);
 
   /// Secondaire sombre - Plus lumineux
   static const Color secondaryDarkMode = Color(0xFF34D399);

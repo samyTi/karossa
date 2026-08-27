@@ -8,8 +8,9 @@ import '../domain/web_demande_model.dart';
 
 class WebDemandesRepository {
   final SupabaseClient _supabase;
+  final String showroomId; // 🔥 NOUVEAU : Identifiant du showroom actif
 
-  WebDemandesRepository(this._supabase);
+  WebDemandesRepository(this._supabase, {required this.showroomId});
 
   // ── Lecture ───────────────────────────────────────────────────────────────
 
@@ -69,8 +70,6 @@ class WebDemandesRepository {
   }
 
   // ── Diagnostic RLS ───────────────────────────────────────────────────────
-  /// À appeler depuis l'écran pour diagnostiquer les problèmes de RLS.
-  /// Affiche dans la console Flutter toutes les infos nécessaires.
   Future<void> diagnosticRLS() async {
     debugPrint('╔══════════════════════════════════════════════════════╗');
     debugPrint('║              DIAGNOSTIC RLS / AUTH                    ║');
@@ -81,6 +80,7 @@ class WebDemandesRepository {
     debugPrint('│  currentUser id    : ${user?.id ?? "NULL → non connecté !"}');
     debugPrint('│  currentUser email : ${user?.email}');
     debugPrint('│  currentUser role  : ${user?.role}');
+    debugPrint('│  showroom_id actif : $showroomId'); // 🚀 Tracé du multi-tenant actif
     debugPrint('│  session valide    : ${session != null}');
     if (session != null) {
       final token = session.accessToken;
@@ -91,56 +91,42 @@ class WebDemandesRepository {
       debugPrint('│');
       debugPrint('│  ── $table ──');
       try {
-        // count sans aucun filtre — si RLS bloque on obtient 0
         final resAll = await _supabase
             .from(table)
             .select('id')
+            .eq('showroom_id', showroomId) // Filtre de vérification
             .count(CountOption.exact);
-        debugPrint('│    count(*) sans filtre  : ${resAll.count}');
+        debugPrint('│    count(*) filtré showroom : ${resAll.count}');
 
         final resEA = await _supabase
             .from(table)
             .select('id')
+            .eq('showroom_id', showroomId)
             .eq('statut', 'en_attente')
             .count(CountOption.exact);
-        debugPrint('│    count en_attente      : ${resEA.count}');
+        debugPrint('│    count en_attente filtré  : ${resEA.count}');
 
-        // lecture brute — on voit la 1ère ligne ou rien si RLS bloque
-        final raw = await _supabase.from(table).select('*').limit(1);
+        final raw = await _supabase.from(table).select('*').eq('showroom_id', showroomId).limit(1);
         final rows = raw as List;
         if (rows.isEmpty) {
-          debugPrint('│    select * limit 1      : ⚠️  VIDE — RLS bloque probablement');
+          debugPrint('│    select * limit 1 tenant : ⚠️  VIDE — RLS ou absence de données');
         } else {
-          debugPrint('│    select * limit 1      : ✅ OK');
-          debugPrint('│    1ère ligne keys       : ${rows.first.keys.toList()}');
+          debugPrint('│    select * limit 1 tenant : ✅ OK');
+          debugPrint('│    1ère ligne keys         : ${rows.first.keys.toList()}');
         }
       } catch (e) {
         debugPrint('│    ❌ EXCEPTION          : $e');
       }
     }
 
-    // Contrôle : profiles est accessible si l'auth fonctionne
-    debugPrint('│');
-    debugPrint('│  ── profiles (table de référence) ──');
-    try {
-      final p = await _supabase.from('profiles').select('id, role').limit(1);
-      final rows = p as List;
-      debugPrint('│    select id,role limit 1 : ${rows.isEmpty ? "VIDE" : rows.first}');
-    } catch (e) {
-      debugPrint('│    ❌ EXCEPTION : $e');
-    }
-
     debugPrint('└───────────────────────────────────────────────────────');
-    debugPrint('  💡 Si count(*) = 0 sur toutes les tables :');
-    debugPrint('     → Vérifie les politiques RLS sur ces tables dans Supabase.');
-    debugPrint('     → Vérifie que l\'utilisateur connecté a le bon rôle (gerant/associe).');
-    debugPrint('     → Ou désactive temporairement RLS sur ces tables pour tester.');
   }
 
   Future<int> _countTable(String table) async {
     final res = await _supabase
         .from(table)
         .select('id')
+        .eq('showroom_id', showroomId) // 🚀 Isolation du count par showroom
         .eq('statut', 'en_attente')
         .count(CountOption.exact);
     return res.count ?? 0;
@@ -156,13 +142,22 @@ class WebDemandesRepository {
     final table    = _tableFor(type);
     final statutDb = _statutToDb(statut);
     debugPrint('[WebDemandes] updateStatut → table=$table  id=$id  statut=$statutDb');
-    await _supabase.from(table).update({'statut': statutDb}).eq('id', id);
+    
+    await _supabase
+        .from(table)
+        .update({
+          'statut': statutDb,
+          'showroom_id': showroomId, // Sécurisation du contexte d'écriture
+        })
+        .eq('id', id);
     debugPrint('[WebDemandes] updateStatut OK');
   }
 
   Future<void> deleteDemande(String id, DemandeWebType type) async {
     final table = _tableFor(type);
     debugPrint('[WebDemandes] deleteDemande → table=$table  id=$id');
+    
+    // RLS prend le relais sur la concordance du showroom_id
     await _supabase.from(table).delete().eq('id', id);
     debugPrint('[WebDemandes] deleteDemande OK');
   }
@@ -183,28 +178,26 @@ class WebDemandesRepository {
 
     final kmDepart = vehiculeData['kilometrage'] as int? ?? 0;
     final prixJour = (vehiculeData['prix_location_jour'] as num?)?.toDouble() ?? 0.0;
-    debugPrint('[WebDemandes]   véhicule km_depart=$kmDepart  prix_jour=$prixJour');
 
     String clientId;
     if (demande.clientId != null) {
       clientId = demande.clientId!;
-      debugPrint('[WebDemandes]   client existant id=$clientId');
     } else {
-      debugPrint('[WebDemandes]   création client anonyme…');
+      debugPrint('[WebDemandes]   création client anonyme avec showroom_id…');
       final clientRes = await _supabase.from('clients').insert({
+        'showroom_id': showroomId, // 🚀 Assure le rattachement multi-tenant du prospect
         'nom':       demande.clientNom ?? 'ANONYME',
         'prenom':    demande.clientPrenom ?? 'Client Web',
         'telephone': demande.telephone ?? '0000000000',
       }).select('id').single();
       clientId = clientRes['id'] as String;
-      debugPrint('[WebDemandes]   client créé id=$clientId');
     }
 
     final nbJours    = demande.dateFin!.difference(demande.dateDebut!).inDays;
     final montantBrut = prixJour * nbJours;
-    debugPrint('[WebDemandes]   nb_jours=$nbJours  montant_brut=$montantBrut');
 
     final locationRes = await _supabase.from('locations').insert({
+      'showroom_id':     showroomId, // 🚀 Injection impérative
       'vehicule_id':     demande.vehiculeId,
       'client_id':       clientId,
       'date_debut':      demande.dateDebut!.toIso8601String().split('T').first,
@@ -219,12 +212,10 @@ class WebDemandesRepository {
     }).select('id').single();
 
     final locationId = locationRes['id'] as String;
-    debugPrint('[WebDemandes]   location créée id=$locationId');
 
     await updateStatut(demande.id, demande.type, DemandeWebStatut.approuve);
     await _supabase.from('vehicules').update({'statut': 'loue'}).eq('id', demande.vehiculeId!);
 
-    debugPrint('[WebDemandes] convertirEnLocation ✅ locationId=$locationId');
     return locationId;
   }
 
@@ -234,18 +225,18 @@ class WebDemandesRepository {
     String clientId;
     if (demande.clientId != null) {
       clientId = demande.clientId!;
-      debugPrint('[WebDemandes]   client existant id=$clientId');
     } else {
       final clientRes = await _supabase.from('clients').insert({
+        'showroom_id': showroomId, // 🚀 Cloisonnement du client créé pour la reprise
         'nom':       demande.clientNom ?? 'ANONYME',
         'prenom':    demande.clientPrenom ?? 'Client Web',
         'telephone': demande.telephone ?? '0000000000',
       }).select('id').single();
       clientId = clientRes['id'] as String;
-      debugPrint('[WebDemandes]   client créé id=$clientId');
     }
 
     final vehiculeRes = await _supabase.from('vehicules').insert({
+      'showroom_id':  showroomId, // 🚀 Cloisonnement du nouveau véhicule d'occasion inséré
       'marque':      demande.propMarque ?? 'INCONNU',
       'modele':      demande.propModele ?? 'INCONNU',
       'annee':       demande.propAnnee ?? DateTime.now().year,
@@ -257,23 +248,21 @@ class WebDemandesRepository {
     }).select('id').single();
 
     final vehiculeId = vehiculeRes['id'] as String;
-    debugPrint('[WebDemandes]   véhicule créé id=$vehiculeId');
 
     await _supabase.from('vehicule_proprietes').insert({
+      'showroom_id':     showroomId, // 🚀 Cloisonnement de la table d'association d'actionnaires / investisseurs
       'vehicule_id':     vehiculeId,
       'proprietaire_id': clientId,
       'part_pct':        100,
     });
 
     await updateStatut(demande.id, demande.type, DemandeWebStatut.approuve);
-    debugPrint('[WebDemandes] convertirEnVehiculeStock ✅ vehiculeId=$vehiculeId');
     return vehiculeId;
   }
 
-  // ── Fetch par table ───────────────────────────────────────────────────────
+  // ── Fetch par table (Filtrage explicite additionnel) ───────────────────────
 
   Future<List<WebDemande>> _fetchReservationsWeb() async {
-    debugPrint('┌─ _fetchReservationsWeb ──────────────────────────────');
     try {
       final data = await _supabase
           .from('reservations_web')
@@ -282,100 +271,48 @@ class WebDemandesRepository {
             'clients(nom, prenom, telephone), '
             'vehicules(marque, modele, immatriculation, prix_location_jour)',
           )
+          .eq('showroom_id', showroomId) // 🚀 Isolation
           .order('created_at', ascending: false);
 
       final rows = data as List;
-      debugPrint('│  Supabase a retourné ${rows.length} ligne(s)');
-
       final result = <WebDemande>[];
       for (var i = 0; i < rows.length; i++) {
-        final json = rows[i] as Map<String, dynamic>;
-        debugPrint('│');
-        debugPrint('│  [reservations_web #$i]');
-        debugPrint('│    id                : ${json['id']}');
-        debugPrint('│    vehicule_id       : ${json['vehicule_id']}');
-        debugPrint('│    client_id         : ${json['client_id']}');
-        debugPrint('│    clients join      : ${json['clients']}');
-        debugPrint('│    vehicules join    : ${json['vehicules']}');
-        debugPrint('│    date_debut        : ${json['date_debut']}');
-        debugPrint('│    date_fin          : ${json['date_fin']}');
-        debugPrint('│    montant_estime    : ${json['montant_estime']}');
-        debugPrint('│    telephone_contact : ${json['telephone_contact']}');
-        debugPrint('│    notes             : ${json['notes']}');
-        debugPrint('│    statut            : ${json['statut']}');
-
         try {
-          final demande = WebDemande.fromReservationWeb(json);
-          debugPrint('│    ✅ parsé → clientFullName="${demande.clientFullName}"'
-              '  vehicule="${demande.vehiculeMarque} ${demande.vehiculeModele}"'
-              '  montantEstimeCalcule=${demande.montantEstimeCalcule}');
-          result.add(demande);
-        } catch (e, st) {
-          debugPrint('│    ❌ ERREUR parsing ligne #$i: $e');
-          debugPrint('$st');
+          result.add(WebDemande.fromReservationWeb(rows[i] as Map<String, dynamic>));
+        } catch (e) {
+          debugPrint('│    ❌ ERREUR parsing reservation_web #$i: $e');
         }
       }
-
-      debugPrint('└─ _fetchReservationsWeb: ${result.length} demande(s) parsée(s)');
       return result;
-    } catch (e, st) {
-      debugPrint('└─ _fetchReservationsWeb ERREUR Supabase: $e\n$st');
+    } catch (e) {
       rethrow;
     }
   }
 
   Future<List<WebDemande>> _fetchPropositionsVente() async {
-    debugPrint('┌─ _fetchPropositionsVente ────────────────────────────');
     try {
       final data = await _supabase
           .from('propositions_vente')
           .select('*, clients(nom, prenom, telephone)')
+          .eq('showroom_id', showroomId) // 🚀 Isolation
           .order('created_at', ascending: false);
 
       final rows = data as List;
-      debugPrint('│  Supabase a retourné ${rows.length} ligne(s)');
-
       final result = <WebDemande>[];
       for (var i = 0; i < rows.length; i++) {
-        final json = rows[i] as Map<String, dynamic>;
-        debugPrint('│');
-        debugPrint('│  [propositions_vente #$i]');
-        debugPrint('│    id             : ${json['id']}');
-        debugPrint('│    client_id      : ${json['client_id']}');
-        debugPrint('│    clients join   : ${json['clients']}');
-        debugPrint('│    marque         : ${json['marque']}');
-        debugPrint('│    modele         : ${json['modele']}');
-        debugPrint('│    annee          : ${json['annee']}');
-        debugPrint('│    kilometrage    : ${json['kilometrage']}');
-        // ⚠️ Deux noms possibles selon la version du site web
-        debugPrint('│    prix_demande   : ${json['prix_demande']}   ← colonne schéma BDD');
-        debugPrint('│    prix_souhaite  : ${json['prix_souhaite']}  ← colonne site web (alias possible)');
-        debugPrint('│    photos         : ${json['photos']}');
-        debugPrint('│    description    : ${json['description']}');
-        debugPrint('│    statut         : ${json['statut']}');
-
         try {
-          final demande = WebDemande.fromPropositionVente(json);
-          debugPrint('│    ✅ parsé → clientFullName="${demande.clientFullName}"'
-              '  propVehicule="${demande.propMarque} ${demande.propModele}"'
-              '  propPrixDemande=${demande.propPrixDemande}');
-          result.add(demande);
-        } catch (e, st) {
-          debugPrint('│    ❌ ERREUR parsing ligne #$i: $e');
-          debugPrint('$st');
+          result.add(WebDemande.fromPropositionVente(rows[i] as Map<String, dynamic>));
+        } catch (e) {
+          debugPrint('│    ❌ ERREUR parsing proposition_vente #$i: $e');
         }
       }
-
-      debugPrint('└─ _fetchPropositionsVente: ${result.length} demande(s) parsée(s)');
       return result;
-    } catch (e, st) {
-      debugPrint('└─ _fetchPropositionsVente ERREUR Supabase: $e\n$st');
+    } catch (e) {
       rethrow;
     }
   }
 
   Future<List<WebDemande>> _fetchDemandesDevis() async {
-    debugPrint('┌─ _fetchDemandesDevis ────────────────────────────────');
     try {
       final data = await _supabase
           .from('demandes_devis')
@@ -384,41 +321,20 @@ class WebDemandesRepository {
             'clients(nom, prenom, telephone), '
             'vehicules(marque, modele, immatriculation, prix_vente)',
           )
+          .eq('showroom_id', showroomId) // 🚀 Isolation
           .order('created_at', ascending: false);
 
       final rows = data as List;
-      debugPrint('│  Supabase a retourné ${rows.length} ligne(s)');
-
       final result = <WebDemande>[];
       for (var i = 0; i < rows.length; i++) {
-        final json = rows[i] as Map<String, dynamic>;
-        debugPrint('│');
-        debugPrint('│  [demandes_devis #$i]');
-        debugPrint('│    id            : ${json['id']}');
-        debugPrint('│    client_id     : ${json['client_id']}');
-        debugPrint('│    vehicule_id   : ${json['vehicule_id']}');
-        debugPrint('│    clients join  : ${json['clients']}');
-        debugPrint('│    vehicules join: ${json['vehicules']}');
-        debugPrint('│    type          : ${json['type']}');
-        debugPrint('│    message       : ${json['message']}');
-        debugPrint('│    budget_max    : ${json['budget_max']}');
-        debugPrint('│    statut        : ${json['statut']}');
-
         try {
-          final demande = WebDemande.fromDemandeDevis(json);
-          debugPrint('│    ✅ parsé → clientFullName="${demande.clientFullName}"'
-              '  devisType=${demande.devisType}');
-          result.add(demande);
-        } catch (e, st) {
-          debugPrint('│    ❌ ERREUR parsing ligne #$i: $e');
-          debugPrint('$st');
+          result.add(WebDemande.fromDemandeDevis(rows[i] as Map<String, dynamic>));
+        } catch (e) {
+          debugPrint('│    ❌ ERREUR parsing demande_devis #$i: $e');
         }
       }
-
-      debugPrint('└─ _fetchDemandesDevis: ${result.length} demande(s) parsée(s)');
       return result;
-    } catch (e, st) {
-      debugPrint('└─ _fetchDemandesDevis ERREUR Supabase: $e\n$st');
+    } catch (e) {
       rethrow;
     }
   }

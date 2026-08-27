@@ -1,11 +1,14 @@
+//lib/features/admin/presentation/users_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../shared/widgets/custom_app_bar.dart';
 import '../../../shared/widgets/shimmer_loading.dart';
 import '../../auth/domain/profile_model.dart';
 import 'users_provider.dart';
+import 'package:garage_auto/core/extensions/l10n_extension.dart';
 
 class UsersScreen extends ConsumerWidget {
   const UsersScreen({super.key});
@@ -15,13 +18,13 @@ class UsersScreen extends ConsumerWidget {
     final usersAsync = ref.watch(usersProvider);
 
     return Scaffold(
-      appBar: const CustomAppBar(
-        title: 'Gérer les utilisateurs',
+      appBar: CustomAppBar(
+        title: context.l10n.gererLesUtilisateurs,
         showHomeButton: true,
       ),
       body: usersAsync.when(
         loading: () => const ClientsListShimmer(), // Réutilise le shimmer des clients
-        error: (e, _) => Center(child: Text('Erreur: $e')),
+        error: (e, _) => Center(child: Text(context.l10n.erreurAvecDetail(e.toString()))),
         data: (users) => Column(
           children: [
             // Stats bar
@@ -45,7 +48,7 @@ class UsersScreen extends ConsumerWidget {
                     color: AppColors.primary,
                   ),
                   _StatItem(
-                    label: 'Actifs',
+                    label: context.l10n.tabActifs,
                     value: '${users.length}', // Tous les utilisateurs sont actifs par défaut
                     icon: Icons.check_circle,
                     color: AppColors.secondary,
@@ -69,9 +72,7 @@ class UsersScreen extends ConsumerWidget {
                         children: [
                           const Icon(Icons.people_outline, size: 64, color: AppColors.textHint),
                           const SizedBox(height: 16),
-                          Text(
-                            'Aucun utilisateur trouvé',
-                            style: AppTextStyles.bodySecondary,
+                          Text(context.l10n.aucunUtilisateurTrouve, style: AppTextStyles.bodySecondary,
                           ),
                         ],
                       ),
@@ -89,14 +90,9 @@ class UsersScreen extends ConsumerWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          // TODO: Show add user dialog
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Ajouter un utilisateur...')),
-          );
-        },
+        onPressed: () => context.push('/admin/users/add'),
         icon: const Icon(Icons.person_add),
-        label: const Text('Ajouter'),
+        label: Text(context.l10n.btnAjouter),
         backgroundColor: AppColors.primary,
       ),
     );
@@ -147,10 +143,20 @@ class _UserCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final roleColor = user.role.color;
     final roleLabel = user.role.label;
+    // Tous les rôles ont désormais un résumé financier consultable :
+    // propriétaire/associé → parts de copropriété, gérant → commissions (écran dédié).
+    final isGerant = user.role == UserRole.gerant;
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
-      child: Padding(
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: () => context.push(
+          isGerant
+              ? '/admin/gerant/${user.id}?nom=${Uri.encodeComponent(user.fullName)}'
+              : '/admin/proprietaire/${user.id}?nom=${Uri.encodeComponent(user.fullName)}',
+        ),
+        child: Padding(
         padding: const EdgeInsets.all(12),
         child: Row(
           children: [
@@ -209,29 +215,34 @@ class _UserCard extends StatelessWidget {
               ),
             ),
 
+            const Padding(
+              padding: EdgeInsets.only(right: 4),
+              child: Icon(Icons.account_balance_wallet_outlined,
+                  color: AppColors.textHint, size: 18),
+            ),
+
             // Actions
             PopupMenuButton<String>(
               onSelected: (value) {
                 if (value == 'edit') {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Édition utilisateur...')),
-                  );
+                  context.push('/admin/users/edit', extra: user);
                 }
               },
-              itemBuilder: (context) => const [
+              itemBuilder: (context) => [
                 PopupMenuItem(
                   value: 'edit',
                   child: Row(
                     children: [
                       Icon(Icons.edit, size: 18),
                       SizedBox(width: 8),
-                      Text('Modifier'),
+                      Text(context.l10n.btnModifier),
                     ],
                   ),
                 ),
               ],
             ),
           ],
+        ),
         ),
       ),
     );

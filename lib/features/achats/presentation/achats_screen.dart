@@ -5,6 +5,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../domain/achat_model.dart';
 import 'achats_provider.dart';
+import 'package:garage_auto/core/extensions/l10n_extension.dart';
 
 class AchatsScreen extends ConsumerStatefulWidget {
   const AchatsScreen({super.key});
@@ -47,7 +48,7 @@ class _AchatsScreenState extends ConsumerState<AchatsScreen>
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Achats & Reprises'),
+        title: Text(context.l10n.achatsReprises),
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
         actions: [
@@ -68,10 +69,10 @@ class _AchatsScreenState extends ConsumerState<AchatsScreen>
           labelColor: AppColors.primary,
           unselectedLabelColor: AppColors.textSecondary,
           indicatorColor: AppColors.primary,
-          tabs: const [
+          tabs: [
             Tab(text: 'Tous'),
-            Tab(text: 'En cours'),
-            Tab(text: 'Validés'),
+            Tab(text: context.l10n.locationEnCours),
+            Tab(text: context.l10n.valides),
           ],
         ),
       ),
@@ -125,7 +126,7 @@ class _AchatsScreenState extends ConsumerState<AchatsScreen>
                         ElevatedButton.icon(
                           onPressed: () => context.push('/achats/new'),
                           icon: const Icon(Icons.add),
-                          label: const Text('Nouvel achat'),
+                          label: Text(context.l10n.nouvelAchat),
                         ),
                       ],
                     ),
@@ -148,14 +149,14 @@ class _AchatsScreenState extends ConsumerState<AchatsScreen>
                     const Icon(Icons.error_outline,
                         size: 48, color: AppColors.retard),
                     const SizedBox(height: 16),
-                    Text('Erreur: $e',
+                    Text(context.l10n.erreurAvecDetail(e.toString()),
                         style: AppTextStyles.bodySecondary),
                     const SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: () {
                         ref.invalidate(achatsProvider);
                       },
-                      child: const Text('Réessayer'),
+                      child: Text(context.l10n.reessayer),
                     ),
                   ],
                 ),
@@ -167,7 +168,7 @@ class _AchatsScreenState extends ConsumerState<AchatsScreen>
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push('/achats/new'),
         icon: const Icon(Icons.add),
-        label: const Text('Nouvel achat'),
+        label: Text(context.l10n.nouvelAchat),
         backgroundColor: AppColors.secondary,
       ),
     );
@@ -176,13 +177,13 @@ class _AchatsScreenState extends ConsumerState<AchatsScreen>
   String _getEmptyMessage(int tabIndex) {
     switch (tabIndex) {
       case 0:
-        return 'Aucun achat enregistré';
+        return context.l10n.aucunAchatEnregistre;
       case 1:
-        return 'Aucun achat en cours';
+        return context.l10n.aucunAchatEnCours;
       case 2:
-        return 'Aucun achat validé';
+        return context.l10n.aucunAchatValide;
       default:
-        return 'Aucun achat';
+        return context.l10n.aucunAchat;
     }
   }
 
@@ -194,7 +195,7 @@ class _AchatsScreenState extends ConsumerState<AchatsScreen>
         children: [
           ListTile(
             leading: const Icon(Icons.clear),
-            title: const Text('Aucun filtre'),
+            title: Text(context.l10n.aucunFiltre),
             onTap: () {
               _filtrerParStatut(null);
               Navigator.pop(context);
@@ -244,19 +245,19 @@ class _StatsSummary extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           _StatItem(
-            label: 'Total achats',
+            label: context.l10n.totalAchats,
             value: totalAchats.toString(),
             icon: Icons.shopping_cart,
             color: AppColors.primary,
           ),
           _StatItem(
-            label: 'Dépense totale',
+            label: context.l10n.depenseTotale,
             value: _formatPrice(totalDepense),
             icon: Icons.attach_money,
             color: AppColors.secondary,
           ),
           _StatItem(
-            label: 'En cours',
+            label: context.l10n.locationEnCours,
             value: enCours.toString(),
             icon: Icons.pending_actions,
             color: AppColors.amber,
@@ -378,7 +379,7 @@ class _AchatCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Prix accordé',
+                        context.l10n.prixAccordeLabel,
                         style: AppTextStyles.label,
                       ),
                       Text(
@@ -393,9 +394,7 @@ class _AchatCard extends StatelessWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text(
-                        'Date achat',
-                        style: AppTextStyles.label,
+                      Text(context.l10n.dateAchat, style: AppTextStyles.label,
                       ),
                       Text(
                         '${achat.dateAchat.day}/${achat.dateAchat.month}/${achat.dateAchat.year}',

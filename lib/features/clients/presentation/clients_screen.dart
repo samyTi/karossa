@@ -9,6 +9,7 @@ import '../../../shared/widgets/shimmer_loading.dart';
 import '../domain/client_model.dart';
 import 'clients_provider.dart';
 import '../../../shared/widgets/search_bar_widget.dart';
+import 'package:garage_auto/core/extensions/l10n_extension.dart';
 
 class ClientsScreen extends ConsumerStatefulWidget {
   const ClientsScreen({super.key});
@@ -23,35 +24,35 @@ class _ClientsScreenState extends ConsumerState<ClientsScreen> {
   Widget build(BuildContext context) {
     final clients = ref.watch(clientsProvider);
     return Scaffold(
-      appBar: const CustomAppBar(
-        title: 'Clients',
+      appBar: CustomAppBar(
+        title: context.l10n.titreClients,
         showBackButton: false,
         showHomeButton: true,
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push('/clients/new'),
         icon: const Icon(Icons.person_add),
-        label: const Text('Nouveau client'),
+        label: Text(context.l10n.nouveauClient),
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
       ),
 body: Column(children: [
   AppSearchBar(
-    hint: 'Rechercher un client...',
+    hint: context.l10n.rechercherUnClient,
     onChanged: (q) => setState(() => _search = q),
   ),
   Expanded(child: clients.when(
         loading: () => const ClientsListShimmer(),
-        error: (e, _) => Center(child: Text('Erreur: $e')),
+        error: (e, _) => Center(child: Text(context.l10n.erreurAvecDetail(e.toString()))),
 data: (allList) {
   final list = _search.isEmpty ? allList
     : allList.where((c) =>
         c.fullName.toLowerCase().contains(_search.toLowerCase()) ||
         c.telephone.contains(_search)).toList();
   return list.isEmpty
-          ? const EmptyState(
+          ? EmptyState(
               icon: Icons.people_outline,
-              message: 'Aucun client enregistré')
+              message: context.l10n.aucunClientEnregistre)
           : ListView.builder(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
               itemCount: list.length,

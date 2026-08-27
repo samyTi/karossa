@@ -6,7 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../domain/web_demande_model.dart';
-import '../domain/web_demandes_providers.dart';
+import 'web_demandes_providers.dart';
+import 'package:garage_auto/core/extensions/l10n_extension.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Écran principal
@@ -21,7 +22,7 @@ class WebDemandesScreen extends ConsumerWidget {
       length: 4,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Demandes Web & Leads'),
+          title: Text(context.l10n.demandesWebLeads),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () => Navigator.of(context).maybePop(),
@@ -30,7 +31,7 @@ class WebDemandesScreen extends ConsumerWidget {
             // Bouton actualiser
             IconButton(
               icon: const Icon(Icons.refresh),
-              tooltip: 'Actualiser',
+              tooltip: context.l10n.actualiser,
               onPressed: () {
                 ref.invalidate(webDemandesListProvider);
               },
@@ -132,7 +133,7 @@ class _SearchBarState extends ConsumerState<_SearchBar> {
       child: TextField(
         controller: _ctrl,
         decoration: InputDecoration(
-          hintText: 'Rechercher (client, téléphone, véhicule…)',
+          hintText: context.l10n.rechercherClientTelephoneVehicule,
           prefixIcon: const Icon(Icons.search, size: 20),
           suffixIcon: _ctrl.text.isNotEmpty
               ? IconButton(
@@ -197,22 +198,22 @@ class _StatsBar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           _StatChip(
-            label: 'En attente',
+            label: context.l10n.enAttente,
             count: stats.enAttente,
             color: Colors.orange,
           ),
           _StatChip(
-            label: 'Approuvées',
+            label: context.l10n.approuvees,
             count: stats.approuvees,
             color: Colors.green,
           ),
           _StatChip(
-            label: 'Rejetées',
+            label: context.l10n.rejetees,
             count: stats.rejetees,
             color: Colors.red,
           ),
           _StatChip(
-            label: 'Total',
+            label: context.l10n.totalLabel,
             count: stats.total,
             color: Colors.blueGrey,
           ),
@@ -257,10 +258,10 @@ class _StatutFilterBar extends ConsumerWidget {
 
     // Ordre intentionnel : En attente en premier (cas le plus fréquent)
     final options = <DemandeWebStatut?, String>{
-      null: 'Toutes',
-      DemandeWebStatut.enAttente: 'En attente',
-      DemandeWebStatut.approuve: 'Approuvées',
-      DemandeWebStatut.rejete: 'Rejetées',
+      null: context.l10n.filterTous,
+      DemandeWebStatut.enAttente: context.l10n.enAttente,
+      DemandeWebStatut.approuve: context.l10n.approuvees,
+      DemandeWebStatut.rejete: context.l10n.rejetees,
     };
 
     return SingleChildScrollView(
@@ -314,8 +315,7 @@ class _DemandesListView extends ConsumerWidget {
             children: [
               const Icon(Icons.cloud_off, size: 64, color: Colors.red),
               const SizedBox(height: 12),
-              Text('Erreur de synchronisation',
-                  style: AppTextStyles.bodySecondary),
+              Text(context.l10n.erreurDeSynchronisation, style: AppTextStyles.bodySecondary),
               const SizedBox(height: 4),
               Text(err.toString(),
                   textAlign: TextAlign.center,
@@ -325,7 +325,7 @@ class _DemandesListView extends ConsumerWidget {
               ElevatedButton.icon(
                 onPressed: () => ref.invalidate(webDemandesListProvider),
                 icon: const Icon(Icons.refresh),
-                label: const Text('Réessayer'),
+                label: Text(context.l10n.reessayer),
               ),
             ],
           ),
@@ -340,11 +340,9 @@ class _DemandesListView extends ConsumerWidget {
                 Icon(Icons.cloud_done_outlined,
                     size: 64, color: Colors.grey.shade400),
                 const SizedBox(height: 16),
-                Text('Aucune demande trouvée',
-                    style: AppTextStyles.bodySecondary),
+                Text(context.l10n.aucuneDemandeTrouvee, style: AppTextStyles.bodySecondary),
                 const SizedBox(height: 8),
-                Text('Essayez de modifier les filtres',
-                    style: TextStyle(
+                Text(context.l10n.essayezDeModifierLesFiltres, style: TextStyle(
                         fontSize: 12, color: Colors.grey.shade400)),
                 const SizedBox(height: 20),
                 // Bouton diagnostic RLS — utile si 0 résultats suspects
@@ -355,9 +353,8 @@ class _DemandesListView extends ConsumerWidget {
                         .diagnosticRLS();
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                              '🔍 Logs de diagnostic écrits dans la console Flutter'),
+                        SnackBar(
+                          content: Text(context.l10n.logsDeDiagnosticEcritsDansLa),
                           behavior: SnackBarBehavior.floating,
                           duration: Duration(seconds: 3),
                         ),
@@ -365,7 +362,7 @@ class _DemandesListView extends ConsumerWidget {
                     }
                   },
                   icon: const Icon(Icons.bug_report_outlined, size: 18),
-                  label: const Text('Diagnostic RLS (console)'),
+                  label: Text(context.l10n.diagnosticRlsConsole),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: Colors.orange,
                     side: const BorderSide(color: Colors.orange),
@@ -443,8 +440,8 @@ class _DemandeCard extends StatelessWidget {
                   color: Colors.grey.shade200,
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Text('Anonyme',
-                    style: TextStyle(fontSize: 10, color: Colors.grey)),
+                child: Text(context.l10n.anonyme,
+                    style: const TextStyle(fontSize: 10, color: Colors.grey)),
               ),
           ],
         ),
@@ -502,12 +499,12 @@ class _DemandeDetail extends StatelessWidget {
           if (demande.telephone != null)
             _InfoRowTappable(
               icon: Icons.phone_outlined,
-              label: 'Téléphone',
+              label: context.l10n.telephone,
               value: demande.telephone!,
               onTap: () => _callPhone(demande.telephone!),
               trailing: IconButton(
                 icon: const Icon(Icons.copy, size: 16, color: Colors.grey),
-                tooltip: 'Copier',
+                tooltip: context.l10n.copier,
                 onPressed: () =>
                     _copyToClipboard(context, demande.telephone!),
               ),
@@ -516,7 +513,7 @@ class _DemandeDetail extends StatelessWidget {
           if (demande.message != null && demande.message!.isNotEmpty)
             _InfoRow(
               icon: Icons.message_outlined,
-              label: 'Message',
+              label: context.l10n.champMessage,
               value: demande.message!,
             ),
 
@@ -540,7 +537,7 @@ class _DemandeDetail extends StatelessWidget {
           if (demande.vehiculeMarque != null || demande.vehiculeImmat != null)
             _InfoRow(
               icon: Icons.directions_car_outlined,
-              label: 'Véhicule',
+              label: context.l10n.vehicule,
               value: [
                 if (demande.vehiculeMarque != null) demande.vehiculeMarque!,
                 if (demande.vehiculeModele != null) demande.vehiculeModele!,
@@ -551,14 +548,14 @@ class _DemandeDetail extends StatelessWidget {
           else if (demande.vehiculeId != null)
             _InfoRow(
               icon: Icons.directions_car_outlined,
-              label: 'Véhicule ID',
+              label: context.l10n.vehiculeId,
               value: demande.vehiculeId!,
             ),
 
           if (demande.dateDebut != null)
             _InfoRow(
               icon: Icons.calendar_today_outlined,
-              label: 'Période',
+              label: context.l10n.periode,
               value:
                   '${_formatDate(demande.dateDebut)} → ${_formatDate(demande.dateFin)}'
                   '${demande.nbJours != null ? "  (${demande.nbJours} j)" : ""}',
@@ -580,7 +577,7 @@ class _DemandeDetail extends StatelessWidget {
           if (demande.propMarque != null || demande.propModele != null)
             _InfoRow(
               icon: Icons.directions_car_outlined,
-              label: 'Véhicule proposé',
+              label: context.l10n.vehiculePropose,
               value:
                   '${demande.propMarque ?? ""} ${demande.propModele ?? ""}'
                       .trim(),
@@ -588,19 +585,19 @@ class _DemandeDetail extends StatelessWidget {
           if (demande.propAnnee != null)
             _InfoRow(
               icon: Icons.date_range_outlined,
-              label: 'Année',
+              label: context.l10n.annee,
               value: demande.propAnnee!.toString(),
             ),
           if (demande.propKm != null)
             _InfoRow(
               icon: Icons.speed_outlined,
-              label: 'Kilométrage',
+              label: context.l10n.kilometrage,
               value: '${_fmtInt(demande.propKm!)} km',
             ),
           if (demande.propPrixDemande != null)
             _InfoRow(
               icon: Icons.sell_outlined,
-              label: 'Prix souhaité',
+              label: context.l10n.prixSouhaite,
               value: '${_fmt(demande.propPrixDemande!)} DA',
             ),
           // Photos de la proposition
@@ -613,13 +610,13 @@ class _DemandeDetail extends StatelessWidget {
           if (demande.devisType != null)
             _InfoRow(
               icon: Icons.category_outlined,
-              label: 'Type',
+              label: context.l10n.champType,
               value: _devisTypeLabel(demande.devisType!),
             ),
           if (demande.vehiculeMarque != null || demande.vehiculeImmat != null)
             _InfoRow(
               icon: Icons.directions_car_outlined,
-              label: 'Véhicule ciblé',
+              label: context.l10n.vehiculeCible,
               value: [
                 if (demande.vehiculeMarque != null) demande.vehiculeMarque!,
                 if (demande.vehiculeModele != null) demande.vehiculeModele!,
@@ -630,19 +627,19 @@ class _DemandeDetail extends StatelessWidget {
           else if (demande.vehiculeId != null)
             _InfoRow(
               icon: Icons.directions_car_outlined,
-              label: 'Véhicule ciblé',
+              label: context.l10n.vehiculeCible,
               value: demande.vehiculeId!,
             ),
           if (demande.vehiculePrixLocation != null)
             _InfoRow(
               icon: Icons.sell_outlined,
-              label: 'Prix catalogue',
+              label: context.l10n.prixCatalogue,
               value: '${_fmt(demande.vehiculePrixLocation!)} DA',
             ),
           if (demande.budgetMax != null)
             _InfoRow(
               icon: Icons.account_balance_wallet_outlined,
-              label: 'Budget max',
+              label: context.l10n.budgetMax,
               value: '${_fmt(demande.budgetMax!)} DA',
             ),
         ],
@@ -663,8 +660,8 @@ class _DemandeDetail extends StatelessWidget {
   void _copyToClipboard(BuildContext context, String text) {
     Clipboard.setData(ClipboardData(text: text));
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Téléphone copié'),
+      SnackBar(
+        content: Text(context.l10n.telephoneCopie),
         duration: Duration(seconds: 1),
         behavior: SnackBarBehavior.floating,
       ),
@@ -701,8 +698,7 @@ class _ActionButtons extends ConsumerWidget {
             onPressed: () => _confirmDelete(context, ref),
             icon: const Icon(Icons.delete_outline,
                 color: Colors.red, size: 18),
-            label: const Text('Supprimer',
-                style: TextStyle(color: Colors.red, fontSize: 13)),
+            label: Text(context.l10n.btnSupprimer, style: TextStyle(color: Colors.red, fontSize: 13)),
           ),
         ],
       );
@@ -729,13 +725,13 @@ class _ActionButtons extends ConsumerWidget {
                 context,
                 ref,
                 statut: DemandeWebStatut.rejete,
-                label: 'Rejeter',
-                message: 'Confirmer le rejet de cette demande ?',
+                label: context.l10n.btnRejeter,
+                message: context.l10n.confirmerLeRejetDeCetteDemande,
                 color: AppColors.retard,
               ),
               icon:
                   const Icon(Icons.cancel_outlined, color: AppColors.retard),
-              label: const Text('Rejeter',
+              label: Text(context.l10n.btnRejeter,
                   style: TextStyle(color: AppColors.retard)),
             ),
             const SizedBox(width: 8),
@@ -745,16 +741,15 @@ class _ActionButtons extends ConsumerWidget {
                 context,
                 ref,
                 statut: DemandeWebStatut.approuve,
-                label: 'Approuver',
-                message:
-                    "Confirmer l'approbation de cette demande ?",
+                label: context.l10n.btnApprouver,
+                message: context.l10n.confirmerApprobationDemande,
                 color: Colors.green,
               ),
               style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,
                   foregroundColor: Colors.white),
               icon: const Icon(Icons.check_circle_outline),
-              label: const Text('Approuver'),
+              label: Text(context.l10n.btnApprouver),
             ),
           ],
         ),
@@ -778,7 +773,7 @@ class _ActionButtons extends ConsumerWidget {
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('Annuler')),
+              child: Text(context.l10n.btnAnnuler)),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: color),
             onPressed: () => Navigator.pop(ctx, true),
@@ -811,7 +806,7 @@ class _ActionButtons extends ConsumerWidget {
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Erreur : $e'),
+          content: Text(context.l10n.erreurAvecDetail(e.toString())),
           backgroundColor: AppColors.retard,
           behavior: SnackBarBehavior.floating,
         ));
@@ -823,19 +818,18 @@ class _ActionButtons extends ConsumerWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Supprimer la demande'),
+        title: Text(context.l10n.supprimerLaDemande),
         content:
-            const Text('Cette action est irréversible. Confirmer ?'),
+            Text(context.l10n.cetteActionEstIrreversibleConfirmer),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('Annuler')),
+              child: Text(context.l10n.btnAnnuler)),
           ElevatedButton(
             style:
                 ElevatedButton.styleFrom(backgroundColor: Colors.red),
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Supprimer',
-                style: TextStyle(color: Colors.white)),
+            child: Text(context.l10n.btnSupprimer, style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -849,15 +843,15 @@ class _ActionButtons extends ConsumerWidget {
           .deleteDemande(demande.id, demande.type);
       ref.invalidate(webDemandesListProvider);
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('Demande supprimée.'),
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(context.l10n.demandeSupprimee),
           behavior: SnackBarBehavior.floating,
         ));
       }
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Erreur suppression : $e'),
+          content: Text(context.l10n.erreurSuppression(e.toString())),
           backgroundColor: Colors.red,
           behavior: SnackBarBehavior.floating,
         ));
@@ -879,7 +873,7 @@ class _ConvertirLocationButton extends ConsumerWidget {
     return OutlinedButton.icon(
       onPressed: () => _convertir(context, ref),
       icon: const Icon(Icons.car_rental, size: 18),
-      label: const Text('Convertir en Location'),
+      label: Text(context.l10n.convertirEnLocation),
       style: OutlinedButton.styleFrom(
         foregroundColor: AppColors.primary,
         side: const BorderSide(color: AppColors.primary),
@@ -891,18 +885,15 @@ class _ConvertirLocationButton extends ConsumerWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Créer la location'),
+        title: Text(context.l10n.creerLaLocation),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-                'Cette action va créer une location depuis cette réservation web.'),
+            Text(context.l10n.cetteActionVaCreerUneLocation),
             const SizedBox(height: 8),
             if (demande.vehiculeId == null)
-              const Text(
-                '⚠️ Aucun véhicule associé — la location ne peut pas être créée.',
-                style: TextStyle(color: Colors.red, fontSize: 13),
+              Text(context.l10n.aucunVehiculeAssocieLaLocationNe, style: TextStyle(color: Colors.red, fontSize: 13),
               ),
             if (demande.vehiculeId != null)
               Text(
@@ -916,14 +907,13 @@ class _ConvertirLocationButton extends ConsumerWidget {
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('Annuler')),
+              child: Text(context.l10n.btnAnnuler)),
           if (demande.vehiculeId != null)
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary),
               onPressed: () => Navigator.pop(ctx, true),
-              child: const Text('Créer la location',
-                  style: TextStyle(color: Colors.white)),
+              child: Text(context.l10n.creerLaLocation, style: TextStyle(color: Colors.white)),
             ),
         ],
       ),
@@ -937,8 +927,8 @@ class _ConvertirLocationButton extends ConsumerWidget {
           .convertirEnLocation(demande);
       ref.invalidate(webDemandesListProvider);
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('✅ Location créée avec succès !'),
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(context.l10n.locationCreeeAvecSucces),
           backgroundColor: Colors.green,
           behavior: SnackBarBehavior.floating,
         ));
@@ -946,7 +936,7 @@ class _ConvertirLocationButton extends ConsumerWidget {
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Erreur conversion : $e'),
+          content: Text(context.l10n.erreurConversion(e.toString())),
           backgroundColor: Colors.red,
           behavior: SnackBarBehavior.floating,
         ));
@@ -968,7 +958,7 @@ class _ConvertirRepriseButton extends ConsumerWidget {
     return OutlinedButton.icon(
       onPressed: () => _convertir(context, ref),
       icon: const Icon(Icons.add_box_outlined, size: 18),
-      label: const Text('Ajouter au Stock'),
+      label: Text(context.l10n.ajouterAuStock),
       style: OutlinedButton.styleFrom(
         foregroundColor: AppColors.secondary,
         side: const BorderSide(color: AppColors.secondary),
@@ -980,7 +970,7 @@ class _ConvertirRepriseButton extends ConsumerWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Ajouter au stock'),
+        title: Text(context.l10n.ajouterAuStockBtn),
         content: Text(
           'Ajouter le véhicule proposé '
           '(${[demande.propMarque, demande.propModele].whereType<String>().join(" ")}) '
@@ -989,12 +979,12 @@ class _ConvertirRepriseButton extends ConsumerWidget {
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('Annuler')),
+              child: Text(context.l10n.btnAnnuler)),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.secondary),
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Ajouter au stock',
+            child: Text(context.l10n.ajouterAuStockBtn,
                 style: TextStyle(color: Colors.white)),
           ),
         ],
@@ -1009,8 +999,8 @@ class _ConvertirRepriseButton extends ConsumerWidget {
           .convertirEnVehiculeStock(demande);
       ref.invalidate(webDemandesListProvider);
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('✅ Véhicule ajouté au stock !'),
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(context.l10n.vehiculeAjouteAuStock),
           backgroundColor: Colors.green,
           behavior: SnackBarBehavior.floating,
         ));
@@ -1018,7 +1008,7 @@ class _ConvertirRepriseButton extends ConsumerWidget {
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Erreur : $e'),
+          content: Text(context.l10n.erreurAvecDetail(e.toString())),
           backgroundColor: Colors.red,
           behavior: SnackBarBehavior.floating,
         ));
@@ -1132,9 +1122,9 @@ class _StatutBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final (color, label) = switch (statut) {
-      DemandeWebStatut.enAttente => (Colors.orange, 'En attente'),
-      DemandeWebStatut.approuve => (Colors.green, 'Approuvé'),
-      DemandeWebStatut.rejete => (Colors.red, 'Rejeté'),
+      DemandeWebStatut.enAttente => (Colors.orange, context.l10n.enAttente),
+      DemandeWebStatut.approuve => (Colors.green, context.l10n.approuve),
+      DemandeWebStatut.rejete => (Colors.red, context.l10n.rejete),
     };
 
     return Container(
@@ -1169,7 +1159,7 @@ class _PhotosRow extends StatelessWidget {
               Icon(Icons.photo_library_outlined,
                   size: 16, color: Colors.grey.shade500),
               const SizedBox(width: 8),
-              Text('Photos (${photos.length})',
+              Text(context.l10n.photosCount(photos.length.toString()),
                   style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.black87,
@@ -1219,7 +1209,7 @@ class _PhotosRow extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             AppBar(
-              title: const Text('Photo'),
+              title: Text(context.l10n.champPhoto),
               leading: IconButton(
                 icon: const Icon(Icons.close),
                 onPressed: () => Navigator.pop(ctx),

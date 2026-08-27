@@ -10,6 +10,7 @@ import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/shimmer_loading.dart';
 import '../domain/vehicule_model.dart';
 import 'vehicules_provider.dart';
+import 'package:garage_auto/core/extensions/l10n_extension.dart';
 
 class CatalogueScreen extends ConsumerWidget {
   const CatalogueScreen({super.key});
@@ -25,15 +26,15 @@ class CatalogueScreen extends ConsumerWidget {
         ref.watch(prixMaxProvider) != null;
 
     return Scaffold(
-      appBar: const CustomAppBar(
-        title: 'Catalogue',
+      appBar: CustomAppBar(
+        title: context.l10n.catalogue,
         showBackButton: false,
         showHomeButton: true,
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push('/vehicules/new'),
-        icon: const Icon(Icons.add),
-        label: const Text('Nouveau'),
+        icon: Icon(Icons.add),
+        label: Text(context.l10n.btnNouveau),
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
       ),
@@ -61,14 +62,14 @@ class CatalogueScreen extends ConsumerWidget {
             // Bouton filtres avancés
             if (hasActiveFilters)
               IconButton(
-                icon: const Icon(Icons.filter_alt, color: AppColors.primary),
+                icon: Icon(Icons.filter_alt, color: AppColors.primary),
                 onPressed: () => _showFiltersDialog(context, ref),
-                tooltip: 'Filtres actifs',
+                tooltip: context.l10n.filtresActifs,
               ),
             IconButton(
-              icon: const Icon(Icons.filter_list),
+              icon: Icon(Icons.filter_list),
               onPressed: () => _showFiltersDialog(context, ref),
-              tooltip: 'Filtres',
+              tooltip: context.l10n.filtres,
             ),
           ],
         ),
@@ -76,7 +77,7 @@ class CatalogueScreen extends ConsumerWidget {
         _StatutFilterBar(selected: statut),
         Expanded(child: vehicules.when(
           loading: () => const VehiculesListShimmer(),
-          error:   (e, _) => Center(child: Text('Erreur: $e')),
+          error:   (e, _) => Center(child: Text(context.l10n.erreurAvecDetail(e.toString()))),
           data:    (list) => list.isEmpty
             ? EmptyState(
                 icon: searchQuery.isNotEmpty ? Icons.search : Icons.directions_car_outlined,
@@ -121,11 +122,11 @@ class _SearchBar extends StatelessWidget {
       onChanged: onChanged,
       textInputAction: TextInputAction.search,
       decoration: InputDecoration(
-        hintText: 'Rechercher un véhicule (marque, modèle, immatriculation...)',
-        prefixIcon: const Icon(Icons.search, color: AppColors.textSecondary),
+        hintText: context.l10n.rechercherUnVehiculeMarqueModeleImmatriculation,
+        prefixIcon: Icon(Icons.search, color: AppColors.textSecondary),
         suffixIcon: query.isNotEmpty
             ? IconButton(
-                icon: const Icon(Icons.clear, color: AppColors.textSecondary),
+                icon: Icon(Icons.clear, color: AppColors.textSecondary),
                 onPressed: onCleared,
               )
             : null,
@@ -206,7 +207,7 @@ class _VehiculeCard extends StatelessWidget {
                   ? CachedNetworkImage(
                       imageUrl: urlDeLimage,
                       fit: BoxFit.cover,
-                      placeholder: (context, url) => const Center(
+                      placeholder: (context, url) => Center(
                         child: CircularProgressIndicator(strokeWidth: 2),
                       ),
                       errorWidget: (context, url, error) {
@@ -217,7 +218,7 @@ class _VehiculeCard extends StatelessWidget {
                   : const _PhotoPlaceholder(),
               ),
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: 12),
             Expanded(child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -227,11 +228,11 @@ class _VehiculeCard extends StatelessWidget {
                     overflow: TextOverflow.ellipsis)),
                   StatusBadge(statut: vehicule.statut),
                 ]),
-                const SizedBox(height: 4),
+                SizedBox(height: 4),
                 Text('${vehicule.kilometrage} km${vehicule.immatriculation != null
                      ? ' · ${vehicule.immatriculation}' : ''}',
                   style: AppTextStyles.bodySecondary),
-                const SizedBox(height: 4),
+                SizedBox(height: 4),
                 Wrap(spacing: 6, children: [
                   if (vehicule.prixLocationJour != null)
                     _Chip('${vehicule.prixLocationJour!.toInt()} DA/j',
@@ -241,7 +242,7 @@ class _VehiculeCard extends StatelessWidget {
                       AppColors.primary),
                 ]),
                 if (vehicule.proprietes.isNotEmpty) ...[
-                  const SizedBox(height: 2),
+                  SizedBox(height: 2),
                   Text(vehicule.proprietes
                     .map((p) => '${p.proprietaireNom} ${p.partPct.toInt()}%')
                     .join(' · '),
@@ -250,7 +251,7 @@ class _VehiculeCard extends StatelessWidget {
                 ],
               ],
             )),
-            const Icon(Icons.chevron_right, color: AppColors.textSecondary),
+            Icon(Icons.chevron_right, color: AppColors.textSecondary),
           ]),
         ),
       ),
@@ -279,7 +280,7 @@ class _PhotoPlaceholder extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
     color: AppColors.inputFill,
-    child: const Icon(Icons.directions_car, color: AppColors.border, size: 28),
+    child: Icon(Icons.directions_car, color: AppColors.border, size: 28),
   );
 }
 
@@ -298,11 +299,11 @@ void _showFiltersDialog(BuildContext context, WidgetRef ref) {
     context: context,
     builder: (context) => StatefulBuilder(
       builder: (context, setDialogState) => AlertDialog(
-        title: const Row(
+        title: Row(
           children: [
             Icon(Icons.filter_list, size: 24),
             SizedBox(width: 8),
-            Text('Filtres avancés'),
+            Text(context.l10n.filtresAvances),
           ],
         ),
         content: SingleChildScrollView(
@@ -311,45 +312,45 @@ void _showFiltersDialog(BuildContext context, WidgetRef ref) {
             children: [
               TextField(
                 controller: marqueController,
-                decoration: const InputDecoration(
-                  labelText: 'Marque',
-                  hintText: 'ex: Renault, Peugeot...',
+                decoration: InputDecoration(
+                  labelText: context.l10n.marque,
+                  hintText: context.l10n.exMarqueVehicule,
                   prefixIcon: Icon(Icons.branding_watermark_outlined),
                 ),
                 onChanged: (value) => setDialogState(() {}),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               Row(
                 children: [
                   Expanded(
                     child: TextField(
                       controller: anneeMinController,
                       keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                        labelText: 'Année min',
+                      decoration: InputDecoration(
+                        labelText: context.l10n.anneeMin,
                         prefixIcon: Icon(Icons.calendar_today),
                       ),
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  SizedBox(width: 12),
                   Expanded(
                     child: TextField(
                       controller: anneeMaxController,
                       keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                        labelText: 'Année max',
+                      decoration: InputDecoration(
+                        labelText: context.l10n.anneeMax,
                         prefixIcon: Icon(Icons.calendar_today),
                       ),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               TextField(
                 controller: prixMaxController,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: 'Prix max (DA)',
+                decoration: InputDecoration(
+                  labelText: context.l10n.prixMaxDa,
                   prefixIcon: Icon(Icons.attach_money),
                 ),
               ),
@@ -365,7 +366,7 @@ void _showFiltersDialog(BuildContext context, WidgetRef ref) {
               ref.read(prixMaxProvider.notifier).state = null;
               Navigator.pop(context);
             },
-            child: const Text('Réinitialiser'),
+            child: Text(context.l10n.reinitialiser),
           ),
           ElevatedButton(
             onPressed: () {
@@ -379,7 +380,7 @@ void _showFiltersDialog(BuildContext context, WidgetRef ref) {
                   double.tryParse(prixMaxController.text);
               Navigator.pop(context);
             },
-            child: const Text('Appliquer'),
+            child: Text(context.l10n.btnAppliquer),
           ),
         ],
       ),

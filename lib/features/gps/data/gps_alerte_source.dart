@@ -7,18 +7,23 @@ import '../domain/gps_alerte.dart';
 
 class GpsAlerteSource {
   final SupabaseClient _supabase;
+  final String showroomId;
   static const String _table = 'gps_alertes';
 
-  const GpsAlerteSource({required SupabaseClient supabase})
-      : _supabase = supabase;
+  const GpsAlerteSource({
+    required SupabaseClient supabase,
+    required this.showroomId,
+  }) : _supabase = supabase;
 
   // ── Lecture ───────────────────────────────────────────────
 
-  /// Toutes les alertes, triées par date décroissante.
+  /// Toutes les alertes du showroom actif, triées par date décroissante.
   Future<List<GpsAlerte>> getToutesAlertes({int limit = 100}) async {
+    if (showroomId.isEmpty) return [];
     final rows = await _supabase
         .from(_table)
         .select()
+        .eq('showroom_id', showroomId) // ✅ filtre multi-tenant
         .order('date_alerte', ascending: false)
         .limit(limit);
 
@@ -29,9 +34,11 @@ class GpsAlerteSource {
 
   /// Alertes non lues uniquement.
   Future<List<GpsAlerte>> getAlertesNonLues() async {
+    if (showroomId.isEmpty) return [];
     final rows = await _supabase
         .from(_table)
         .select()
+        .eq('showroom_id', showroomId) // ✅ filtre multi-tenant
         .eq('lue', false)
         .order('date_alerte', ascending: false);
 
@@ -42,9 +49,11 @@ class GpsAlerteSource {
 
   /// Nombre d'alertes non lues (pour le badge).
   Future<int> getNombreNonLues() async {
+    if (showroomId.isEmpty) return 0;
     final resp = await _supabase
         .from(_table)
         .select('id')
+        .eq('showroom_id', showroomId) // ✅ filtre multi-tenant
         .eq('lue', false);
 
     return (resp as List<dynamic>).length;
@@ -57,7 +66,8 @@ class GpsAlerteSource {
     await _supabase
         .from(_table)
         .update({'lue': true})
-        .eq('id', alerteId);
+        .eq('id', alerteId)
+        .eq('showroom_id', showroomId); // ✅ verrou anti cross-tenant
   }
 
   /// Marque toutes les alertes comme lues.
@@ -65,6 +75,7 @@ class GpsAlerteSource {
     await _supabase
         .from(_table)
         .update({'lue': true})
+        .eq('showroom_id', showroomId) // ✅ verrou anti cross-tenant
         .eq('lue', false);
   }
 
@@ -76,6 +87,7 @@ class GpsAlerteSource {
     required String message,
   }) async {
     await _supabase.from(_table).insert({
+      'showroom_id':  showroomId, // ✅ injection multi-tenant
       'vehicule_id':  vehiculeId,
       'vehicule_nom': vehiculeNom,
       'type':         type,
@@ -90,6 +102,7 @@ class GpsAlerteSource {
     await _supabase
         .from(_table)
         .delete()
+        .eq('showroom_id', showroomId) // ✅ verrou anti cross-tenant
         .eq('lue', true)
         .lt('date_alerte', before.toIso8601String());
   }

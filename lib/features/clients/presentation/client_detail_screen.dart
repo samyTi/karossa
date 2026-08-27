@@ -9,6 +9,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../domain/client_model.dart';
 import 'clients_provider.dart';
+import 'package:garage_auto/core/extensions/l10n_extension.dart';
 
 // Provider : historique locations d'un client
 final clientLocationsProvider = FutureProvider.autoDispose.family<List<Map<String,dynamic>>, String>(
@@ -44,9 +45,9 @@ class ClientDetailScreen extends ConsumerWidget {
 
     return clientAsync.when(
       loading: () => const Scaffold(body: Center(child: CircularProgressIndicator())),
-      error: (e, _) => Scaffold(body: Center(child: Text('Erreur : $e'))),
+      error: (e, _) => Scaffold(body: Center(child: Text(context.l10n.erreurAvecDetail(e.toString())))),
       data: (client) => client == null
-        ? const Scaffold(body: Center(child: Text('Client introuvable')))
+        ? Scaffold(body: Center(child: Text(context.l10n.clientIntrouvable)))
         : _ClientDetailBody(client: client),
     );
   }
@@ -117,7 +118,7 @@ class _ClientDetailBody extends ConsumerWidget {
               children: [
                 // ── Coordonnées ────────────────────────────────
                 _Section(
-                  title: 'Coordonnées',
+                  title: context.l10n.coordonnees,
                   icon: Icons.contact_page_outlined,
                   children: [
                     _InfoTile(Icons.phone, client.telephone,
@@ -133,7 +134,7 @@ class _ClientDetailBody extends ConsumerWidget {
                 // ── Documents ──────────────────────────────────
                 if (client.numCni != null || client.numPermis != null)
                   _Section(
-                    title: 'Documents',
+                    title: context.l10n.documents,
                     icon: Icons.badge_outlined,
                     children: [
                       if (client.numCni != null)
@@ -147,7 +148,7 @@ class _ClientDetailBody extends ConsumerWidget {
                 // ── Note interne ──────────────────────────────
                 if (client.noteInterne != null && client.noteInterne!.isNotEmpty)
                   _Section(
-                    title: 'Note interne',
+                    title: context.l10n.noteInterne,
                     icon: Icons.sticky_note_2_outlined,
                     children: [
                       Padding(
@@ -160,11 +161,11 @@ class _ClientDetailBody extends ConsumerWidget {
                 const SizedBox(height: 12),
 
                 // ── Historique locations ───────────────────────
-                Text('Locations', style: AppTextStyles.heading2),
+                Text(context.l10n.titreLocations, style: AppTextStyles.heading2),
                 const SizedBox(height: 8),
                 locsAsync.when(
                   loading: () => const LinearProgressIndicator(),
-                  error: (e, _) => Text('Erreur : $e'),
+                  error: (e, _) => Text(context.l10n.erreurAvecDetail(e.toString())),
                   data: (locs) => locs.isEmpty
                     ? const _EmptyHistory('Aucune location')
                     : Column(
@@ -180,11 +181,11 @@ class _ClientDetailBody extends ConsumerWidget {
                 const SizedBox(height: 12),
 
                 // ── Historique ventes ──────────────────────────
-                Text('Achats / Ventes', style: AppTextStyles.heading2),
+                Text(context.l10n.achatsVentes, style: AppTextStyles.heading2),
                 const SizedBox(height: 8),
                 ventesAsync.when(
                   loading: () => const LinearProgressIndicator(),
-                  error: (e, _) => Text('Erreur : $e'),
+                  error: (e, _) => Text(context.l10n.erreurAvecDetail(e.toString())),
                   data: (ventes) => ventes.isEmpty
                     ? const _EmptyHistory('Aucun achat')
                     : Column(
@@ -207,7 +208,7 @@ class _ClientDetailBody extends ConsumerWidget {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push('/locations/new?clientId=${client.id}'),
         icon: const Icon(Icons.add),
-        label: const Text('Nouvelle location'),
+        label: Text(context.l10n.nouvelleLocation),
         backgroundColor: AppColors.secondary,
         foregroundColor: Colors.white,
       ),

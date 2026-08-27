@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../data/caisse_operation.dart';
+import '../domain/caisse_operation.dart';
 import '../domain/caisse_providers.dart';
+import 'package:garage_auto/core/extensions/l10n_extension.dart';
 
 class CaisseFilterBar extends ConsumerWidget {
   const CaisseFilterBar({super.key});
@@ -81,7 +82,7 @@ class CaisseFilterBar extends ConsumerWidget {
                   filter.mois != DateTime.now().month) ...[
                 const SizedBox(width: 6),
                 _FilterChip(
-                  label: 'Réinitialiser',
+                  label: context.l10n.reinitialiser,
                   icon: Icons.close,
                   active: false,
                   danger: true,
@@ -155,7 +156,7 @@ class CaisseFilterBar extends ConsumerWidget {
       builder: (_) => SafeArea(
         child: Column(mainAxisSize: MainAxisSize.min, children: [
           ListTile(
-            title: const Text('Tous les types'),
+            title: Text(context.l10n.tousLesTypes),
             leading: const Icon(Icons.all_inclusive),
             selected: filter.type == null,
             onTap: () {
@@ -164,7 +165,7 @@ class CaisseFilterBar extends ConsumerWidget {
             },
           ),
           ListTile(
-            title: const Text('Entrées'),
+            title: Text(context.l10n.entrees),
             leading: Icon(Icons.arrow_downward, color: AppColors.secondary),
             selected: filter.type == 'entree',
             onTap: () {
@@ -173,7 +174,7 @@ class CaisseFilterBar extends ConsumerWidget {
             },
           ),
           ListTile(
-            title: const Text('Sorties'),
+            title: Text(context.l10n.filterSorties),
             leading: Icon(Icons.arrow_upward, color: AppColors.retard),
             selected: filter.type == 'sortie',
             onTap: () {
@@ -202,7 +203,7 @@ class CaisseFilterBar extends ConsumerWidget {
           controller: ctrl,
           children: [
             ListTile(
-              title: const Text('Toutes les catégories'),
+              title: Text(context.l10n.toutesLesCategories),
               leading: const Icon(Icons.all_inclusive),
               selected: filter.categorie == null,
               onTap: () {
