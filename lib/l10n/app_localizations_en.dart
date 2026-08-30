@@ -2345,6 +2345,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get locationSupprimee => 'Rental deleted.';
 
   @override
+  String get elementSupprime => 'Deleted successfully.';
+
+  @override
+  String get suppressionImpossibleLiee =>
+      'Cannot delete: other records (rentals, sales, payments, repairs...) are still linked to this item.';
+
+  @override
   String get exMarqueVehicule => 'e.g. Renault, Peugeot...';
 
   @override

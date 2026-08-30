@@ -1,6 +1,7 @@
 // lib/features/vehicules/data/vehicules_repository.dart
 
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../../core/utils/app_logger.dart';
 import '../domain/vehicule_model.dart';
 
 class VehiculesRepository {
@@ -121,5 +122,28 @@ class VehiculesRepository {
       'marge': marge,
       'margePct': margePct,
     };
+  }
+
+  // ── Suppression ────────────────────────────────────────────────────────────
+
+  /// Supprime un véhicule. Échoue (contrainte de clé étrangère) si des
+  /// locations, ventes, échanges, réparations ou opérations de caisse lui
+  /// sont encore rattachées — c'est volontaire pour ne jamais perdre
+  /// d'historique financier par accident.
+  Future<void> delete(String id) async {
+    try {
+      await _client
+          .from('vehicule_proprietes')
+          .delete()
+          .eq('vehicule_id', id);
+      await _client
+          .from('vehicules')
+          .delete()
+          .eq('showroom_id', showroomId) // ✅ verrou anti cross-tenant
+          .eq('id', id);
+    } catch (e, st) {
+      AppLogger.e('VehiculesRepository.delete', error: e, stackTrace: st);
+      rethrow;
+    }
   }
 }

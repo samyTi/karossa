@@ -8,6 +8,7 @@ import '../../../shared/widgets/empty_state.dart';
 import '../domain/echange_model.dart';
 import 'echanges_provider.dart';
 import 'package:garage_auto/core/extensions/l10n_extension.dart';
+import '../../../shared/widgets/delete_confirm.dart';
 
 class EchangesScreen extends ConsumerWidget {
   const EchangesScreen({super.key});
@@ -42,21 +43,38 @@ class EchangesScreen extends ConsumerWidget {
   }
 }
 
-class _EchangeCard extends StatelessWidget {
+class _EchangeCard extends ConsumerWidget {
   final Echange echange;
   const _EchangeCard({required this.echange});
+
+  Future<void> _supprimer(BuildContext context, WidgetRef ref) {
+    return confirmAndDelete(
+      context,
+      title: context.l10n.supprimerDefinitivement,
+      message: '${echange.clientNom ?? "ce client"}\n${context.l10n.actionIrreversible}',
+      onDelete: () => ref.read(echangesRepositoryProvider).delete(echange.id),
+      onSuccess: () => ref.invalidate(echangesProvider),
+    );
+  }
+
   @override
-  Widget build(BuildContext context) => Card(
+  Widget build(BuildContext context, WidgetRef ref) => Card(
     margin: const EdgeInsets.only(bottom: 10),
     child: Padding(
       padding: const EdgeInsets.all(14),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Text(echange.clientNom ?? '—', style: AppTextStyles.heading3),
+          Expanded(child: Text(echange.clientNom ?? '—', style: AppTextStyles.heading3)),
           Text('${echange.dateEchange.day.toString().padLeft(2,'0')}/'
                '${echange.dateEchange.month.toString().padLeft(2,'0')}/'
                '${echange.dateEchange.year}',
             style: AppTextStyles.label),
+          IconButton(
+            icon: Icon(Icons.delete_outline, color: AppColors.retard, size: 20),
+            tooltip: context.l10n.btnSupprimer,
+            visualDensity: VisualDensity.compact,
+            onPressed: () => _supprimer(context, ref),
+          ),
         ]),
         const SizedBox(height: 8),
         Row(children: [

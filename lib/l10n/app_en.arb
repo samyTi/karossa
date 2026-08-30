@@ -949,6 +949,8 @@
   "notesEtatVehiculeDepart": "Vehicle condition notes at departure (optional)",
   "pdfGenereAvecSucces": "PDF generated successfully",
   "locationSupprimee": "Rental deleted.",
+  "elementSupprime": "Deleted successfully.",
+  "suppressionImpossibleLiee": "Cannot delete: other records (rentals, sales, payments, repairs...) are still linked to this item.",
   "exMarqueVehicule": "e.g. Renault, Peugeot...",
   "sommePartsDoit100": "The sum of shares must equal 100%",
   "anneeInvalideSimple": "Invalid year",

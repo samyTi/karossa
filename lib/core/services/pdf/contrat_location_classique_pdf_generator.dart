@@ -25,11 +25,18 @@ import 'package:pdf/widgets.dart' as pw;
 import 'pdf_theme.dart' hide debugPrint;
 import 'vehicle_schema_pdf_renderer.dart';
 import '../../../features/contrats/domain/contrat_location_dto.dart';
+import '../../../features/contrats/domain/contrat_location_champs.dart';
 
 class ContratLocationClassiquePdfGenerator {
   ContratLocationClassiquePdfGenerator._();
 
   static String _v(String? s) => (s == null || s.isEmpty) ? '—' : s;
+
+  /// Champs actifs pour la génération en cours. Alimenté par [buildBothAsync]
+  /// et lu par les box builders privés (évite de faire passer le paramètre
+  /// dans toute la chaîne d'appels statiques existante).
+  static Set<String> _champs = ContratLocationChamps.toActiveSet(ContratLocationChamps.defaults);
+  static bool _on(String key) => _champs.contains(key);
 
   // ── Points d'entrée ────────────────────────────────────────────────────────
 
@@ -37,7 +44,9 @@ class ContratLocationClassiquePdfGenerator {
     ContratLocationDto dto, {
     List<Map<String, String>>? articlesFr,
     List<Map<String, String>>? articlesAr,
+    Set<String>? champsActifs,
   }) async {
+    _champs = champsActifs ?? ContratLocationChamps.toActiveSet(ContratLocationChamps.defaults);
     pw.Widget? schemaWidget;
 
     if (dto.etatCarrosserie != null && dto.etatCarrosserie!.hasAnyDamage) {
@@ -231,7 +240,7 @@ class ContratLocationClassiquePdfGenerator {
               style: pw.TextStyle(fontSize: 11, fontWeight: pw.FontWeight.bold, color: PdfColors.grey700)),
           if (dto.agenceLogoBytes != null) ...[
             pw.SizedBox(height: 4),
-            pw.Image(pw.MemoryImage(dto.agenceLogoBytes!), height: 32, fit: pw.BoxFit.contain),
+            pw.Image(pw.MemoryImage(dto.agenceLogoBytes!), height: 58, fit: pw.BoxFit.contain),
           ],
         ]),
       ]),
@@ -264,7 +273,7 @@ class ContratLocationClassiquePdfGenerator {
               style: pw.TextStyle(fontSize: 11, fontWeight: pw.FontWeight.bold, color: PdfColors.grey700)),
           if (dto.agenceLogoBytes != null) ...[
             pw.SizedBox(height: 4),
-            pw.Image(pw.MemoryImage(dto.agenceLogoBytes!), height: 32, fit: pw.BoxFit.contain),
+            pw.Image(pw.MemoryImage(dto.agenceLogoBytes!), height: 58, fit: pw.BoxFit.contain),
           ],
         ]),
       ]),
@@ -351,12 +360,12 @@ class ContratLocationClassiquePdfGenerator {
         title: 'LE LOCATAIRE',
         children: [
           _line('Nom/Prénom', dto.locataireFullName, bold: true),
-          _line('Adresse', _v(dto.locataireAdresse)),
-          _line('Date de naissance', _v(dto.locataireDateNaissance)),
-          _line('Permis n°', _v(dto.locataireNumPermis)),
+          if (_on('locataire_adresse')) _line('Adresse', _v(dto.locataireAdresse)),
+          if (_on('locataire_naissance')) _line('Date de naissance', _v(dto.locataireDateNaissance)),
+          if (_on('locataire_permis')) _line('Permis n°', _v(dto.locataireNumPermis)),
           _line('Téléphone', dto.locataireTel),
-          _line('Email', _v(dto.locataireEmail)),
-          if (dto.hasConducteur2) ...[
+          if (_on('locataire_email')) _line('Email', _v(dto.locataireEmail)),
+          if (_on('locataire_conducteur2') && dto.hasConducteur2) ...[
             pw.SizedBox(height: 4),
             pw.Text('2ème conducteur', style: pw.TextStyle(fontSize: 7.5, fontWeight: pw.FontWeight.bold, color: PdfColors.grey600)),
             _line('Nom', '${_v(dto.conducteur2Prenom)} ${_v(dto.conducteur2Nom)}'),
@@ -370,11 +379,11 @@ class ContratLocationClassiquePdfGenerator {
         children: [
           _line('Société', dto.agenceNom, bold: true),
           _line('Adresse', dto.agenceAdresse),
-          if ((dto.agenceRc ?? '').isNotEmpty) _line('R.C N°', dto.agenceRc!),
-          if ((dto.agenceArtNo ?? '').isNotEmpty) _line('ART N°', dto.agenceArtNo!),
+          if (_on('agence_rc') && (dto.agenceRc ?? '').isNotEmpty) _line('R.C N°', dto.agenceRc!),
+          if (_on('agence_art') && (dto.agenceArtNo ?? '').isNotEmpty) _line('ART N°', dto.agenceArtNo!),
           _line('Téléphone', dto.agenceTel),
-          if ((dto.agenceEmail ?? '').isNotEmpty) _line('Email', dto.agenceEmail!),
-          if ((dto.agentNom ?? '').isNotEmpty)
+          if (_on('agence_email') && (dto.agenceEmail ?? '').isNotEmpty) _line('Email', dto.agenceEmail!),
+          if (_on('agent') && (dto.agentNom ?? '').isNotEmpty)
             _line('Agent', [dto.agentNom, dto.agentTel].whereType<String>().where((s) => s.isNotEmpty).join(', ')),
         ],
       );
@@ -384,21 +393,21 @@ class ContratLocationClassiquePdfGenerator {
         children: [
           _line('Marque/Modèle', '${dto.vehiculeMarque} ${dto.vehiculeModele}', bold: true),
           _line('Immat./réf', _v(dto.vehiculeImmatriculation)),
-          _line('Couleur', _v(dto.vehiculeCouleur)),
-          _line('Carburant', _v(dto.vehiculeCarburant)),
-          _line('Boîte', _v(dto.vehiculeBoite)),
+          if (_on('vehicule_couleur')) _line('Couleur', _v(dto.vehiculeCouleur)),
+          if (_on('vehicule_carburant')) _line('Carburant', _v(dto.vehiculeCarburant)),
+          if (_on('vehicule_boite')) _line('Boîte', _v(dto.vehiculeBoite)),
         ],
       );
 
   static pw.Widget _boxLocationFr(ContratLocationDto dto) => _box(
         title: 'LA LOCATION : id ${PdfTheme.shortId(dto.contratId)}',
         children: [
-          _line('Début', '${PdfTheme.fmtDate(dto.dateDepart)} ${_v(dto.heureDepart)}${dto.lieuDepart != null ? ', ${dto.lieuDepart}' : ''}'),
-          _line('Fin', '${PdfTheme.fmtDate(dto.dateRetour)} ${_v(dto.heureRetour)}${dto.lieuRetour != null ? ', ${dto.lieuRetour}' : ''}'),
-          _line('Prix Total', PdfTheme.fmtMoney(dto.montantTotal), bold: true),
-          _line('Caution', PdfTheme.fmtMoney(dto.caution)),
-          if ((dto.modePaiement ?? '').isNotEmpty) _line('Mode de paiement', dto.modePaiement!),
-          if ((dto.optionsLocation ?? []).isNotEmpty)
+          _line('Début', '${PdfTheme.fmtDate(dto.dateDepart)} ${_v(dto.heureDepart)}${(_on('location_lieu') && dto.lieuDepart != null) ? ', ${dto.lieuDepart}' : ''}'),
+          _line('Fin', '${PdfTheme.fmtDate(dto.dateRetour)} ${_v(dto.heureRetour)}${(_on('location_lieu') && dto.lieuRetour != null) ? ', ${dto.lieuRetour}' : ''}'),
+          if (_on('location_montant_total')) _line('Prix Total', PdfTheme.fmtMoney(dto.montantTotal), bold: true),
+          if (_on('location_caution')) _line('Caution', PdfTheme.fmtMoney(dto.caution)),
+          if (_on('location_mode_paiement') && (dto.modePaiement ?? '').isNotEmpty) _line('Mode de paiement', dto.modePaiement!),
+          if (_on('location_options') && (dto.optionsLocation ?? []).isNotEmpty)
             _line('Options', dto.optionsLocation!.join(', ')),
         ],
       );
@@ -407,10 +416,12 @@ class ContratLocationClassiquePdfGenerator {
         title: 'KILOMÉTRAGE / CARBURANT',
         children: [
           _line('Kilométrage', PdfTheme.fmtKm(dto.kmDepart)),
-          pw.SizedBox(height: 4),
-          pw.Text('Carburant', style: pw.TextStyle(fontSize: 8, fontWeight: pw.FontWeight.bold, color: PdfColors.grey800)),
-          pw.SizedBox(height: 3),
-          _fuelGauge(dto.carburantNiveauDepart ?? 1.0),
+          if (_on('km_carburant_jauge')) ...[
+            pw.SizedBox(height: 4),
+            pw.Text('Carburant', style: pw.TextStyle(fontSize: 8, fontWeight: pw.FontWeight.bold, color: PdfColors.grey800)),
+            pw.SizedBox(height: 3),
+            _fuelGauge(dto.carburantNiveauDepart ?? 1.0),
+          ],
         ],
       );
 
@@ -418,7 +429,7 @@ class ContratLocationClassiquePdfGenerator {
         title: 'REMARQUES',
         children: [
           pw.Text(
-            (dto.remarquesDepart ?? dto.observations ?? '').isEmpty
+            !_on('remarques') || (dto.remarquesDepart ?? dto.observations ?? '').isEmpty
                 ? 'Aucune'
                 : (dto.remarquesDepart ?? dto.observations!),
             style: const pw.TextStyle(fontSize: 8),
@@ -483,12 +494,12 @@ class ContratLocationClassiquePdfGenerator {
         title: 'المستأجر',
         children: [
           _lineAr('الاسم/اللقب', dto.locataireFullName, bold: true),
-          _lineAr('العنوان', _v(dto.locataireAdresse)),
-          _lineAr('تاريخ الميلاد', _v(dto.locataireDateNaissance)),
-          _lineAr('رخصة القيادة رقم', _v(dto.locataireNumPermis)),
+          if (_on('locataire_adresse')) _lineAr('العنوان', _v(dto.locataireAdresse)),
+          if (_on('locataire_naissance')) _lineAr('تاريخ الميلاد', _v(dto.locataireDateNaissance)),
+          if (_on('locataire_permis')) _lineAr('رخصة القيادة رقم', _v(dto.locataireNumPermis)),
           _lineAr('الهاتف', dto.locataireTel),
-          _lineAr('البريد الإلكتروني', _v(dto.locataireEmail)),
-          if (dto.hasConducteur2) ...[
+          if (_on('locataire_email')) _lineAr('البريد الإلكتروني', _v(dto.locataireEmail)),
+          if (_on('locataire_conducteur2') && dto.hasConducteur2) ...[
             pw.SizedBox(height: 4),
             PdfTheme.arText('السائق الثاني', fontSize: 7.5, bold: true, color: PdfColors.grey600),
             _lineAr('الاسم', '${_v(dto.conducteur2Prenom)} ${_v(dto.conducteur2Nom)}'),
@@ -503,11 +514,11 @@ class ContratLocationClassiquePdfGenerator {
         children: [
           _lineAr('الشركة', dto.agenceNom, bold: true),
           _lineAr('العنوان', dto.agenceAdresse),
-          if ((dto.agenceRc ?? '').isNotEmpty) _lineAr('السجل التجاري رقم', dto.agenceRc!),
-          if ((dto.agenceArtNo ?? '').isNotEmpty) _lineAr('رقم المادة الجبائية', dto.agenceArtNo!),
+          if (_on('agence_rc') && (dto.agenceRc ?? '').isNotEmpty) _lineAr('السجل التجاري رقم', dto.agenceRc!),
+          if (_on('agence_art') && (dto.agenceArtNo ?? '').isNotEmpty) _lineAr('رقم المادة الجبائية', dto.agenceArtNo!),
           _lineAr('الهاتف', dto.agenceTel),
-          if ((dto.agenceEmail ?? '').isNotEmpty) _lineAr('البريد الإلكتروني', dto.agenceEmail!),
-          if ((dto.agentNom ?? '').isNotEmpty)
+          if (_on('agence_email') && (dto.agenceEmail ?? '').isNotEmpty) _lineAr('البريد الإلكتروني', dto.agenceEmail!),
+          if (_on('agent') && (dto.agentNom ?? '').isNotEmpty)
             _lineAr('الوكيل', [dto.agentNom, dto.agentTel].whereType<String>().where((s) => s.isNotEmpty).join(', ')),
         ],
       );
@@ -518,9 +529,9 @@ class ContratLocationClassiquePdfGenerator {
         children: [
           _lineAr('الماركة/الطراز', '${dto.vehiculeMarque} ${dto.vehiculeModele}', bold: true),
           _lineAr('رقم التسجيل', _v(dto.vehiculeImmatriculation)),
-          _lineAr('اللون', _v(dto.vehiculeCouleur)),
-          _lineAr('نوع الوقود', _v(dto.vehiculeCarburant)),
-          _lineAr('ناقل الحركة', _v(dto.vehiculeBoite)),
+          if (_on('vehicule_couleur')) _lineAr('اللون', _v(dto.vehiculeCouleur)),
+          if (_on('vehicule_carburant')) _lineAr('نوع الوقود', _v(dto.vehiculeCarburant)),
+          if (_on('vehicule_boite')) _lineAr('ناقل الحركة', _v(dto.vehiculeBoite)),
         ],
       );
 
@@ -528,12 +539,12 @@ class ContratLocationClassiquePdfGenerator {
         rtl: true,
         title: 'الإيجار : ${PdfTheme.shortId(dto.contratId)}',
         children: [
-          _lineAr('البداية', '${PdfTheme.fmtDate(dto.dateDepart)} ${_v(dto.heureDepart)}${dto.lieuDepart != null ? '، ${dto.lieuDepart}' : ''}'),
-          _lineAr('النهاية', '${PdfTheme.fmtDate(dto.dateRetour)} ${_v(dto.heureRetour)}${dto.lieuRetour != null ? '، ${dto.lieuRetour}' : ''}'),
-          _lineAr('المبلغ الإجمالي', PdfTheme.fmtMoney(dto.montantTotal), bold: true),
-          _lineAr('التأمين', PdfTheme.fmtMoney(dto.caution)),
-          if ((dto.modePaiement ?? '').isNotEmpty) _lineAr('طريقة الدفع', dto.modePaiement!),
-          if ((dto.optionsLocation ?? []).isNotEmpty) _lineAr('الخيارات', dto.optionsLocation!.join(', ')),
+          _lineAr('البداية', '${PdfTheme.fmtDate(dto.dateDepart)} ${_v(dto.heureDepart)}${(_on('location_lieu') && dto.lieuDepart != null) ? '، ${dto.lieuDepart}' : ''}'),
+          _lineAr('النهاية', '${PdfTheme.fmtDate(dto.dateRetour)} ${_v(dto.heureRetour)}${(_on('location_lieu') && dto.lieuRetour != null) ? '، ${dto.lieuRetour}' : ''}'),
+          if (_on('location_montant_total')) _lineAr('المبلغ الإجمالي', PdfTheme.fmtMoney(dto.montantTotal), bold: true),
+          if (_on('location_caution')) _lineAr('التأمين', PdfTheme.fmtMoney(dto.caution)),
+          if (_on('location_mode_paiement') && (dto.modePaiement ?? '').isNotEmpty) _lineAr('طريقة الدفع', dto.modePaiement!),
+          if (_on('location_options') && (dto.optionsLocation ?? []).isNotEmpty) _lineAr('الخيارات', dto.optionsLocation!.join(', ')),
         ],
       );
 
@@ -542,10 +553,12 @@ class ContratLocationClassiquePdfGenerator {
         title: 'الكيلومترات / الوقود',
         children: [
           _lineAr('الكيلومترات', PdfTheme.fmtKm(dto.kmDepart)),
-          pw.SizedBox(height: 4),
-          PdfTheme.arText('الوقود', fontSize: 8, bold: true, color: PdfColors.grey800),
-          pw.SizedBox(height: 3),
-          _fuelGauge(dto.carburantNiveauDepart ?? 1.0),
+          if (_on('km_carburant_jauge')) ...[
+            pw.SizedBox(height: 4),
+            PdfTheme.arText('الوقود', fontSize: 8, bold: true, color: PdfColors.grey800),
+            pw.SizedBox(height: 3),
+            _fuelGauge(dto.carburantNiveauDepart ?? 1.0),
+          ],
         ],
       );
 
@@ -554,7 +567,7 @@ class ContratLocationClassiquePdfGenerator {
         title: 'ملاحظات',
         children: [
           PdfTheme.arText(
-            (dto.remarquesDepart ?? dto.observations ?? '').isEmpty
+            !_on('remarques') || (dto.remarquesDepart ?? dto.observations ?? '').isEmpty
                 ? 'لا توجد ملاحظات'
                 : (dto.remarquesDepart ?? dto.observations!),
             fontSize: 8,
@@ -629,7 +642,7 @@ class ContratLocationClassiquePdfGenerator {
           pw.Text('COMPTE RENDU DE FIN DE LOCATION',
               style: pw.TextStyle(fontSize: 13, fontWeight: pw.FontWeight.bold)),
           pw.SizedBox(height: 4),
-          _line('Agent', _v(dto.agentNom)),
+          if (_on('agent')) _line('Agent', _v(dto.agentNom)),
           _line('Date et heure de restitution', '.............'),
           pw.SizedBox(height: 8),
           pw.Table(
@@ -674,7 +687,7 @@ class ContratLocationClassiquePdfGenerator {
         children: [
           PdfTheme.arTextCenter('محضر نهاية الإيجار', fontSize: 13, bold: true),
           pw.SizedBox(height: 4),
-          _lineAr('الوكيل', _v(dto.agentNom)),
+          if (_on('agent')) _lineAr('الوكيل', _v(dto.agentNom)),
           _lineAr('تاريخ ووقت الاستعادة', '...........'),
           pw.SizedBox(height: 8),
           pw.Table(

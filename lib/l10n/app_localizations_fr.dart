@@ -2362,6 +2362,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get locationSupprimee => 'Location supprimée.';
 
   @override
+  String get elementSupprime => 'Supprimé avec succès.';
+
+  @override
+  String get suppressionImpossibleLiee =>
+      'Suppression impossible : d\'autres éléments (locations, ventes, paiements, réparations...) sont encore liés à cet enregistrement.';
+
+  @override
   String get exMarqueVehicule => 'ex: Renault, Peugeot...';
 
   @override

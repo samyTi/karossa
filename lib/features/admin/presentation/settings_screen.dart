@@ -396,6 +396,13 @@ class _SettingsBodyState extends ConsumerState<_SettingsBody> {
               trailing: Icon(Icons.chevron_right),
               onTap: () => context.go('/admin/contract-articles'),
             ),
+            _SettingsTile(
+              icon: Icons.checklist_outlined,
+              title: 'Champs du contrat de location',
+              subtitle: 'Choisir les informations affichées sur le contrat',
+              trailing: Icon(Icons.chevron_right),
+              onTap: () => context.go('/admin/contract-location-champs'),
+            ),
 
             SizedBox(height: 40),
             Center(child: Text(

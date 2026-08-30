@@ -4510,6 +4510,18 @@ abstract class AppLocalizations {
   /// **'Location supprimée.'**
   String get locationSupprimee;
 
+  /// No description provided for @elementSupprime.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimé avec succès.'**
+  String get elementSupprime;
+
+  /// No description provided for @suppressionImpossibleLiee.
+  ///
+  /// In fr, this message translates to:
+  /// **'Suppression impossible : d\'autres éléments (locations, ventes, paiements, réparations...) sont encore liés à cet enregistrement.'**
+  String get suppressionImpossibleLiee;
+
   /// No description provided for @exMarqueVehicule.
   ///
   /// In fr, this message translates to:

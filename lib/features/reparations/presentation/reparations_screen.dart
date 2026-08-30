@@ -8,6 +8,7 @@ import '../../../shared/widgets/empty_state.dart';
 import '../domain/reparation_model.dart';
 import 'reparations_provider.dart';
 import 'package:garage_auto/core/extensions/l10n_extension.dart';
+import '../../../shared/widgets/delete_confirm.dart';
 
 class ReparationsScreen extends ConsumerWidget {
   const ReparationsScreen({super.key});
@@ -71,11 +72,22 @@ class _TotalBanner extends StatelessWidget {
   );
 }
 
-class _RepCard extends StatelessWidget {
+class _RepCard extends ConsumerWidget {
   final Reparation rep;
   const _RepCard({required this.rep});
+
+  Future<void> _supprimer(BuildContext context, WidgetRef ref) {
+    return confirmAndDelete(
+      context,
+      title: context.l10n.supprimerDefinitivement,
+      message: '${rep.vehiculeNom ?? "ce véhicule"} — ${rep.description}\n${context.l10n.actionIrreversible}',
+      onDelete: () => ref.read(reparationsRepositoryProvider).delete(rep.id),
+      onSuccess: () => ref.invalidate(reparationsProvider),
+    );
+  }
+
   @override
-  Widget build(BuildContext context) => Card(
+  Widget build(BuildContext context, WidgetRef ref) => Card(
     margin: const EdgeInsets.only(bottom: 8),
     child: Stack(children: [
       ListTile(
@@ -143,10 +155,16 @@ class _RepCard extends StatelessWidget {
           icon: const Icon(Icons.more_vert),
           onSelected: (v) {
             if (v == 'edit') context.push('/reparations/${rep.id}/edit', extra: rep);
+            if (v == 'delete') _supprimer(context, ref);
           },
           itemBuilder: (_) => [
             PopupMenuItem(value: 'edit', child: Row(children: [
               const Icon(Icons.edit_outlined, size: 16), const SizedBox(width: 8), Text(context.l10n.btnModifier),
+            ])),
+            PopupMenuItem(value: 'delete', child: Row(children: [
+              const Icon(Icons.delete_outline, size: 16, color: AppColors.retard),
+              const SizedBox(width: 8),
+              Text(context.l10n.btnSupprimer, style: const TextStyle(color: AppColors.retard)),
             ])),
           ],
         ),

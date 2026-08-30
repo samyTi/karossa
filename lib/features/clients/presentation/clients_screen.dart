@@ -9,6 +9,7 @@ import '../../../shared/widgets/shimmer_loading.dart';
 import '../domain/client_model.dart';
 import 'clients_provider.dart';
 import '../../../shared/widgets/search_bar_widget.dart';
+import '../../../shared/widgets/delete_confirm.dart';
 import 'package:garage_auto/core/extensions/l10n_extension.dart';
 
 class ClientsScreen extends ConsumerStatefulWidget {
@@ -65,12 +66,22 @@ data: (allList) {
   }
 }
 
-class _ClientTile extends StatelessWidget {
+class _ClientTile extends ConsumerWidget {
   final Client client;
   const _ClientTile({required this.client});
 
+  Future<void> _supprimer(BuildContext context, WidgetRef ref) {
+    return confirmAndDelete(
+      context,
+      title: context.l10n.supprimerDefinitivement,
+      message: '${client.fullName}\n${context.l10n.actionIrreversible}',
+      onDelete: () => ref.read(clientsRepositoryProvider).delete(client.id),
+      onSuccess: () => ref.invalidate(clientsProvider),
+    );
+  }
+
   @override
-  Widget build(BuildContext context) => Card(
+  Widget build(BuildContext context, WidgetRef ref) => Card(
     margin: const EdgeInsets.only(bottom: 8),
     child: ListTile(
       leading: CircleAvatar(
@@ -98,8 +109,15 @@ class _ClientTile extends StatelessWidget {
       ]),
       subtitle: Text(client.telephone,
         style: AppTextStyles.bodySecondary),
-      trailing: const Icon(Icons.chevron_right,
-        color: AppColors.textSecondary),
+      trailing: Row(mainAxisSize: MainAxisSize.min, children: [
+        IconButton(
+          icon: const Icon(Icons.delete_outline, color: AppColors.retard, size: 20),
+          tooltip: context.l10n.btnSupprimer,
+          visualDensity: VisualDensity.compact,
+          onPressed: () => _supprimer(context, ref),
+        ),
+        const Icon(Icons.chevron_right, color: AppColors.textSecondary),
+      ]),
       onTap: () => context.push('/clients/${client.id}'),
     ),
   );

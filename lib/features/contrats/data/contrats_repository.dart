@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import '../domain/contrat_template_model.dart';
+import '../domain/contrat_location_champs.dart';
 import '../../../core/utils/app_logger.dart';
 
 class ContratsRepository {
@@ -41,7 +42,8 @@ class ContratsRepository {
             'commission_vente_type, commission_vente_valeur, '
             'commission_echange_type, commission_echange_valeur, '
             'commission_location_type, commission_location_valeur, '
-            'commission_achat_type, commission_achat_valeur',
+            'commission_achat_type, commission_achat_valeur, '
+            'contrat_location_champs',
           )
           .eq('id', _safeShowroomId)
           .single();
@@ -57,6 +59,37 @@ class ContratsRepository {
         .from('showrooms')
         .update(settings)
         .eq('id', _safeShowroomId);
+  }
+
+  // ── Champs affichés sur le contrat de location ──────────────────────────
+  // Colonne showrooms.contrat_location_champs (jsonb) : { "cle": true/false }.
+  // Voir migration SQL fournie séparément si la colonne n'existe pas encore.
+
+  Future<Map<String, bool>> getContratLocationChamps() async {
+    try {
+      final data = await _client
+          .from('showrooms')
+          .select('contrat_location_champs')
+          .eq('id', _safeShowroomId)
+          .single();
+      final raw = data['contrat_location_champs'] as Map<String, dynamic>?;
+      return ContratLocationChamps.resolve(raw);
+    } catch (e) {
+      AppLogger.w('ContratsRepository.getContratLocationChamps: defaults utilisés', error: e);
+      return ContratLocationChamps.defaults;
+    }
+  }
+
+  Future<void> updateContratLocationChamps(Map<String, bool> champs) async {
+    try {
+      await _client
+          .from('showrooms')
+          .update({'contrat_location_champs': champs})
+          .eq('id', _safeShowroomId);
+    } catch (e) {
+      AppLogger.e('ContratsRepository.updateContratLocationChamps', error: e);
+      rethrow;
+    }
   }
 
   // ── Templates ────────────────────────────────────────────────────────────

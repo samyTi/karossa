@@ -11,6 +11,7 @@ import '../../../shared/widgets/shimmer_loading.dart';
 import '../domain/vehicule_model.dart';
 import 'vehicules_provider.dart';
 import 'package:garage_auto/core/extensions/l10n_extension.dart';
+import '../../../shared/widgets/delete_confirm.dart';
 
 class CatalogueScreen extends ConsumerWidget {
   const CatalogueScreen({super.key});
@@ -179,13 +180,28 @@ class _StatutFilterBar extends ConsumerWidget {
   }
 }
 
-class _VehiculeCard extends StatelessWidget {
+class _VehiculeCard extends ConsumerWidget {
   final Vehicule vehicule;
   final VoidCallback onTap;
   const _VehiculeCard({required this.vehicule, required this.onTap});
 
+  Future<void> _supprimer(BuildContext context, WidgetRef ref) {
+    return confirmAndDelete(
+      context,
+      title: context.l10n.supprimerDefinitivement,
+      message:
+          '${vehicule.displayName}\n${context.l10n.actionIrreversible}',
+      onDelete: () =>
+          ref.read(vehiculesRepositoryProvider).delete(vehicule.id),
+      onSuccess: () {
+        ref.invalidate(vehiculesProvider);
+        ref.invalidate(vehiculesFiltresProvider);
+      },
+    );
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     // ✅ Correction 1 & 2 : Déclaration correcte de la variable avec le bon nom (vehicule au lieu de v)
     // et intégration dans un vrai bloc {}
     final String? urlDeLimage = vehicule.photos.isNotEmpty ? vehicule.photos.first : null;
@@ -251,7 +267,15 @@ class _VehiculeCard extends StatelessWidget {
                 ],
               ],
             )),
-            Icon(Icons.chevron_right, color: AppColors.textSecondary),
+            Column(mainAxisSize: MainAxisSize.min, children: [
+              IconButton(
+                icon: Icon(Icons.delete_outline, color: AppColors.retard, size: 20),
+                tooltip: context.l10n.btnSupprimer,
+                visualDensity: VisualDensity.compact,
+                onPressed: () => _supprimer(context, ref),
+              ),
+              Icon(Icons.chevron_right, color: AppColors.textSecondary),
+            ]),
           ]),
         ),
       ),

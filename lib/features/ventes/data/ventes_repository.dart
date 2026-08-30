@@ -141,6 +141,33 @@ class VentesRepository {
         .eq('id', id);
   }
 
+  // ── Suppression ────────────────────────────────────────────────────────────
+
+  /// Supprime une vente et ses paiements associés. Échoue si des opérations
+  /// de caisse ou des répartitions sont encore liées à cette vente.
+  Future<void> delete(String id) async {
+    try {
+      await _client
+          .from('vente_paiements')
+          .delete()
+          .eq('showroom_id', showroomId)
+          .eq('vente_id', id);
+      await _client
+          .from('transaction_repartitions')
+          .delete()
+          .eq('transaction_type', 'vente')
+          .eq('transaction_id', id);
+      await _client
+          .from('ventes')
+          .delete()
+          .eq('showroom_id', showroomId) // 🚀 Sécurité anti cross-tenant
+          .eq('id', id);
+    } catch (e, st) {
+      AppLogger.e('VentesRepository.delete', error: e, stackTrace: st);
+      rethrow;
+    }
+  }
+
   // ── Stats ──────────────────────────────────────────────────────────────────
 
   Future<Map<String, dynamic>> getStats() async {

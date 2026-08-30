@@ -13,6 +13,7 @@ import '../../../../core/services/pdf/contrat_orchestrator.dart';
 import '../../../../core/services/pdf/vehicle_schema_pdf_renderer.dart';
 import '../domain/contrat_location_dto.dart' show ContratLocationTemplate;
 import 'widgets/contrat_location_template_picker.dart';
+import 'contrats_provider.dart' show contratLocationChampsProvider;
 import '../../auth/presentation/auth_provider.dart';
 import '../../admin/presentation/showroom_settings_provider.dart';
 import 'package:garage_auto/core/extensions/l10n_extension.dart';
@@ -258,9 +259,11 @@ class _LocationsTab extends ConsumerWidget {
                       ...list[i],
                       if (blueprintBytes != null) 'blueprint_bytes': blueprintBytes,
                     };
+                    final champs = await ref.read(contratLocationChampsProvider.future);
                     await orchestrator.generateAndShareLocation(
                       locationData: locationDataWithBlueprint,
                       template: template,
+                      champs: champs,
                     );
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).hideCurrentSnackBar();

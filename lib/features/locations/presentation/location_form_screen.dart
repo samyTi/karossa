@@ -23,6 +23,7 @@ import '../../../core/services/pdf/contrat_orchestrator.dart';
 import '../../../core/services/pdf/vehicle_schema_pdf_renderer.dart';
 import '../../contrats/domain/contrat_location_dto.dart' show ContratLocationTemplate;
 import '../../contrats/presentation/widgets/contrat_location_template_picker.dart';
+import '../../contrats/presentation/contrats_provider.dart' show contratLocationChampsProvider;
 import 'locations_provider.dart';
 
 import '../../../shared/widgets/location_financial_recap.dart';
@@ -861,9 +862,11 @@ class _State extends ConsumerState<LocationFormScreen> {
               supabase:   ref.read(supabaseClientProvider),
               showroomId: ref.read(currentShowroomIdProvider) ?? '',
             );
+            final champs = await ref.read(contratLocationChampsProvider.future);
             await orchestrator.generateAndShareLocation(
               locationData: locationData,
               template: _selectedTemplate!,
+              champs: champs,
             );
           } catch (e) {
             pdfError = e.toString();

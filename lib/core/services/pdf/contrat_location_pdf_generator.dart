@@ -16,6 +16,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'pdf_theme.dart' hide debugPrint;
 import 'vehicle_schema_pdf_renderer.dart';
 import '../../../features/contrats/domain/contrat_location_dto.dart';
+import '../../../features/contrats/domain/contrat_location_champs.dart';
 
 export '../../../features/contrats/domain/contrat_location_dto.dart';
 
@@ -24,6 +25,11 @@ class ContratLocationPdfGenerator {
 
   static String _v(String? s) => (s == null || s.isEmpty) ? '' : s;
 
+  /// Champs actifs pour la génération en cours (voir même mécanisme que
+  /// ContratLocationClassiquePdfGenerator).
+  static Set<String> _champs = ContratLocationChamps.toActiveSet(ContratLocationChamps.defaults);
+  static bool _on(String key) => _champs.contains(key);
+
   // ── Points d'entrée ────────────────────────────────────────────────────────
 
   /// Génère les deux documents (FR + AR) et les retourne en mémoire.
@@ -31,7 +37,9 @@ class ContratLocationPdfGenerator {
     ContratLocationDto dto, {
     List<Map<String, String>>? articlesFr,
     List<Map<String, String>>? articlesAr,
+    Set<String>? champsActifs,
   }) async {
+    _champs = champsActifs ?? ContratLocationChamps.toActiveSet(ContratLocationChamps.defaults);
     pw.Widget? schemaWidget;
 
     debugPrint('🔍 [PDF] etatCarrosserie: ${dto.etatCarrosserie != null ? "non-null, pins: ${dto.etatCarrosserie!.pins.length}" : "NULL"}');
@@ -250,28 +258,30 @@ class ContratLocationPdfGenerator {
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
                 _infoRow('Nom, prénom :', dto.locataireFullName, bold: true),
-                _infoRow('Né(e) le :', _v(dto.locataireDateNaissance)),
-                _infoRow('N° permis :', '${_v(dto.locataireNumPermis)}  Délivré le : ${_v(dto.locatairePermisDate)}'),
-                _infoRow('Adresse :', _v(dto.locataireAdresse)),
+                if (_on('locataire_naissance')) _infoRow('Né(e) le :', _v(dto.locataireDateNaissance)),
+                if (_on('locataire_permis')) _infoRow('N° permis :', '${_v(dto.locataireNumPermis)}  Délivré le : ${_v(dto.locatairePermisDate)}'),
+                if (_on('locataire_adresse')) _infoRow('Adresse :', _v(dto.locataireAdresse)),
                 _infoRow('Tel :', _v(dto.locataireTel)),
               ],
             )),
-            pw.Container(width: 0.6, color: PdfColors.grey500),
-            pw.Expanded(flex: 2, child: pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.start,
-              children: [
-                pw.Padding(
-                  padding: const pw.EdgeInsets.fromLTRB(6, 4, 6, 2),
-                  child: pw.Text('2eme Conducteur :',
-                      style: pw.TextStyle(fontSize: 8, fontWeight: pw.FontWeight.bold)),
-                ),
-                _infoRow('Nom et prénom :',
-                    dto.hasConducteur2
-                        ? '${dto.conducteur2Prenom ?? ''} ${dto.conducteur2Nom ?? ''}'
-                        : ''),
-                _infoRow('Permis N°:', '${_v(dto.conducteur2NumPermis)}  Délivré le : ${_v(dto.conducteur2PermisDate)}'),
-              ],
-            )),
+            if (_on('locataire_conducteur2')) ...[
+              pw.Container(width: 0.6, color: PdfColors.grey500),
+              pw.Expanded(flex: 2, child: pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                children: [
+                  pw.Padding(
+                    padding: const pw.EdgeInsets.fromLTRB(6, 4, 6, 2),
+                    child: pw.Text('2eme Conducteur :',
+                        style: pw.TextStyle(fontSize: 8, fontWeight: pw.FontWeight.bold)),
+                  ),
+                  _infoRow('Nom et prénom :',
+                      dto.hasConducteur2
+                          ? '${dto.conducteur2Prenom ?? ''} ${dto.conducteur2Nom ?? ''}'
+                          : ''),
+                  _infoRow('Permis N°:', '${_v(dto.conducteur2NumPermis)}  Délivré le : ${_v(dto.conducteur2PermisDate)}'),
+                ],
+              )),
+            ],
           ]),
         ]),
       );
@@ -285,12 +295,12 @@ class ContratLocationPdfGenerator {
           pw.Row(children: [
             pw.Expanded(child: _infoRow('Marque :', _v(dto.vehiculeMarque), bold: true)),
             pw.Expanded(child: _infoRow('Matricule :', _v(dto.vehiculeImmatriculation), bold: true)),
-            pw.Expanded(child: _infoRow('Couleur :', _v(dto.vehiculeCouleur))),
+            if (_on('vehicule_couleur')) pw.Expanded(child: _infoRow('Couleur :', _v(dto.vehiculeCouleur))),
           ]),
           pw.Row(children: [
             pw.Expanded(child: _infoRow('Modèle :', _v(dto.vehiculeModele))),
-            pw.Expanded(child: _infoRow('Assurance :', _v(dto.vehiculeAssurance))),
-            pw.Expanded(child: _infoRow('Code RADIO :', _v(dto.vehiculeCodeRadio))),
+            if (_on('vehicule_assurance')) pw.Expanded(child: _infoRow('Assurance :', _v(dto.vehiculeAssurance))),
+            if (_on('vehicule_code_radio')) pw.Expanded(child: _infoRow('Code RADIO :', _v(dto.vehiculeCodeRadio))),
           ]),
         ]),
       );
@@ -475,26 +485,28 @@ class ContratLocationPdfGenerator {
           pw.Row(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
             pw.Expanded(flex: 3, child: pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
               _infoRowAr('الاسم واللقب :', dto.locataireFullName),
-              _infoRowAr('تاريخ الميلاد :', _v(dto.locataireDateNaissance)),
-              _infoRowAr('رقم رخصة القيادة :', '${_v(dto.locataireNumPermis)}  صدرت: ${_v(dto.locatairePermisDate)}'),
-              _infoRowAr('العنوان :', _v(dto.locataireAdresse)),
+              if (_on('locataire_naissance')) _infoRowAr('تاريخ الميلاد :', _v(dto.locataireDateNaissance)),
+              if (_on('locataire_permis')) _infoRowAr('رقم رخصة القيادة :', '${_v(dto.locataireNumPermis)}  صدرت: ${_v(dto.locatairePermisDate)}'),
+              if (_on('locataire_adresse')) _infoRowAr('العنوان :', _v(dto.locataireAdresse)),
               _infoRowAr('الهاتف :', _v(dto.locataireTel)),
             ])),
-            pw.Container(width: 0.6, color: PdfColors.grey500),
-            pw.Expanded(flex: 2, child: pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
-              pw.Padding(
-                padding: const pw.EdgeInsets.fromLTRB(6, 4, 6, 2),
-                child: pw.Text('السائق الثاني :',
-                    style: pw.TextStyle(fontSize: 8, fontWeight: pw.FontWeight.bold),
-                    textDirection: pw.TextDirection.rtl, textAlign: pw.TextAlign.right),
-              ),
-              _infoRowAr('الاسم :', dto.hasConducteur2
-                  ? '${dto.conducteur2Prenom ?? ''} ${dto.conducteur2Nom ?? ''}' : ''),
-              // ✅ FIX : la date de délivrance du permis du 2ème conducteur
-              // était affichée en FR mais absente ici.
-              _infoRowAr('رخصة القيادة :',
-                  '${_v(dto.conducteur2NumPermis)}  صدرت: ${_v(dto.conducteur2PermisDate)}'),
-            ])),
+            if (_on('locataire_conducteur2')) ...[
+              pw.Container(width: 0.6, color: PdfColors.grey500),
+              pw.Expanded(flex: 2, child: pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
+                pw.Padding(
+                  padding: const pw.EdgeInsets.fromLTRB(6, 4, 6, 2),
+                  child: pw.Text('السائق الثاني :',
+                      style: pw.TextStyle(fontSize: 8, fontWeight: pw.FontWeight.bold),
+                      textDirection: pw.TextDirection.rtl, textAlign: pw.TextAlign.right),
+                ),
+                _infoRowAr('الاسم :', dto.hasConducteur2
+                    ? '${dto.conducteur2Prenom ?? ''} ${dto.conducteur2Nom ?? ''}' : ''),
+                // ✅ FIX : la date de délivrance du permis du 2ème conducteur
+                // était affichée en FR mais absente ici.
+                _infoRowAr('رخصة القيادة :',
+                    '${_v(dto.conducteur2NumPermis)}  صدرت: ${_v(dto.conducteur2PermisDate)}'),
+              ])),
+            ],
           ]),
         ]),
       );
@@ -508,12 +520,12 @@ class ContratLocationPdfGenerator {
           pw.Row(children: [
             pw.Expanded(child: _infoRowAr('الماركة :', _v(dto.vehiculeMarque))),
             pw.Expanded(child: _infoRowAr('رقم التسجيل :', _v(dto.vehiculeImmatriculation))),
-            pw.Expanded(child: _infoRowAr('اللون :', _v(dto.vehiculeCouleur))),
+            if (_on('vehicule_couleur')) pw.Expanded(child: _infoRowAr('اللون :', _v(dto.vehiculeCouleur))),
           ]),
           pw.Row(children: [
             pw.Expanded(child: _infoRowAr('الموديل :', _v(dto.vehiculeModele))),
-            pw.Expanded(child: _infoRowAr('التأمين :', _v(dto.vehiculeAssurance))),
-            pw.Expanded(child: _infoRowAr('كود الراديو :', _v(dto.vehiculeCodeRadio))),
+            if (_on('vehicule_assurance')) pw.Expanded(child: _infoRowAr('التأمين :', _v(dto.vehiculeAssurance))),
+            if (_on('vehicule_code_radio')) pw.Expanded(child: _infoRowAr('كود الراديو :', _v(dto.vehiculeCodeRadio))),
           ]),
         ]),
       );

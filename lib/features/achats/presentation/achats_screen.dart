@@ -6,6 +6,7 @@ import '../../../core/theme/app_text_styles.dart';
 import '../domain/achat_model.dart';
 import 'achats_provider.dart';
 import 'package:garage_auto/core/extensions/l10n_extension.dart';
+import '../../../shared/widgets/delete_confirm.dart';
 
 class AchatsScreen extends ConsumerStatefulWidget {
   const AchatsScreen({super.key});
@@ -314,7 +315,7 @@ class _StatItem extends StatelessWidget {
   }
 }
 
-class _AchatCard extends StatelessWidget {
+class _AchatCard extends ConsumerWidget {
   final Achat achat;
 
   const _AchatCard({required this.achat});
@@ -323,8 +324,24 @@ class _AchatCard extends StatelessWidget {
     return Color(int.parse('0x${statut.color.substring(1)}'));
   }
 
+  Future<void> _supprimer(BuildContext context, WidgetRef ref) {
+    final vehNom = achat.vehiculeNom ?? 'ce véhicule';
+    return confirmAndDelete(
+      context,
+      title: context.l10n.supprimerDefinitivement,
+      message: '$vehNom — ${achat.vendeurNom}\n${context.l10n.actionIrreversible}',
+      onDelete: () => ref.read(achatsRepositoryProvider).deleteAchat(achat.id),
+      onSuccess: () {
+        ref.invalidate(achatsProvider);
+        ref.invalidate(achatsEnCoursProvider);
+        ref.invalidate(achatsValidesProvider);
+        ref.invalidate(statsAchatsProvider);
+      },
+    );
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
         final vehNom = achat.vehiculeNom ?? 'Véhicule ${achat.vehiculeId.substring(0, 8)}...';
     final color = _AchatCard.getColorFromStatut(achat.statut);
 
@@ -369,6 +386,12 @@ class _AchatCard extends StatelessWidget {
                     ),
                   ),
                   _StatusBadge(statut: achat.statut),
+                  IconButton(
+                    icon: Icon(Icons.delete_outline, color: AppColors.retard, size: 20),
+                    tooltip: context.l10n.btnSupprimer,
+                    visualDensity: VisualDensity.compact,
+                    onPressed: () => _supprimer(context, ref),
+                  ),
                 ],
               ),
               const SizedBox(height: 12),

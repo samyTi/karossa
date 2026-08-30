@@ -959,6 +959,8 @@
   "notesEtatVehiculeDepart": "Notes état du véhicule au départ (optionnel)",
   "pdfGenereAvecSucces": "PDF généré avec succès",
   "locationSupprimee": "Location supprimée.",
+  "elementSupprime": "Supprimé avec succès.",
+  "suppressionImpossibleLiee": "Suppression impossible : d'autres éléments (locations, ventes, paiements, réparations...) sont encore liés à cet enregistrement.",
   "exMarqueVehicule": "ex: Renault, Peugeot...",
   "sommePartsDoit100": "La somme des parts doit etre 100%",
   "anneeInvalideSimple": "Annee invalide",

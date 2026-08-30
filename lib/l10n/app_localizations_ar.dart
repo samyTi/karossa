@@ -2325,6 +2325,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get locationSupprimee => 'تم حذف الإيجار.';
 
   @override
+  String get elementSupprime => 'تم الحذف بنجاح.';
+
+  @override
+  String get suppressionImpossibleLiee =>
+      'تعذر الحذف: لا تزال هناك عناصر أخرى (إيجارات، مبيعات، مدفوعات، إصلاحات...) مرتبطة بهذا السجل.';
+
+  @override
   String get exMarqueVehicule => 'مثال: Renault, Peugeot...';
 
   @override

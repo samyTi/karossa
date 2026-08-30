@@ -15,6 +15,7 @@ import '../../../features/contrats/data/contract_articles_repository.dart';
 import 'contrat_location_pdf_generator.dart';
 import 'contrat_location_classique_pdf_generator.dart';
 import '../../../features/contrats/domain/contrat_location_dto.dart' show ContratLocationTemplate;
+import '../../../features/contrats/domain/contrat_location_champs.dart';
 import 'contrat_vente_pdf_generator.dart';
 import 'contrat_echange_pdf_generator.dart';
 import 'facture_location_pdf_generator.dart';
@@ -233,6 +234,12 @@ class ContratOrchestrator {
   Future<void> generateAndShareLocation({
     required Map<String, dynamic> locationData,
     ContratLocationTemplate template = ContratLocationTemplate.standard,
+    /// Champs à afficher sur le contrat (voir contrat_location_champs.dart).
+    /// Si non fourni, l'orchestrateur utilise les valeurs par défaut du
+    /// registre (rétrocompatible avec les appelants qui ne le renseignent
+    /// pas encore). Les écrans doivent lire
+    /// `ref.read(contratLocationChampsProvider.future)` et le transmettre ici.
+    Map<String, bool>? champs,
   }) async {
     debugPrint('📄 [Orchestrator] generateAndShareLocation → id=${locationData['id']} template=$template');
     try {
@@ -260,16 +267,25 @@ class ContratOrchestrator {
 
       final dto  = _buildLocationDto(locationData, settings, logoBytes: logoBytes);
 
+      // Champs à afficher, réglés par le showroom. `champs` est fourni par
+      // l'écran appelant (lu depuis contratLocationChampsProvider) ; à
+      // défaut on retombe sur les valeurs par défaut du registre.
+      final champsActifs = ContratLocationChamps.toActiveSet(
+        ContratLocationChamps.resolve(champs),
+      );
+
       final pair = template == ContratLocationTemplate.classique
           ? await ContratLocationClassiquePdfGenerator.buildBothAsync(
               dto,
               articlesFr: articles.fr,
               articlesAr: articles.ar,
+              champsActifs: champsActifs,
             )
           : await ContratLocationPdfGenerator.buildBothAsync(
               dto,
               articlesFr: articles.fr,
               articlesAr: articles.ar,
+              champsActifs: champsActifs,
             );
 
       final bytesFr = await pair.fr.save();

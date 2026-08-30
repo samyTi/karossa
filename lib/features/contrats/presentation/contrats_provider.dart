@@ -5,6 +5,7 @@ import '../../../../core/providers/supabase_provider.dart';
 import '../../auth/presentation/auth_provider.dart';
 import '../data/contrats_repository.dart';
 import '../domain/contrat_template_model.dart';
+import '../domain/contrat_location_champs.dart';
 
 final contratsRepositoryProvider = Provider<ContratsRepository>((ref) {
   final client     = ref.watch(supabaseClientProvider);
@@ -46,4 +47,16 @@ final activeVenteTemplateProvider =
   final showroomId = ref.watch(currentShowroomIdProvider);
   if (showroomId == null || showroomId.isEmpty) return Future.value(null);
   return ref.watch(contratsRepositoryProvider).getActiveTemplate('vente');
+});
+
+/// Champs activés/désactivés sur le contrat de location (persistés côté
+/// showroom). Utilisé à la fois par l'écran de réglages et par
+/// l'orchestrateur PDF.
+final contratLocationChampsProvider =
+    FutureProvider.autoDispose<Map<String, bool>>((ref) {
+  final showroomId = ref.watch(currentShowroomIdProvider);
+  if (showroomId == null || showroomId.isEmpty) {
+    return Future.value(ContratLocationChamps.defaults);
+  }
+  return ref.watch(contratsRepositoryProvider).getContratLocationChamps();
 });

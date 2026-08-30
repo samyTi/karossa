@@ -8,6 +8,7 @@ import '../../../shared/widgets/empty_state.dart';
 import '../domain/vente_model.dart';
 import 'ventes_provider.dart';
 import 'package:garage_auto/core/extensions/l10n_extension.dart';
+import '../../../shared/widgets/delete_confirm.dart';
 
 class VentesScreen extends ConsumerStatefulWidget {
   const VentesScreen({super.key});
@@ -148,12 +149,27 @@ class _Stat extends StatelessWidget {
 
 // ── Carte de Vente ────────────────────────────────────────────────────────────
 
-class _VenteCard extends StatelessWidget {
+class _VenteCard extends ConsumerWidget {
   final Vente vente;
   const _VenteCard({required this.vente});
 
+  Future<void> _supprimer(BuildContext context, WidgetRef ref) {
+    final nomVeh = vente.vehiculeNom ?? 'ce véhicule';
+    final nomCli = vente.clientNom ?? 'ce client';
+    return confirmAndDelete(
+      context,
+      title: context.l10n.supprimerDefinitivement,
+      message: '$nomVeh — $nomCli\n${context.l10n.actionIrreversible}',
+      onDelete: () => ref.read(ventesRepositoryProvider).delete(vente.id),
+      onSuccess: () {
+        ref.invalidate(ventesListProvider);
+        ref.invalidate(statsVentesProvider);
+      },
+    );
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     // CORRECTION ICI : Utilisation de vehiculeNom et clientNom de votre modèle
     final nomVeh = vente.vehiculeNom ?? 'Véhicule inconnu';
     final nomCli = vente.clientNom ?? 'Client inconnu';
@@ -175,6 +191,12 @@ class _VenteCard extends StatelessWidget {
                   Text(nomVeh, style: AppTextStyles.heading3),
                   Text(nomCli, style: AppTextStyles.bodySecondary),
                 ]),
+              ),
+              IconButton(
+                icon: Icon(Icons.delete_outline, color: AppColors.retard, size: 20),
+                tooltip: context.l10n.btnSupprimer,
+                visualDensity: VisualDensity.compact,
+                onPressed: () => _supprimer(context, ref),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),

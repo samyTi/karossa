@@ -698,6 +698,8 @@
   "notesEtatVehiculeDepart": "ملاحظات حالة السيارة عند المغادرة (اختياري)",
   "pdfGenereAvecSucces": "✅ تم توليد PDF بنجاح",
   "locationSupprimee": "تم حذف الإيجار.",
+  "elementSupprime": "تم الحذف بنجاح.",
+  "suppressionImpossibleLiee": "تعذر الحذف: لا تزال هناك عناصر أخرى (إيجارات، مبيعات، مدفوعات، إصلاحات...) مرتبطة بهذا السجل.",
   "exMarqueVehicule": "مثال: Renault, Peugeot...",
   "sommePartsDoit100": "مجموع الحصص يجب أن يساوي 100٪",
   "anneeInvalideSimple": "سنة غير صحيحة",

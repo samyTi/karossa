@@ -58,6 +58,7 @@ import '../../features/audit/presentation/audit_log_screen.dart';
 import '../../features/locations/presentation/location_calendar_screen.dart';
 import '../../features/ai/presentation/ai_chat_screen.dart';
 import '../../features/contrats/presentation/contract_articles_admin_screen.dart';
+import '../../features/contrats/presentation/contrat_location_champs_screen.dart';
 import '../../features/web_demandes/presentation/web_demandes_screen.dart';
 import '../../features/finance/presentation/proprietaire_finance_screen.dart';
 import '../../features/finance/presentation/gerant_commission_screen.dart';
@@ -504,6 +505,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/admin/contract-articles',
         builder: (_, __) => const ContractArticlesAdminScreen(),
+      ),
+      GoRoute(
+        path: '/admin/contract-location-champs',
+        builder: (_, __) => const ContratLocationChampsScreen(),
       ),
       GoRoute(
         path: '/admin/audit-log',

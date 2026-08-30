@@ -95,4 +95,26 @@ class EchangesRepository {
       rethrow;
     }
   }
+
+  // ── Suppression ────────────────────────────────────────────────────────────
+
+  /// Supprime un échange. Échoue si des opérations de caisse sont encore
+  /// liées à cet échange.
+  Future<void> delete(String id) async {
+    try {
+      await _client
+          .from('transaction_repartitions')
+          .delete()
+          .eq('transaction_type', 'echange')
+          .eq('transaction_id', id);
+      await _client
+          .from('echanges')
+          .delete()
+          .eq('showroom_id', showroomId) // ✅ verrou anti cross-tenant
+          .eq('id', id);
+    } catch (e, st) {
+      AppLogger.e('EchangesRepository.delete', error: e, stackTrace: st);
+      rethrow;
+    }
+  }
 }
